@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <utility> // (pair)
+#include <SDL.h>
 
 typedef enum {
 	DIR_CENTRE, DIR_N, DIR_NE, DIR_E, DIR_SE, DIR_S, DIR_SW, DIR_W, DIR_NW
@@ -29,25 +30,41 @@ public:
 	 * Button presses should latch a flag which this function clears so as
 	 * to avoid double or missed presses from polling. */
 	virtual bool hadButtonPress() = 0;
+
+	/** Process SDL event. For the ControlManager. */
+	virtual void feedEvent(SDL_Event& event) = 0;
+	/** Should also overload operator== so that ControlManager can detect
+	 * duplicates. Two controllers for the same input are equal. This
+	 * superclass version re-dispatches based on other. */
+	virtual bool operator==(Controller& other) { return other==*this;}
+	/* Make sure that the copy constructor is suitable, too. */
 };
 
 /** The ControlManager owns all Controller instances, and is responsible for
  * probing hardware and creating them in the first place. */
 class ControlManager {
-	std::vector<Controller> controllers;
+	/* Specific sets allow us to avoid spamming everything with all events*/
+	std::vector<Controller*> controllers_key;
+	std::vector<Controller*> controllers_mouse;
+	std::vector<Controller*> controllers_joy;
+	/** All of the controllers; this one owns the memory */
+	std::vector<Controller*> controllers;
+	/** Add a controller, with duplicate testing. Takes ownership. */
+	void addController(std::vector<Controller*> set,Controller* controller);
 public:
-	ControlManager();
 	~ControlManager();
 	/** Populate the list of controllers. To avoid invalidating controllers
 	 * which may be used in PlayerSetups, this will only ever add to the
 	 * vector, and will avoid creating duplicates. Designed to allow for
 	 * late-connected devices. */
 	void populate();
+	/** Provide an SDL event so that controller states can be updated. */
+	void feedEvent(SDL_Event& event);
 	/** Get the dummy controller for computer players. There is only ever
 	 * one (there need be no more, and it's useful for construction). */
 	static Controller& getDummy();
 	/** Get const access to the set of controllers. */
-	const std::vector<Controller> getControllers();
+	const std::vector<Controller*>& getControllers();
 	//std::vector<Controller>::const_iterator getControllersBegin();
 	//std::vector<Controller>::const_iterator getControllersEnd();
 };

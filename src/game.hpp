@@ -47,8 +47,11 @@ class Terrain {
 class Game {
 	Player players[PLAYERS];
 	Terrain terrain;
+	uint8_t month;
 public:
 	Game(GameSetup& setup);
+	//...access to state for rendering...
+	//tick(...inputs...)
 };
 
 #endif
