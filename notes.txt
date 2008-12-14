@@ -1,0 +1,35 @@
+Mechanised Extraterrestial Work Labourer?
+
+The internals use generic names, so that MULE-izing or please-dont-sue-izing is the responsibility of the UI.
+
+The Wiimote D-pad is rotated 90 degrees between its pointing-at-screen and held-as-gamepad modes. Could be irritating, as not sure if "can't see screen" is a good enough test to trigger a rotate. Makes mixed-use IR and d-pad use awkward, too.
+
+Species are an interesting modelling challenge:
+ - The set can concievably be considered to be of flexible size; enum checks are
+   nice, so is the factory-style adding of instances.
+ - Factory is an ill-fit as instances of a species have no per-instance data.
+   (Interface Species with a class for each actual species.)
+ - The per-species data falls into two camps: logical (starting cash), and
+   user interface (name, description, graphics). Neither is particularly
+   priviledged over the other, and neither are instance state to keep
+   consistent. Logic will only have one implementation; UI may have many.
+ - A class Species with a static instance accessor (e.g. backed by a map)
+   allows, say, logic to have accessor methods on each instance, but a different
+   pattern must be used for UI (getdescription(species)).
+ - A simple enum encodes the only information which is crucial to the species'
+   consistency---which one it is---and then either data can be accessed by
+   lookup tables. This does rather separate the species definition across
+   multiple places, but that's inevitable as we allow for differing UIs; a
+   simple struct record cannot know what information every UI may want.
+
+Tuning variables which couldn't be determined from the original game have been marked with 'TWEAK' comments.
+
+-- Original game documentation --
+Manual:
+http://muttoo.on.ca/mulemanual/
+
+Some lists of random events, etc.:
+http://strategywiki.org/wiki/M.U.L.E.
+
+Unfortunately, digging about in memory dumps of the running game don't reveal any useful sets of strings.
+
