@@ -1,5 +1,5 @@
 #include <algorithm>
-#include <functional>
+#include <typeinfo>
 #include "controller.hpp"
 #include "platform.hpp"
 
@@ -13,6 +13,7 @@ public:
 	Direction getDirection() { return DIR_CENTRE; }
 	bool hadButtonPress() { return false; }
 	void feedEvent(SDL_Event& event) {}
+	bool operator==(const Controller& other) { return false; }
 };
 
 class KeyboardController: public Controller {
@@ -37,27 +38,31 @@ public:
 
 	bool hadButtonPress() { bool f = fired; fired = false; return f; }
 
-	void feedEvent(SDL_Event& event) {
-	}
+	void feedEvent(SDL_Event& event) { switch(event.type) {
+		case SDL_KEYDOWN: break;
+		case SDL_KEYUP: break;
+	}}
 
-	bool operator==(KeyboardController& other) {
-trace("Compare %p with %p", this, &other);
-return
-		k_n == other.k_n && k_ne == other.k_ne && k_e == other.k_e &&
-		k_se == other.k_se && k_s == other.k_s && k_sw == other.k_sw &&
-		k_w == other.k_w && k_nw == other.k_nw && k_fire == other.k_fire
-	;}
+	bool operator==(const Controller& other) {
+		try {
+			const KeyboardController& o =
+				dynamic_cast<const KeyboardController&>(other);
+			return k_n == o.k_n && k_ne == o.k_ne && k_e == o.k_e &&
+			k_se == o.k_se && k_s == o.k_s && k_sw == o.k_sw &&
+			k_w == o.k_w && k_nw == o.k_nw && k_fire == o.k_fire;
+		} catch(std::bad_cast e) { return false; }
+	}
 };
 
-void ControlManager::addController(std::vector<Controller*> set,
+void ControlManager::addController(std::vector<Controller*>& set,
 	Controller* controller) {
 	// I am aware of find and find_if, but they are awkward with pointers
 	// when I want to perform object comparison instead. And the vector
 	// stores pointers because I'm using polymorphism. Want closures, grr.
 	bool found = false;
 	for(std::vector<Controller*>::const_iterator i = set.begin();
-		i < set.end(); ++i) {
-		if(**i == *controller) { found = true; break; }
+		!found && (i < set.end()); ++i) {
+		if(**i == *controller) { found = true; }
 	}
 
 	if(found) { trace("\tduplicate ignored"); delete controller; } else {
@@ -99,4 +104,11 @@ Controller& ControlManager::getDummy()
 
 const std::vector<Controller*>& ControlManager::getControllers()
 	{ return controllers; }
+
+/*
+		k_n == other.k_n && k_ne == other.k_ne && k_e == other.k_e &&
+		k_se == other.k_se && k_s == other.k_s && k_sw == other.k_sw &&
+		k_w == other.k_w && k_nw == other.k_nw && k_fire == other.k_fire
+virtual, overloaded operator== without RTTI overhead for everything...hahahahaha
+*/
 

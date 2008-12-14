@@ -34,10 +34,8 @@ public:
 	/** Process SDL event. For the ControlManager. */
 	virtual void feedEvent(SDL_Event& event) = 0;
 	/** Should also overload operator== so that ControlManager can detect
-	 * duplicates. Two controllers for the same input are equal. This
-	 * superclass version re-dispatches based on other. */
-	virtual bool operator==(Controller& other) { return other==*this;}
-	/* Make sure that the copy constructor is suitable, too. */
+	 * duplicates. Two controllers for the same input are equal. */
+	virtual bool operator==(const Controller& other) { return false; }
 };
 
 /** The ControlManager owns all Controller instances, and is responsible for
@@ -50,7 +48,8 @@ class ControlManager {
 	/** All of the controllers; this one owns the memory */
 	std::vector<Controller*> controllers;
 	/** Add a controller, with duplicate testing. Takes ownership. */
-	void addController(std::vector<Controller*> set,Controller* controller);
+	void addController(std::vector<Controller*>& set,
+		Controller* controller);
 public:
 	~ControlManager();
 	/** Populate the list of controllers. To avoid invalidating controllers
@@ -65,8 +64,6 @@ public:
 	static Controller& getDummy();
 	/** Get const access to the set of controllers. */
 	const std::vector<Controller*>& getControllers();
-	//std::vector<Controller>::const_iterator getControllersBegin();
-	//std::vector<Controller>::const_iterator getControllersEnd();
 };
 
 #endif

@@ -18,7 +18,6 @@ int main(int argc, char** argv) {
 		{ warn("Joystick initialisation failed: %s", SDL_GetError()); }
 
 	controlman.populate();
-	controlman.populate();
 
 	trace("Running");
 	run = true;
