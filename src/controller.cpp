@@ -3,6 +3,22 @@
 #include "controller.hpp"
 #include "platform.hpp"
 
+Controller::Controller() : fired(false) {}
+bool Controller::hadButtonPress() { bool f = fired; fired = false; return f; }
+
+/// Turn -1, 0, 1 axes into a direction
+static Direction make_direction(int x, int y) {
+	switch(y) {
+		case -1: switch(x) {
+	case -1: return DIR_NW; case 0: return DIR_N; case 1: return DIR_NE; }
+		case  0: switch(x) {
+	case -1: return DIR_W; case 0: return DIR_CENTRE; case 1: return DIR_E;}
+		case  1: switch(x) {
+	case -1: return DIR_SW; case 0: return DIR_S; case 1: return DIR_SE; }
+	}
+	trace("Impossible direction (%d, %d)", x, y); return DIR_CENTRE;
+}
+
 /** Dummy controller for computer players. */
 class DummyController : public Controller {
 public:
@@ -20,11 +36,10 @@ class KeyboardController: public Controller {
 	SDLKey key[8];
 	SDLKey k_fire;
 	bool down[8];
-	bool fired;
 public:
 	KeyboardController(SDLKey n, SDLKey ne, SDLKey e, SDLKey se, SDLKey s,
 		SDLKey sw, SDLKey w, SDLKey nw, SDLKey fire)
-		: k_fire(fire), fired(false) {
+		: k_fire(fire) {
 		key[DIR_N]= n; key[DIR_NE]= ne; key[DIR_E]= e; key[DIR_SE]= se;
 		key[DIR_S]= s; key[DIR_SW]= sw; key[DIR_W]= w; key[DIR_NW]= nw;
 		for(int i = 0; i < 8; ++i) { down[i] = false; }
@@ -53,8 +68,6 @@ public:
 		return DIR_CENTRE;
 	}
 
-	bool hadButtonPress() { bool f = fired; fired = false; return f; }
-
 	void feedEvent(SDL_Event& event) {
 		if(event.key.keysym.sym == k_fire) {
 			if(event.type == SDL_KEYDOWN) { fired = true; }
@@ -79,20 +92,56 @@ public:
 };
 
 class MouseController : public Controller {
+	double calibx, caliby;
+	/** Update calibrated position, and return true if in window. */
+	bool updatePosition() {
+		int mx, my;
+		double cx, cy;
+		const SDL_VideoInfo* info;
+		// Attempt one to identify out-of-window state
+		if(!(SDL_GetAppState() & SDL_APPMOUSEFOCUS)) { return false; }
+		// Get a calibrated mouse position
+		info = SDL_GetVideoInfo();
+		SDL_GetMouseState(&mx, &my); // 0,0 aligns with window 0,0
+		cx = ((double) mx) / info->current_w;
+		cy = ((double) my) / info->current_h;
+		// Attempt two to identify out-of-window state
+		if(cx < 0 || cx >= 1 || cy < 0 || cy >= 1 ) { return false; }
+		// Ok, we think we're inside the window
+		calibx = cx; caliby = cx;
+		return true;
+	}
 public:
-	MouseController() {}
-	bool hasPosition() { return true; }
-	std::pair<double, double> getPosition()
-		{ return std::pair<double, double>(0, 0); } // TODO
-	Direction getDirection() { return DIR_CENTRE; } // TODO
-	bool hadButtonPress() { return false; } // TODO
-	void feedEvent(SDL_Event& event) {} // TODO
+	MouseController() : calibx(0.5), caliby(0.5) {}
+	bool hasPosition() { return updatePosition(); }
+
+	std::pair<double, double> getPosition() {
+		updatePosition();
+		return std::pair<double, double>(calibx, caliby);
+	}
+
+	Direction getDirection() {
+		int x = -1;
+		int y = -1;
+		updatePosition();
+		if(calibx > 0.33) { x = 0; } if(calibx > 0.67) { x = 1; }
+		if(caliby > 0.33) { y = 0; } if(caliby > 0.67) { y = 1; }
+		return make_direction(x, y);
+	}
+
+	void feedEvent(SDL_Event& event) {
+		// We don't care about button releases or motion
+		if(event.type == SDL_MOUSEBUTTONDOWN &&
+			event.button.button == SDL_BUTTON_LEFT)
+			{ fired = true; }
+	}
+
 	bool operator==(const Controller& other) {
 		try {
 			MouseController& o = const_cast<MouseController&>
 				(dynamic_cast<const MouseController&>(other));
 			o.hasPosition(); // Shut up, g++
-			return true; // No distinguishing state
+			return true; // No distinguishing mouse ID
 		} catch(std::bad_cast e) { return false; }
 	}
 };
@@ -100,8 +149,9 @@ public:
 class JoystickController : public Controller {
 	int jindex;
 	SDL_Joystick* joy;
+	Sint16 jx, jy;
 public:
-	JoystickController(int index) : jindex(index) {
+	JoystickController(int index) : jindex(index), jx(0), jy(0) {
 		const char* name = SDL_JoystickName(index);
 		if(!name) { name = "unknown"; }
 		if(!SDL_JoystickOpened(index)) {
@@ -131,9 +181,37 @@ public:
 	bool hasPosition() { return false; }
 	std::pair<double, double> getPosition()
 		{ return std::pair<double, double>(0, 0); }
-	Direction getDirection() { return DIR_CENTRE; } // TODO
-	bool hadButtonPress() { return false; } // TODO
-	void feedEvent(SDL_Event& event) {} // TODO
+
+	Direction getDirection() {
+		// We only need direction, so we can have a massive deadzone
+		int x = -1;
+		int y = -1;
+		if(jx > -16384) { x = 0; } if(jx > 16384) { x = 1; }
+		if(jy > -16384) { y = 0; } if(jy > 16384) { y = 1; }
+		return make_direction(x, y);
+	}
+
+	void feedEvent(SDL_Event& event) {
+		uint8_t which = (event.type == SDL_JOYAXISMOTION) ?
+			event.jaxis.which : event.jbutton.which;
+		if(which != jindex) { return; } // Not this stick
+		switch(event.type) {
+			case SDL_JOYAXISMOTION:
+				switch(event.jaxis.axis) {
+					case 0: jx = event.jaxis.value; break;
+					case 1: jy = event.jaxis.value; break;
+				} // Any other axis is ignored
+				break;
+			case SDL_JOYBUTTONDOWN:
+				/* We are sensitive to the first two buttons,
+				 * as on most physical devices I've seen this
+				 * should offer some ergonomic flexibility,
+				 * without turning random shouldpads etc. into
+				 * potential misfires. */
+				if(event.jbutton.button < 2) { fired = true; }
+		} // We don't care about button releases
+	}
+
 	bool operator==(const Controller& other) {
 		try {
 			const JoystickController& o =
@@ -188,9 +266,30 @@ void ControlManager::populate() {
 	trace("Adding joystick controllers");
 	for(int i = 0; i < SDL_NumJoysticks(); ++i)
 		{ addController(controllers_joy, new JoystickController(i)); }
+	/* Wiimotes, etc... */
 }
 
 void ControlManager::feedEvent(SDL_Event& event) {
+	// I wish STL for_each was useful.
+	std::vector<Controller*>* set;
+	switch(event.type) {
+		case SDL_KEYDOWN:
+		case SDL_KEYUP:
+			set = &controllers_key; break;
+		case SDL_MOUSEMOTION:
+		case SDL_MOUSEBUTTONDOWN:
+		case SDL_MOUSEBUTTONUP:
+			set = &controllers_mouse; break;
+		case SDL_JOYAXISMOTION:
+		case SDL_JOYBUTTONDOWN:
+		case SDL_JOYBUTTONUP:
+			set = &controllers_joy; break;
+		default:
+			trace("ControlManager being fed unsupported events");
+			return;
+	}
+	for(std::vector<Controller*>::iterator i = set->begin(); i < set->end();
+		++i) { (*i)->feedEvent(event); }
 }
 
 Controller& ControlManager::getDummy()
@@ -198,11 +297,4 @@ Controller& ControlManager::getDummy()
 
 const std::vector<Controller*>& ControlManager::getControllers()
 	{ return controllers; }
-
-/*
-		k_n == other.k_n && k_ne == other.k_ne && k_e == other.k_e &&
-		k_se == other.k_se && k_s == other.k_s && k_sw == other.k_sw &&
-		k_w == other.k_w && k_nw == other.k_nw && k_fire == other.k_fire
-virtual, overloaded operator== without RTTI overhead for everything...hahahahaha
-*/
 

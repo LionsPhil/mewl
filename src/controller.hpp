@@ -13,6 +13,9 @@ typedef enum {
 /** A Controller is any of various possible devices which can be used to
  * control the game: mouse, keyboard, joystick, Wiimote... */
 class Controller {
+protected:
+	Controller();
+	bool fired; ///< See hadButtonPress()
 public:
 	/* Is the controller capable of reporting a screen position right now?
 	 * This may change repeatedly during the use of a controller, due to
@@ -29,8 +32,9 @@ public:
 	/* Return true if the main button (whichever one[s] you wish to make
 	 * sensitive) has been pressed since this function was last called.
 	 * Button presses should latch a flag which this function clears so as
-	 * to avoid double or missed presses from polling. */
-	virtual bool hadButtonPress() = 0;
+	 * to avoid double or missed presses from polling. The base class does
+	 * this using a 'fired' boolean, which should be adaquate for most. */
+	virtual bool hadButtonPress();
 
 	/** Process SDL event. For the ControlManager, which needs to pre-
 	 * filter them (e.g. KeyboardController only gets KEYDOWN/KEYUP). */

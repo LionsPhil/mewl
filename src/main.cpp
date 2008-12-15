@@ -3,10 +3,13 @@
 #include "game.hpp"
 #include "platform.hpp"
 
+static const Uint32 tickduration = 10; /* ms -> 100Hz */
+
 int main(int argc, char** argv) {
 	bool run;
 	ControlManager controlman;
 	SDL_Event event;
+	Uint32 tickerror, ticklast;
 
 	trace("Startup");
 	if(SDL_Init(0) < 0)
@@ -23,6 +26,8 @@ int main(int argc, char** argv) {
 	controlman.populate();
 
 	trace("Running");
+	tickerror = 0;
+	ticklast = SDL_GetTicks();
 	run = true;
 	while(run) {
 		/* Process events */
@@ -46,8 +51,23 @@ int main(int argc, char** argv) {
 				controlman.feedEvent(event);
 		}}
 
-		/* Poke game logic to tick */
-		/* Poke UI to render gamestate */
+		/* Proceess the passage of time */
+		if(1) { const Uint32 now = SDL_GetTicks();
+		tickerror += (now - ticklast);
+		ticklast = now; }
+		if(tickerror >= tickduration) {
+			do {
+				tickerror -= tickduration;
+
+				/* Poke game logic to tick */ // TODO
+			} while(tickerror >= tickduration);
+
+			/* Poke UI to render gamestate */ // TODO
+		} else {
+			/* Have a nap until we actually have at least one tick
+			 * to run */
+			SDL_Delay(tickduration);
+		}
 	}
 
 	trace("Clean exit");
