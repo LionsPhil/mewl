@@ -14,8 +14,11 @@ int main(int argc, char** argv) {
 
 	// Poke UI code to init VIDEO and AUDIO around here
 
-	if(SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0) // Nonfatal
-		{ warn("Joystick initialisation failed: %s", SDL_GetError()); }
+	if(SDL_InitSubSystem(SDL_INIT_JOYSTICK) == 0) {
+		SDL_JoystickEventState(SDL_ENABLE); // May erase all events(!)
+	} else { // Nonfatal
+		warn("Joystick initialisation failed: %s", SDL_GetError());
+	}
 
 	controlman.populate();
 

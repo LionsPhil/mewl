@@ -6,7 +6,8 @@
 #include <SDL.h>
 
 typedef enum {
-	DIR_CENTRE, DIR_N, DIR_NE, DIR_E, DIR_SE, DIR_S, DIR_SW, DIR_W, DIR_NW
+	DIR_N = 0, DIR_NE, DIR_E, DIR_SE, DIR_S, DIR_SW, DIR_W, DIR_NW,
+	DIR_CENTRE
 } Direction;
 
 /** A Controller is any of various possible devices which can be used to
@@ -31,7 +32,8 @@ public:
 	 * to avoid double or missed presses from polling. */
 	virtual bool hadButtonPress() = 0;
 
-	/** Process SDL event. For the ControlManager. */
+	/** Process SDL event. For the ControlManager, which needs to pre-
+	 * filter them (e.g. KeyboardController only gets KEYDOWN/KEYUP). */
 	virtual void feedEvent(SDL_Event& event) = 0;
 	/** Should also overload operator== so that ControlManager can detect
 	 * duplicates. Two controllers for the same input are equal. */
