@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
 	if(SDL_Init(0) < 0)
 		{ warn("Unable to initialise SDL: %s", SDL_GetError()); die(); }
 
-	// Poke UI code to init VIDEO and AUDIO around here
+	// Poke UI code to init VIDEO and AUDIO around here // TODO
 
 	if(SDL_InitSubSystem(SDL_INIT_JOYSTICK) == 0) {
 		SDL_JoystickEventState(SDL_ENABLE); // May erase all events(!)
@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
 				controlman.feedEvent(event);
 		}}
 
-		/* Proceess the passage of time */
+		/* Process the passage of time */
 		if(1) { const Uint32 now = SDL_GetTicks();
 		tickerror += (now - ticklast);
 		ticklast = now; }

@@ -17,6 +17,9 @@ protected:
 	Controller();
 	bool fired; ///< See hadButtonPress()
 public:
+	virtual ~Controller();
+	/* Have the controller describe itself. */
+	virtual const char* getDescription() = 0;
 	/* Is the controller capable of reporting a screen position right now?
 	 * This may change repeatedly during the use of a controller, due to
 	 * grabless mice and Wiimotes pointed away from the screen. */

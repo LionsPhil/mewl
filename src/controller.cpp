@@ -4,6 +4,7 @@
 #include "platform.hpp"
 
 Controller::Controller() : fired(false) {}
+Controller::~Controller() {}
 bool Controller::hadButtonPress() { bool f = fired; fired = false; return f; }
 
 /// Turn -1, 0, 1 axes into a direction
@@ -23,6 +24,7 @@ static Direction make_direction(int x, int y) {
 class DummyController : public Controller {
 public:
 	DummyController() {}
+	const char* getDescription() { return "(dummy)"; }
 	bool hasPosition() { return false; }
 	std::pair<double, double> getPosition()
 		{ return std::pair<double, double>(0, 0); }
@@ -33,18 +35,20 @@ public:
 };
 
 class KeyboardController: public Controller {
+	const char* desc;
 	SDLKey key[8];
 	SDLKey k_fire;
 	bool down[8];
 public:
-	KeyboardController(SDLKey n, SDLKey ne, SDLKey e, SDLKey se, SDLKey s,
-		SDLKey sw, SDLKey w, SDLKey nw, SDLKey fire)
-		: k_fire(fire) {
+	KeyboardController(const char* desc, SDLKey n, SDLKey ne, SDLKey e,
+		SDLKey se, SDLKey s, SDLKey sw, SDLKey w, SDLKey nw,SDLKey fire)
+		: desc(desc), k_fire(fire) {
 		key[DIR_N]= n; key[DIR_NE]= ne; key[DIR_E]= e; key[DIR_SE]= se;
 		key[DIR_S]= s; key[DIR_SW]= sw; key[DIR_W]= w; key[DIR_NW]= nw;
 		for(int i = 0; i < 8; ++i) { down[i] = false; }
 	}
 
+	const char* getDescription() { return desc; }
 	bool hasPosition() { return false; }
 	std::pair<double, double> getPosition()
 		{ return std::pair<double, double>(0, 0); }
@@ -113,6 +117,8 @@ class MouseController : public Controller {
 	}
 public:
 	MouseController() : calibx(0.5), caliby(0.5) {}
+
+	const char* getDescription() { return "(default)"; }
 	bool hasPosition() { return updatePosition(); }
 
 	std::pair<double, double> getPosition() {
@@ -152,17 +158,15 @@ class JoystickController : public Controller {
 	Sint16 jx, jy;
 public:
 	JoystickController(int index) : jindex(index), jx(0), jy(0) {
-		const char* name = SDL_JoystickName(index);
-		if(!name) { name = "unknown"; }
 		if(!SDL_JoystickOpened(index)) {
 			if((joy = SDL_JoystickOpen(index))) {
 				trace("Got joystick %d (%s) with %d axes and "
-					"%d buttons", index + 1, name,
+					"%d buttons", index+1, getDescription(),
 					SDL_JoystickNumAxes(joy),
 					SDL_JoystickNumButtons(joy));
 			} else {
-				warn("Can't open joystick %d (%s): %s",
-					index + 1, name, SDL_GetError());
+				warn("Can't open joystick %d (%s): %s", index+1,
+					getDescription(), SDL_GetError());
 			}
 		}
 	}
@@ -170,12 +174,16 @@ public:
 	~JoystickController() {
 		if(SDL_JoystickOpened(jindex)) {
 			if(joy) { SDL_JoystickClose(joy); } else {
-				const char* name = SDL_JoystickName(jindex);
-				if(!name) { name = "unknown"; }
 				warn("Joystick %d (%s) open but handle lost!",
-					jindex + 1, name);
+					jindex + 1, getDescription());
 			}
 		}
+	}
+
+	const char* getDescription() {
+		const char* name = SDL_JoystickName(jindex);
+		if(!name) { name = "(unknown)"; }
+		return name;
 	}
 
 	bool hasPosition() { return false; }
@@ -223,16 +231,20 @@ public:
 
 void ControlManager::addController(std::vector<Controller*>& set,
 	Controller* controller) {
+
+	bool found;
+	trace("\t%s", controller->getDescription());
+
 	// I am aware of find and find_if, but they are awkward with pointers
 	// when I want to perform object comparison instead. And the vector
 	// stores pointers because I'm using polymorphism. Want closures, grr.
-	bool found = false;
+       	found = false;
 	for(std::vector<Controller*>::const_iterator i = set.begin();
 		!found && (i < set.end()); ++i) {
 		if(**i == *controller) { found = true; }
 	}
 
-	if(found) { trace("\tduplicate ignored"); delete controller; } else {
+	if(found) { trace("\t\tduplicate ignored"); delete controller; } else {
 		set.push_back(controller);
 		controllers.push_back(controller);
 	}
@@ -249,14 +261,14 @@ void ControlManager::populate() {
 	/* Keyboard: three possible, WASD, HJKL, arrows, and numpad. */
 	const SDLKey nk = (SDLKey)(SDLK_FIRST - 1); // No key
 	trace("Adding keyboard controllers");
-	addController(controllers_key, new KeyboardController(
+	addController(controllers_key, new KeyboardController("WASD+L Ctrl",
 		SDLK_w, nk, SDLK_d, nk, SDLK_s, nk, SDLK_a, nk, SDLK_LCTRL));
-	addController(controllers_key, new KeyboardController(
+	addController(controllers_key, new KeyboardController("HJKL+Space",
 		SDLK_k, nk, SDLK_l, nk, SDLK_j, nk, SDLK_h, nk, SDLK_SPACE));
-	addController(controllers_key, new KeyboardController(
+	addController(controllers_key, new KeyboardController("Arrows+R Ctrl",
 		SDLK_UP, nk, SDLK_RIGHT, nk,
 		SDLK_DOWN, nk, SDLK_LEFT, nk, SDLK_RCTRL));
-	addController(controllers_key, new KeyboardController(
+	addController(controllers_key, new KeyboardController("Numpad",
 		SDLK_KP8, SDLK_KP9, SDLK_KP6, SDLK_KP3,
 		SDLK_KP2, SDLK_KP1, SDLK_KP4, SDLK_KP7, SDLK_KP_ENTER));
 	/* Mouse: one positional controller. */
