@@ -50,9 +50,11 @@ CPPSOURCES = controller.cpp difficulty.cpp game.cpp gamesetup.cpp species.cpp \
              resources.hpp util.hpp \
              factory.hpp platform.hpp ui.hpp
 
-# User interface files
+# User interface files and flags
 ifeq ($(USERINTF),Sprite)
-    CPPSOURCES+= ui_sprite.cpp
+    CPPSOURCES += ui_sprite.cpp
+    HEADERS    += 
+    LDFLAGSEX  += -lSDL_mixer -lSDL_ttf
 endif
 
 # Anything else you want put in the distributed version

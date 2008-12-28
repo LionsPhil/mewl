@@ -16,7 +16,7 @@ public: // This is just a struct with an ego problem
 	PlayerSetup();
 	Species::Type species;
 	bool computer;
-	Controller& controller; // meaningless if computer player
+	Controller* controller; // meaningless if computer player
 };
 
 class GameSetup {

@@ -68,9 +68,6 @@ public:
 	void populate();
 	/** Provide an SDL event so that controller states can be updated. */
 	void feedEvent(SDL_Event& event);
-	/** Get the dummy controller for computer players. There is only ever
-	 * one (there need be no more, and it's useful for construction). */
-	static Controller& getDummy();
 	/** Get const access to the set of controllers. */
 	const std::vector<Controller*>& getControllers();
 };

@@ -9,7 +9,8 @@
 int random_normal(int min, int max, double stddev);
 
 /** Generate a random number in the inclusive range given with a uniform
- *  probability distribution. Again, C++ TR1 is a future possibility here. */
+ *  probability distribution. Again, C++ TR1 is a future possibility here.
+ *  IMPORTANT: unlike simplistic modulo-rand, max is a possible value! */
 int random_uniform(int min, int max);
 
 #endif

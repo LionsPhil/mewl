@@ -20,6 +20,7 @@ static Direction make_direction(int x, int y) {
 	trace("Impossible direction (%d, %d)", x, y); return DIR_CENTRE;
 }
 
+#if 0 // XXX REMOVE
 /** Dummy controller for computer players. */
 class DummyController : public Controller {
 public:
@@ -33,6 +34,7 @@ public:
 	void feedEvent(SDL_Event& event) {}
 	bool operator==(const Controller& other) { return false; }
 };
+#endif // XXX REMOVE
 
 class KeyboardController: public Controller {
 	const char* desc;
@@ -303,9 +305,6 @@ void ControlManager::feedEvent(SDL_Event& event) {
 	for(std::vector<Controller*>::iterator i = set->begin(); i < set->end();
 		++i) { (*i)->feedEvent(event); }
 }
-
-Controller& ControlManager::getDummy()
-	{ static DummyController dc; return dc; }
 
 const std::vector<Controller*>& ControlManager::getControllers()
 	{ return controllers; }

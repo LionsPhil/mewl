@@ -30,7 +30,7 @@ http://www2.bitstream.net/~marksim/atarimac/fonts.html
 [ GameSetup ]  Title/gametype screen
                Colour selection
                Species selection
-[ Game      ]  Landing (chance for the logic to do init)
+[ Game      ]  Landing (display only, and sort-of a random event)
                <starts at Scoreboard for round 0>
                Land grab
                Land auction
