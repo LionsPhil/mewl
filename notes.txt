@@ -24,6 +24,25 @@ Species are an interesting modelling challenge:
 
 Tuning variables which couldn't be determined from the original game have been marked with 'TWEAK' comments.
 
+
+http://www2.bitstream.net/~marksim/atarimac/fonts.html
+
+[ GameSetup ]  Title/gametype screen
+               Colour selection
+               Species selection
+[ Game      ]  Landing (chance for the logic to do init)
+               <starts at Scoreboard for round 0>
+               Land grab
+               Land auction
+               Development - Human - Colony map
+                                   - Town
+               Development - Computer
+               Production (calculate only)
+               Random event
+               Production (display only)
+               Goods auctions
+               Scoreboard (possibly for game end)
+
 -- Original game documentation --
 Manual:
 http://muttoo.on.ca/mulemanual/

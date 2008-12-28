@@ -6,23 +6,32 @@
 #include "gamesetup.hpp"
 
 class Player {
+public:
 	PlayerSetup setup;
 	uint32_t money;
 	Stock stock;
 	// Land ownership is handled as a property of the terrain
-public:
 	static Player& getDummyPlayer(); // For Tile constructor
 };
 
 class Tile {
-	Tile();
-	uint8_t mountains;
-	uint8_t crystal;
-	bool river;
-	bool owned; // Owned; otherwise, owner and equipment are undefined.
-	Player& owner;
+	uint8_t m_mountains; // 0--3
+	uint8_t m_crystal; // 0--4
+	bool m_river;
+	bool m_owned; // Owned; otherwise, owner and equipment are undefined.
+	Player* m_owner; // Needs to be ptr, as can be reseated
 	// What has it been outfitted to produce? Only valid if owned.
-	Resource::Type equipment;
+	Resource::Type m_equipment;
+public:
+	Tile();
+	uint8_t& mountains(); // Can be mutated by planetquakes
+	uint8_t& crystal(); // Can be mutated by meteor strikes
+	const bool river();
+	const bool owned();
+	const Player& owner();
+	const Resource::Type& equipment();
+	void setUnowned();
+	void setOwnership(Player& owner, Resource::Type equipment);
 };
 
 class Terrain {
@@ -33,19 +42,23 @@ class Terrain {
 	// The river runs vertically through the city. Anything else may not
 	// be drawn correctly by the UI.
 	std::vector<Tile> tiles;
+public:
+	Terrain();
+	std::pair<uint8_t, uint8_t> getSize();
+	std::pair<uint8_t, uint8_t> getCity();
+	Tile& tile(uint8_t x, uint8_t y);
 };
 
-/** The state of one game in progress. */
+/** The state of one game in progress. This covers things like inventory; it
+ *  does not cover the logic, even the terrain initialisation. */
 class Game {
+public: // Another fancypants struct
 	Player players[PLAYERS];
+	Difficulty::Type difficulty;
 	Terrain terrain;
 	uint8_t month;
 	Stock store;
 	Stock prices; // (store)
-public:
-	Game(GameSetup& setup);
-	//...access to state for rendering...
-	//tick(...inputs...)
 };
 
 #endif

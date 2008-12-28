@@ -2,7 +2,7 @@
 #define RESOURCES_HPP_
 #include <stdint.h>
 
-namespace Resource { typedef enum { Food, Energy, Ore, Crystal } Type; }
+namespace Resource { typedef enum { None, Food, Energy, Ore, Crystal } Type; }
 
 // Initialised by difficulty level; this gets used for both price AND quantity
 struct Stock {

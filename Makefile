@@ -7,6 +7,8 @@ DISTFILE = $(BINARY)-$(VERSION).zip
  DISTMSG = "M.E.W.L. $(VERSION)"
 # Platform can be one of 'posix', 'win', and hopefully soon 'wii'
 PLATFORM = posix
+# User interface can currently only be 'Sprite'
+USERINTF = Sprite
 
 # Expects GNU-flavoured tools
 # Because we need C++ linkage, this will use CPPC to compile/link C sources!
@@ -41,10 +43,17 @@ CPPFLAGSEX = $(CFLAGSEX)
   ASOURCES = 
   CSOURCES = 
 CPPSOURCES = controller.cpp difficulty.cpp game.cpp gamesetup.cpp species.cpp \
-             resources.cpp util.cpp main.cpp platform_$(PLATFORM).cpp
+             resources.cpp util.cpp \
+             main.cpp platform_$(PLATFORM).cpp
 # Headers can be called whatever you want
    HEADERS = controller.hpp difficulty.hpp game.hpp gamesetup.hpp species.hpp \
-             resources.hpp util.hpp platform.hpp
+             resources.hpp util.hpp \
+             factory.hpp platform.hpp ui.hpp
+
+# User interface files
+ifeq ($(USERINTF),Sprite)
+    CPPSOURCES+= ui_sprite.cpp
+endif
 
 # Anything else you want put in the distributed version
 # (Include all platform files here; duplication doesn't matter)
@@ -76,7 +85,7 @@ CPPWFLAGS = $(WARNFLAGS)
 AFLAGS    = -f elf
 #CFLAGS    = $(CWFLAGS) -std=c99 -pedantic `sdl-config --cflags` $(CFLAGSEX)
 CPPFLAGS  = $(CPPWFLAGS) -std=c++98 -DVERSION='"$(VERSION)"' \
-            -DPLATFORM$(PLATFORM) \
+            -DPLATFORM$(PLATFORM) -DUSERINTF='"$(USERINTF)"' \
             `sdl-config --cflags`   $(CPPFLAGSEX)
 LDFLAGS   = `sdl-config --libs` -lm $(LDFLAGSEX)
 

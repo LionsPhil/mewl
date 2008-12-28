@@ -1,22 +1,36 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <SDL.h>
 #include "game.hpp"
 #include "platform.hpp"
+#include "ui.hpp"
 
 static const Uint32 tickduration = 10; /* ms -> 100Hz */
 
-int main(int argc, char** argv) {
+static int realmain(bool fullscreen) {
 	bool run;
 	ControlManager controlman;
+	UserInterface* userintf;
 	SDL_Event event;
 	Uint32 tickerror, ticklast;
 
-	trace("Startup");
+	trace("M.E.W.L. version " VERSION " starting");
 	platform_init();
 	if(SDL_Init(0) < 0)
 		{ warn("Unable to initialise SDL: %s", SDL_GetError()); die(); }
 
-	// Poke UI code to init VIDEO and AUDIO around here // TODO
+	// Build the user interface
+	userintf = FACTORY_FOR(UserInterface).create("UserInterface" USERINTF);
+	if(!userintf) {
+		warn("Miscompiled: class '%s' not found by UI factory.",
+			"UserInterface" USERINTF);
+		SDL_Quit(); die();
+	}
+	// And initialise it
+	if(!userintf->init(fullscreen)) {
+		warn("Unable to initialise user interface.");
+		delete userintf; SDL_Quit(); die();
+	}
 
 	if(SDL_InitSubSystem(SDL_INIT_JOYSTICK) == 0) {
 		SDL_JoystickEventState(SDL_ENABLE); // May erase all events(!)
@@ -72,7 +86,34 @@ int main(int argc, char** argv) {
 	}
 
 	trace("Clean exit");
+	delete userintf;
 	SDL_Quit();
 	return EXIT_SUCCESS;
+}
+
+int main(int argc, char** argv) {
+	bool fullscreen = false;
+	// Do all the horrible command-line processing malarky
+	for(int a = 1; a < argc; a++) {
+		const char* arg = argv[a];
+		if(0) {
+		} else if(!strcmp(arg, "-h") || !strcmp(arg, "--help")
+		       || !strcmp(arg, "/h") || !strcmp(arg, "/?")) {
+			puts("Usage: mewl [-f]\n");
+			puts("  -h --help       : this text");
+			puts("  -v --version    : show version information");
+			puts("  -f --fullscreen : run in fullscreen");
+			return 0;
+		} else if(!strcmp(arg, "-v") || !strcmp(arg, "--version")) {
+			puts("M.E.W.L. version " VERSION);
+			puts("Licensed under the GNU GPL.");
+			return 0;
+		} else if(!strcmp(arg, "-f") || !strcmp(arg, "--fullscreen")) {
+			fullscreen = true;
+		}
+	}
+
+	// Now do the 'real' main route
+	return realmain(fullscreen);
 }
 
