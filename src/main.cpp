@@ -12,6 +12,7 @@ int main(int argc, char** argv) {
 	Uint32 tickerror, ticklast;
 
 	trace("Startup");
+	platform_init();
 	if(SDL_Init(0) < 0)
 		{ warn("Unable to initialise SDL: %s", SDL_GetError()); die(); }
 

@@ -41,10 +41,10 @@ CPPFLAGSEX = $(CFLAGSEX)
   ASOURCES = 
   CSOURCES = 
 CPPSOURCES = controller.cpp difficulty.cpp game.cpp gamesetup.cpp species.cpp \
-             main.cpp platform_$(PLATFORM).cpp
+             resources.cpp util.cpp main.cpp platform_$(PLATFORM).cpp
 # Headers can be called whatever you want
    HEADERS = controller.hpp difficulty.hpp game.hpp gamesetup.hpp species.hpp \
-             platform.hpp
+             resources.hpp util.hpp platform.hpp
 
 # Anything else you want put in the distributed version
 # (Include all platform files here; duplication doesn't matter)

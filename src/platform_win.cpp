@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <time.h>
 #include <windows.h>
 #include "platform.hpp"
 
@@ -23,4 +24,19 @@ void _trace(const char* fmt, ...) {
 }
 
 void die() { exit(EXIT_FAILURE); }
+
+void platform_init() {
+	srand((unsigned) time(NULL));
+}
+
+double platform_random() {
+	// rand_s appears to be overkill, a la /dev/random on Unicies
+	return ((double) rand()) / RAND_MAX;
+}
+
+/* Unfun: Microsoft's libraries apparently don't provide an implementation of
+ * this. Possibly consider using BSD's implementation, which appears to be
+ * reasonably self-contained (and licensed). Alternatively, if Boost-ing to
+ * get stdint, it provides a fancy-pants templated version of erf(). */
+double plat_erf(double x) { return erf(x); } // Expect this to not compile :(
 

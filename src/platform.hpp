@@ -20,5 +20,14 @@ void _trace(const char* fmt, ...);
 /// Exit with failure. warn() first if you want a message (advisable).
 void die();
 
+/// Initialise platform-specific things; e.g. seed the random number generator.
+void platform_init();
+
+/// Generate a random fractional number between 0 and 1.
+double platform_random();
+
+/// Calculate the error function (this is in C99 as erf()).
+double platform_erf(double x);
+
 #endif
 

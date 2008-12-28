@@ -2,21 +2,13 @@
 #define GAME_HPP_
 
 #include <vector>
+#include "resources.hpp"
 #include "gamesetup.hpp"
-
-namespace Resource { typedef enum { Food, Energy, Ore, Crystal } Type; }
-
-class Stocks {
-	uint32_t food;
-	uint32_t energy;
-	uint32_t ore;     // (Smithore)
-	uint32_t crystal; // (Crystite)
-};
 
 class Player {
 	PlayerSetup setup;
 	uint32_t money;
-	Stocks stocks;
+	Stock stock;
 	// Land ownership is handled as a property of the terrain
 public:
 	static Player& getDummyPlayer(); // For Tile constructor
@@ -48,6 +40,8 @@ class Game {
 	Player players[PLAYERS];
 	Terrain terrain;
 	uint8_t month;
+	Stock store;
+	Stock prices; // (store)
 public:
 	Game(GameSetup& setup);
 	//...access to state for rendering...
