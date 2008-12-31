@@ -43,6 +43,8 @@ http://www2.bitstream.net/~marksim/atarimac/fonts.html
                Goods auctions
                Scoreboard (possibly for game end)
 
+Sprite tiles are 64x64 and alpha-blend on top of the background. Top-left offset is 32 horizontal and 80 vertical. The mountain is smaller and has 16px horizontal and 4px vertical random wiggle within its subrow (of which there are four).
+
 -- Original game documentation --
 Manual:
 http://muttoo.on.ca/mulemanual/
@@ -50,5 +52,5 @@ http://muttoo.on.ca/mulemanual/
 Some lists of random events, etc.:
 http://strategywiki.org/wiki/M.U.L.E.
 
-Unfortunately, digging about in memory dumps of the running game don't reveal any useful sets of strings.
-
+At some future point in time, might want to add a 'difficulty' setting to roll in some unreleased Son of MULE features:
+http://www.worldofmule.net/tiki-index.php?page=SoMReport

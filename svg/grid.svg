@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="640"
+   height="480"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.44.1"
+   version="1.0"
+   sodipodi:docbase="/Users/phil"
+   sodipodi:docname="mule-grid.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     gridtolerance="10000"
+     guidetolerance="10"
+     objecttolerance="10"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.2375"
+     inkscape:cx="320"
+     inkscape:cy="240"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     width="640px"
+     height="480px"
+     gridspacingx="32px"
+     gridspacingy="32px"
+     gridempspacing="4"
+     showgrid="true"
+     inkscape:grid-points="true"
+     gridoriginy="16px"
+     inkscape:window-width="1440"
+     inkscape:window-height="793"
+     inkscape:window-x="0"
+     inkscape:window-y="22" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:none;fill-opacity:1;stroke:black;stroke-width:0.99999994;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect2762"
+       width="63.501316"
+       height="63.285732"
+       x="32.499989"
+       y="80.214287" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#rect2762"
+       id="use3657"
+       transform="translate(1.141429e-5,63.99998)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#rect2762"
+       id="use3659"
+       transform="translate(1.141429e-5,128)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#rect2762"
+       id="use3661"
+       transform="translate(1.141429e-5,192)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#rect2762"
+       id="use3663"
+       transform="translate(1.141429e-5,256)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#rect2762"
+       id="use3665"
+       transform="translate(63.49868,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3657"
+       id="use3667"
+       transform="translate(63.49868,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3659"
+       id="use3669"
+       transform="translate(63.49868,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3661"
+       id="use3671"
+       transform="translate(63.49868,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3663"
+       id="use3673"
+       transform="translate(63.49868,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#rect2762"
+       id="use3685"
+       transform="translate(127.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3657"
+       id="use3687"
+       transform="translate(127.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3659"
+       id="use3689"
+       transform="translate(127.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3661"
+       id="use3691"
+       transform="translate(127.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3663"
+       id="use3693"
+       transform="translate(127.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#rect2762"
+       id="use3695"
+       transform="translate(191.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3657"
+       id="use3697"
+       transform="translate(191.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3659"
+       id="use3699"
+       transform="translate(191.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3661"
+       id="use3701"
+       transform="translate(191.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3663"
+       id="use3703"
+       transform="translate(191.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#rect2762"
+       id="use3705"
+       transform="translate(255.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3657"
+       id="use3707"
+       transform="translate(255.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3659"
+       id="use3709"
+       transform="translate(255.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3661"
+       id="use3711"
+       transform="translate(255.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3663"
+       id="use3713"
+       transform="translate(255.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#rect2762"
+       id="use3715"
+       transform="translate(319.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3657"
+       id="use3717"
+       transform="translate(319.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3659"
+       id="use3719"
+       transform="translate(319.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3661"
+       id="use3721"
+       transform="translate(319.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3663"
+       id="use3723"
+       transform="translate(319.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#rect2762"
+       id="use3725"
+       transform="translate(383.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3657"
+       id="use3727"
+       transform="translate(383.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3659"
+       id="use3729"
+       transform="translate(383.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3661"
+       id="use3731"
+       transform="translate(383.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3663"
+       id="use3733"
+       transform="translate(383.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#rect2762"
+       id="use3735"
+       transform="translate(447.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3657"
+       id="use3737"
+       transform="translate(447.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3659"
+       id="use3739"
+       transform="translate(447.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3661"
+       id="use3741"
+       transform="translate(447.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3663"
+       id="use3743"
+       transform="translate(447.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#rect2762"
+       id="use3745"
+       transform="translate(511.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3657"
+       id="use3747"
+       transform="translate(511.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3659"
+       id="use3749"
+       transform="translate(511.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3661"
+       id="use3751"
+       transform="translate(511.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use3663"
+       id="use3753"
+       transform="translate(511.4987,-1.904368e-5)"
+       width="640"
+       height="480" />
+  </g>
+</svg>

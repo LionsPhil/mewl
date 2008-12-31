@@ -1,4 +1,17 @@
+/* NOTE: hash_map is not strictly standard (yet); it is a common extension.
+ * Apparently Visual Studio of late has moved it out of std:: into stdext::,
+ * so if this code won't compile in Microsoftland, that may be your problem.
+ * (Add another special case, as GNU G++ has forced us to, hurrah.) */
+#ifdef __GNUC__
+#  include <ext/hash_map>
+using __gnu_cxx::hash_map;
+#else
+#  include <hash_map>
+using std::hash_map;
+#endif
+#include <string>
 #include <SDL.h>
+#include <SDL_image.h>
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
 #include "ui.hpp"
@@ -9,15 +22,31 @@ class UserInterfaceSprite : public UserInterface {
 	TTF_Font* fonttitle;
 	TTF_Font* fontlarge;
 	TTF_Font* fontsmall;
+	Mix_Music* music;
+	hash_map<const char*, Mix_Chunk*> samples;
+	hash_map<const char*, SDL_Surface*> textures;
 
 	~UserInterfaceSprite() {
 		int dum1; Uint16 dum2; int dum3;
+		// Free samples and textures (can has C++0x type inference plz?)
+		if(music) { Mix_FreeMusic(music); music = NULL; }
+		for(hash_map<const char*, Mix_Chunk*>::iterator i =
+			samples.begin(); i != samples.end(); i++) {
+				Mix_FreeChunk(i->second); }
+		samples.clear();
+		for(hash_map<const char*, SDL_Surface*>::iterator i =
+			textures.begin(); i != textures.end(); i++) {
+				SDL_FreeSurface(i->second); }
+		textures.clear();
+		// Shutdown TTF and Mixer
 		if(TTF_WasInit()) { TTF_Quit(); }
 		if(Mix_QuerySpec(&dum1, &dum2, &dum3)) { Mix_CloseAudio(); }
 	}
 
 private:
+	const char* getDataDir() { return "data/"; }
 	const char* findFontFile() { return "data/mainfont.ttf"; }
+	const char* findMusicFile() { return "data/theme.mp3"; }
 
 	SDL_Surface* renderText(TTF_Font* font, const char* text,
 		SDL_Color colour) {
@@ -27,6 +56,32 @@ private:
 		s = TTF_RenderUTF8_Blended(font, text, colour);
 		if(!s) { warn("TTF error: %s", TTF_GetError()); }
 		return s;
+	}
+
+	bool loadSample(const char* name) {
+		std::string file(getDataDir());
+		file += name;
+		Mix_Chunk* sample = Mix_LoadWAV(file.c_str());
+		if(sample) {
+			samples[name] = sample;
+			return true;
+		} else {
+			warn("Unable to load sample: %s", Mix_GetError());
+			return false;
+		}
+	}
+
+	bool loadTexture(const char* name) {
+		std::string file(getDataDir());
+		file += name;
+		SDL_Surface* texture = IMG_Load(file.c_str());
+		if(texture) {
+			textures[name] = texture;
+			return true;
+		} else {
+			warn("Unable to load texture: %s", IMG_GetError());
+			return false;
+		}
 	}
 
 	bool setupVideo() {
@@ -71,8 +126,11 @@ public:
 			warn("Unable to load font: %s", TTF_GetError());
 			return false;
 		}
-		// Load sprites (failure is nonfatal) TODO
-		// Load audio (failure is nonfatal) TODO
+		// Load sprite textures (failure is nonfatal) TODO
+		// Load audio samples (failure is nonfatal) TODO
+		// Load music (failure is nonfatal)
+		if(!(music = Mix_LoadMUS(findMusicFile())))
+			{ warn("Unable to load music: %s", Mix_GetError()); }
 		// Done
 		return true;
 	}

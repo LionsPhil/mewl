@@ -1,0 +1,9 @@
+#ifndef GAMESTATE_HPP_
+#define GAMESTATE_HPP_
+
+namespace GameStage { typedef enum { TITLE, COLOUR, SPECIES, SCOREBOARD, LANDGRAB, LANDAUCTION, DEVELOPHUMAN, DEVELOPCOMPUTER, EVENT, PRODUCTION, AUCTION } Type; };
+
+class GameState {
+};
+
+#endif
