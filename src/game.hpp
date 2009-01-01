@@ -5,6 +5,9 @@
 #include "resources.hpp"
 #include "gamesetup.hpp"
 
+/** Current stage of the entire game programme. */
+namespace GameStage { typedef enum { TITLE, COLOUR, SPECIES, SCOREBOARD, LANDGRAB, LANDAUCTION, DEVELOPHUMAN, DEVELOPCOMPUTER, EVENT, PRODUCTION, AUCTION } Type; };
+
 class Player {
 public:
 	PlayerSetup setup;

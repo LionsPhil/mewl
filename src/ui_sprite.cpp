@@ -136,6 +136,9 @@ public:
 	}
 
 	void toggleFullscreen() { fullscreen = !fullscreen; setupVideo(); }
+
+	bool render(GameStage::Type stage, GameSetup* setup, Game* game,
+		uint32_t ticks) { return true; }
 };
 /* Register with the factory */
 FACTORY_REGISTER_IMPL(UserInterface,UserInterfaceSprite)

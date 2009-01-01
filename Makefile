@@ -42,12 +42,12 @@ CPPFLAGSEX = $(CFLAGSEX)
 # ASOURCES end in .S, CSOURCES in .c, CPPSOURCES in .cpp and HEADERS in .h
   ASOURCES = 
   CSOURCES = 
-CPPSOURCES = controller.cpp difficulty.cpp game.cpp gamesetup.cpp species.cpp \
-             resources.cpp util.cpp \
+CPPSOURCES = controller.cpp difficulty.cpp game.cpp gamelogic.cpp gamesetup.cpp\
+             species.cpp resources.cpp util.cpp \
              main.cpp platform_$(PLATFORM).cpp
 # Headers can be called whatever you want
-   HEADERS = controller.hpp difficulty.hpp game.hpp gamesetup.hpp species.hpp \
-             resources.hpp util.hpp \
+   HEADERS = controller.hpp difficulty.hpp game.hpp gamelogic.hpp gamesetup.hpp\
+             species.hpp resources.hpp util.hpp \
              factory.hpp platform.hpp ui.hpp
 
 # User interface files and flags
