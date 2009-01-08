@@ -49,6 +49,11 @@ Sprite tiles are 64x64 and alpha-blend on top of the background. Top-left offset
 Manual:
 http://muttoo.on.ca/mulemanual/
 
+Decompilation full of lovely original values/algorithms:
+http://bringerp.free.fr/RE/Mule/mule_document.html
+Some texts from same source:
+http://bringerp.free.fr/RE/phpBB2/viewtopic.php?t=55&sid=364d93ddcea13add2601037057ee31ab
+
 Some lists of random events, etc.:
 http://strategywiki.org/wiki/M.U.L.E.
 
