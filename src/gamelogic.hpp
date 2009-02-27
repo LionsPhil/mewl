@@ -3,6 +3,7 @@
 #include "game.hpp"
 
 class GameLogic {
+	virtual ~GameLogic();
 public:
 	GameLogic* getTitleState();
 	/** Get the stage this object does the processing for, so that the
