@@ -104,9 +104,9 @@ public:
 			warn("Unable to initialise SDL: %s", SDL_GetError());
 			return false;
 		}
-		// Set up the window
+		// Set up the window (icon must be done before video mode)
 		SDL_WM_SetCaption("M.E.W.L.", "M.E.W.L.");
-		// SDL_WM_SetIcon(...32x32 surface..., NULL);
+		// SDL_WM_SetIcon(...32x32 surface..., NULL); // TODO
 		// Set the video mode
 		this->fullscreen = fullscreen;
 		if(!setupVideo()) { return false; }
@@ -141,7 +141,17 @@ public:
 	void toggleFullscreen() { fullscreen = !fullscreen; setupVideo(); }
 
 	bool render(GameStage::Type stage, GameSetup* setup, Game* game,
-		uint32_t ticks) { return true; }
+		uint32_t ticks) {
+		
+		// Horribly inefficient---strictly temporary
+		SDL_Color white = {255, 255, (int) (platform_random() * 255), 0};
+		SDL_Surface* temp = renderText(fonttitle, "M.E.W.L.", white);
+		SDL_BlitSurface(temp, NULL, SDL_GetVideoSurface(), NULL);
+		SDL_FreeSurface(temp);
+		SDL_Flip(SDL_GetVideoSurface());
+		
+		return true;
+	}
 };
 /* Register with the factory */
 FACTORY_REGISTER_IMPL(UserInterface,UserInterfaceSprite)

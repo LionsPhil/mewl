@@ -80,7 +80,8 @@ static int realmain(bool fullscreen) {
 				/* Poke game logic to tick */ // TODO
 			} while(tickerror >= tickduration);
 
-			/* Poke UI to render gamestate */ // TODO
+			/* Poke UI to render gamestate */
+			userintf->render(GameStage::TITLE , NULL, NULL, 1); // TODO
 		} else {
 			/* Have a nap until we actually have at least one tick
 			 * to run */

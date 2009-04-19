@@ -6,7 +6,9 @@
 #include "gamesetup.hpp"
 
 /** Current stage of the entire game programme. */
-namespace GameStage { typedef enum { TITLE, COLOUR, SPECIES, SCOREBOARD, LANDGRAB, LANDAUCTION, DEVELOPHUMAN, DEVELOPCOMPUTER, EVENT, PRODUCTION, AUCTION } Type; };
+namespace GameStage { typedef enum { TITLE, COLOUR, SPECIES, SCOREBOARD,
+	LANDGRAB, LANDAUCTION, DEVELOPCOLONY, DEVELOPTOWN, DEVELOPCOMPUTER, EVENT,
+	PRODUCTION,	AUCTION } Type; };
 
 class Player {
 public:
@@ -42,8 +44,8 @@ class Terrain {
 	uint8_t height;
 	uint8_t cityx;
 	uint8_t cityy;
-	// The river runs vertically through the city. Anything else may not
-	// be drawn correctly by the UI.
+	/* The river runs vertically through the city. Anything else may not
+	 * be drawn correctly by the UI. */
 	std::vector<Tile> tiles;
 public:
 	Terrain();

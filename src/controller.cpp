@@ -20,22 +20,6 @@ static Direction make_direction(int x, int y) {
 	trace("Impossible direction (%d, %d)", x, y); return DIR_CENTRE;
 }
 
-#if 0 // XXX REMOVE
-/** Dummy controller for computer players. */
-class DummyController : public Controller {
-public:
-	DummyController() {}
-	const char* getDescription() { return "(dummy)"; }
-	bool hasPosition() { return false; }
-	std::pair<double, double> getPosition()
-		{ return std::pair<double, double>(0, 0); }
-	Direction getDirection() { return DIR_CENTRE; }
-	bool hadButtonPress() { return false; }
-	void feedEvent(SDL_Event& event) {}
-	bool operator==(const Controller& other) { return false; }
-};
-#endif // XXX REMOVE
-
 class KeyboardController: public Controller {
 	const char* desc;
 	SDLKey key[8];
@@ -216,7 +200,7 @@ public:
 				/* We are sensitive to the first two buttons,
 				 * as on most physical devices I've seen this
 				 * should offer some ergonomic flexibility,
-				 * without turning random shouldpads etc. into
+				 * without turning random shoulderpads etc. into
 				 * potential misfires. */
 				if(event.jbutton.button < 2) { fired = true; }
 		} // We don't care about button releases
@@ -240,7 +224,7 @@ void ControlManager::addController(std::vector<Controller*>& set,
 	// I am aware of find and find_if, but they are awkward with pointers
 	// when I want to perform object comparison instead. And the vector
 	// stores pointers because I'm using polymorphism. Want closures, grr.
-       	found = false;
+	found = false;
 	for(std::vector<Controller*>::const_iterator i = set.begin();
 		!found && (i < set.end()); ++i) {
 		if(**i == *controller) { found = true; }
@@ -259,7 +243,7 @@ ControlManager::~ControlManager() {
 
 void ControlManager::populate() {
 	/* Be liberal in detection. There is no penalty for false positives,
-	 * as long as they don't leave to false button presses as well. */
+	 * as long as they don't lead to false button presses as well. */
 	/* Keyboard: three possible, WASD, HJKL, arrows, and numpad. */
 	const SDLKey nk = (SDLKey)(SDLK_FIRST - 1); // No key
 	trace("Adding keyboard controllers");
@@ -308,4 +292,3 @@ void ControlManager::feedEvent(SDL_Event& event) {
 
 const std::vector<Controller*>& ControlManager::getControllers()
 	{ return controllers; }
-
