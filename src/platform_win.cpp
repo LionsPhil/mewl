@@ -1,5 +1,8 @@
 #include <stdlib.h>
+#include <stdio.h>
+#include <stdarg.h>
 #include <time.h>
+#include <math.h>
 #include <windows.h>
 #include "platform.hpp"
 
@@ -37,6 +40,6 @@ double platform_random() {
 /* Unfun: Microsoft's libraries apparently don't provide an implementation of
  * this. Possibly consider using BSD's implementation, which appears to be
  * reasonably self-contained (and licensed). Alternatively, if Boost-ing to
- * get stdint, it provides a fancy-pants templated version of erf(). */
-double plat_erf(double x) { return erf(x); } // Expect this to not compile :(
-
+ * get stdint, it provides a fancy-pants templated version of erf().
+ * For now, we just try math.h and erf(), as this works for Dev-C++. */
+double platform_erf(double x) {	return erf(x); }

@@ -95,7 +95,7 @@ static int realmain(bool fullscreen) {
 }
 
 int main(int argc, char** argv) {
-	bool fullscreen = true;
+	bool fullscreen = false;
 	// Do all the horrible command-line processing malarky
 	for(int a = 1; a < argc; a++) {
 		const char* arg = argv[a];
@@ -103,16 +103,16 @@ int main(int argc, char** argv) {
 		} else if(!strcmp(arg, "-h") || !strcmp(arg, "--help")
 		       || !strcmp(arg, "/h") || !strcmp(arg, "/?")) {
 			puts("Usage: mewl [-f]\n");
-			puts("  -h --help     : this text");
-			puts("  -v --version  : show version information");
-			puts("  -w --windowed : run in a window");
+			puts("  -h --help       : this text");
+			puts("  -v --version    : show version information");
+			puts("  -f --fullscreen : run fullscreen");
 			return 0;
 		} else if(!strcmp(arg, "-v") || !strcmp(arg, "--version")) {
 			puts("M.E.W.L. version " VERSION);
 			puts("Licensed under the GNU GPL.");
 			return 0;
-		} else if(!strcmp(arg, "-w") || !strcmp(arg, "--windowed")) {
-			fullscreen = false;
+		} else if(!strcmp(arg, "-f") || !strcmp(arg, "--fullscreen")) {
+			fullscreen = true;
 		}
 	}
 

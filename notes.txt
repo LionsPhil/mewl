@@ -59,3 +59,11 @@ http://strategywiki.org/wiki/M.U.L.E.
 
 At some future point in time, might want to add a 'difficulty' setting to roll in some unreleased Son of MULE features:
 http://www.worldofmule.net/tiki-index.php?page=SoMReport
+
+-- Build notes --
+http://lazyfoo.net/SDL_tutorials/lesson03/windows/devcpp/index.php
+covers using the SDL sublibraries with Dev-C++: only the .lib goes in lib; the .dlls go with the built .exe.
+fakeroot can be useful to convince Linux Subversion to operate on a workspace on FAT32, where chmod fails.
+tofrodos is the Ubuntu package for dos2unix, for when Dev-C++ rudely converts source files.
+For all this, svn commit may still fail due to being unable to set atime, *sigh*. cp -a to /tmp/ and commit that copy if needs be.
+

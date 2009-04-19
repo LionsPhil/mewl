@@ -104,6 +104,9 @@ public:
 			warn("Unable to initialise SDL: %s", SDL_GetError());
 			return false;
 		}
+		// Set up the window
+		SDL_WM_SetCaption("M.E.W.L.", "M.E.W.L.");
+		// SDL_WM_SetIcon(...32x32 surface..., NULL);
 		// Set the video mode
 		this->fullscreen = fullscreen;
 		if(!setupVideo()) { return false; }
