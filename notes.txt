@@ -36,12 +36,32 @@ http://www2.bitstream.net/~marksim/atarimac/fonts.html
                Land auction
                Development - Human - Colony map
                                    - Town
-               Development - Computer
+                           - Computer
                Production (calculate only)
                Random event
                Production (display only)
                Goods auctions
                Scoreboard (possibly for game end)
+
+There is quite a lot of state for each of these which the GameLogic and the UI need to share but is only pertinent to that stage; not to the state of the game in general.
+ Title: difficulty (in GameSetup), number of humans
+ Colour/species: current player being configured (rest is in GameSetup)
+ Land grab: current cursor position
+ Land auction: cursor position again (then on to Auction)
+ Pre-development: player coming up, random event
+ Development (human): player, position, colony/town, mule, time, wampus
+ Development (comp): player, cursor (last change)
+ Wampus: player who caught, money awarded
+ Post-development: player, gambling winnings or timeout
+ Pre-production: event (acid rain, quake, sunspot, radiation, meteorite), loc.
+ Production: produced in each square
+ Post-production: event (pest, pirate, fire in store, colony ship), location
+ Pre-auction: which good, player qty/prod/spoil/surplus/deficit, store qty
+ Auction declare: as above, + player buyer/seller, time
+ Auction: land or good, player role/bids[/quantitys, store buy/sell/qty], time
+ Scoreboard: player land/goods values (money + month in game info), message type
+
+Wampus catching requires that the GameLogic can ask if the player is over the wampus (location + mountain index).
 
 Sprite tiles are 64x64 and alpha-blend on top of the background. Top-left offset is 32 horizontal and 80 vertical. The mountain is smaller and has 16px horizontal and 4px vertical random wiggle within its subrow (of which there are four).
 

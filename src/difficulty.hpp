@@ -15,7 +15,7 @@ namespace Difficulty {
 	double getDeclareTime(Type self); // seconds (set buyer/seller)
 	double getAuctionTime(Type self); // seconds (both land and trade)
 	double getLandGrabTime(Type self); // seconds (time per tile)
-	double getWumpusTimeMultiplier(Type self); // >1 == longer
+	double getWampusTimeMultiplier(Type self); // >1 == longer
 	void initialPlayerStock(Type self, Stock& initialise);
 	void initialStoreStock(Type self, Stock& initialise);
 	void initialStorePrices(Type self, Stock& initialise);
@@ -32,7 +32,7 @@ namespace Difficulty {
 	uint8_t calcMaxLandAuctions(Type self); // Generate random
 	int8_t calcProductionVariation(Type self); // Generate random
 	
-	/* The Wumpus is interesting. In the original MULE, the difficulty
+	/* The Wampus is interesting. In the original MULE, the difficulty
 	 * affects the brightness of his cave light, and also (via PTU/BTU
 	 * conversion) how long he takes to appear (as a function of how long
 	 * the player takes to begin their turn). We don't replicate this

@@ -39,8 +39,8 @@ double Difficulty::getLandGrabTime(Difficulty::Type self) {
 }
 
 /* This is the same ratio as the move time, as the basis is the same: you get
- * more Wumpus time in Beginner, because PTUs are longer. */
-double Difficulty::getWumpusTimeMultiplier(Difficulty::Type self)
+ * more Wampus time in Beginner, because PTUs are longer. */
+double Difficulty::getWampusTimeMultiplier(Difficulty::Type self)
 	{ return (self == Difficulty::BEGINNER) ? 9.0/7.0 : 1.0; }
 
 void Difficulty::initialPlayerStock(Type self, Stock& initialise) {

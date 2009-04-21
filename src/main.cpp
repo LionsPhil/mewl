@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <SDL.h>
 #include "game.hpp"
+#include "gamelogic.hpp"
 #include "platform.hpp"
 #include "ui.hpp"
 
@@ -10,6 +11,7 @@ static const Uint32 tickduration = 10; /* ms -> 100Hz */
 static int realmain(bool fullscreen) {
 	bool run;
 	ControlManager controlman;
+	GameLogic* gamelogic;
 	UserInterface* userintf;
 	SDL_Event event;
 	Uint32 tickerror, ticklast;
@@ -39,6 +41,8 @@ static int realmain(bool fullscreen) {
 	}
 
 	controlman.populate();
+
+	gamelogic = GameLogic::getTitleState();
 
 	trace("Running");
 	tickerror = 0;
@@ -77,7 +81,8 @@ static int realmain(bool fullscreen) {
 			do {
 				tickerror -= tickduration;
 
-				/* Poke game logic to tick */ // TODO
+				/* Poke game logic to tick */
+				// gamelogic.simulate(game); // TODO
 			} while(tickerror >= tickduration);
 
 			/* Poke UI to render gamestate */
@@ -91,6 +96,7 @@ static int realmain(bool fullscreen) {
 
 	trace("Clean exit");
 	delete userintf;
+	// delete gamelogic; // TODO (it's null for now)
 	SDL_Quit();
 	return EXIT_SUCCESS;
 }

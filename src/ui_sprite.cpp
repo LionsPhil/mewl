@@ -52,8 +52,8 @@ private:
 		SDL_Color colour) {
 
 		SDL_Surface* s;
-		//s = TTF_RenderUTF8_Solid(font, text, colour);
-		s = TTF_RenderUTF8_Blended(font, text, colour);
+		s = TTF_RenderUTF8_Solid(font, text, colour);
+		//s = TTF_RenderUTF8_Blended(font, text, colour);
 		if(!s) { warn("TTF error: %s", TTF_GetError()); }
 		return s;
 	}

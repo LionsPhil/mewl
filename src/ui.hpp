@@ -3,6 +3,12 @@
 #include "factory.hpp"
 #include "game.hpp"
 
+/* UserInterface is a slight misnomer; it really means 'multimedia display'.
+ * The controls are a sufficiently intrinsic part of MEWL that they go to the
+ * GameLogic, not via the UI. You don't add, say, PDA stylus input by writing
+ * a new PDA UI; you add a new PDA stylus Controller. This applies all the way
+ * down to setting up the game, which is arguably overkill. */
+
 class UserInterface {
 public:
 	virtual ~UserInterface() {}

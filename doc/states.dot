@@ -1,0 +1,31 @@
+/* dot states.dot -Tpng -o states.png */
+digraph states {
+	title -> title [label="toggle controller (fire)"];
+	title -> title [label="difficulty (l/r)"];
+	title -> color [label="begin (all up)"];
+	color -> species;
+	species -> color [label="more players"];
+	species -> postprod;
+	postprod -> scoreboard [label="colony ship arrives"];
+	scoreboard -> title [label="game over"];
+	scoreboard -> landgrab [label="next round"];
+	landgrab -> landauction;
+	landauction -> auction;
+	auction -> predevelop [label="land auction over"];
+	landgrab -> predevelop;
+	predevelop -> develophuman;
+	develophuman -> wampus [label="caught"];
+	wampus -> develophuman;
+	develophuman -> postdevelop;
+	predevelop -> developcomp;
+	developcomp -> postdevelop;
+	postdevelop -> predevelop [label="next player"];
+	postdevelop -> preproduct;
+	preproduct -> product;
+	product -> postproduct;
+	postproduct -> preauction;
+	preauction -> auctiondeclare;
+	auctiondeclare -> auction;
+	auction -> preauction [label="next good"];
+	auction -> scoreboard;
+}
