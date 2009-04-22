@@ -1,5 +1,6 @@
 #include <string>
 #ifdef FPS_COUNTER
+# include <deque>
 # include <stdio.h>
 #endif
 #include <SDL.h>
@@ -43,6 +44,9 @@ class UserInterfaceSprite : public UserInterface {
 	}
 
 private:
+#ifdef FPS_COUNTER
+	std::deque<int> fps_history;
+#endif
 	const char* getDataDir() { return "data/"; }
 	const char* findFontFile() { return "data/mainfont.ttf"; }
 	const char* findThemeMusicFile() { return "data/theme.mp3"; }
@@ -186,6 +190,7 @@ public:
 					rc.c_str());
 				die();
 			}
+			renderer->init(setup, game, ticks, resources);
 			laststage = stage;
 		}
 
@@ -194,7 +199,13 @@ public:
 			char str[8];
 			SDL_Color white = {255, 255, 255, 0};
 			SDL_Surface* screen = SDL_GetVideoSurface();
-			snprintf(str, 7, "%3d", 100 / ticks); str[7] = '\0';
+			fps_history.push_back(100 / ticks);
+			if(fps_history.size() > 32) { fps_history.pop_front(); }
+			int sumfps = 0;
+			for(std::deque<int>::iterator i = fps_history.begin();
+				i < fps_history.end(); i++) { sumfps += *i; }
+			snprintf(str, 7, "%3d", sumfps / fps_history.size());
+			str[7] = '\0';
 			SDL_Surface* sur = resources.renderText(
 				resources.font_small, str, white);
 			SDL_Rect rect = {0, 0, sur->w, sur->h};
@@ -216,8 +227,7 @@ SDL_Surface* UserInterfaceSpriteResources::renderText(TTF_Font* font,
 	const char* text, SDL_Color colour) {
 
 	SDL_Surface* s;
-	s = TTF_RenderUTF8_Solid(font, text, colour);
-	//s = TTF_RenderUTF8_Blended(font, text, colour);
+	s = TTF_RenderUTF8_Blended(font, text, colour);
 	if(!s) { warn("TTF error: %s", TTF_GetError()); }
 	return s;
 }

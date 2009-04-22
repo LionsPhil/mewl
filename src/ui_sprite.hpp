@@ -53,6 +53,10 @@ struct UserInterfaceSpriteResources {
 class UserInterfaceSpriteRenderer {
 public:
 	virtual inline ~UserInterfaceSpriteRenderer() {}
+	/// Init after construction (factory pattern); can do initial render
+	virtual inline void init(GameSetup& setup, Game* game, uint32_t ticks,
+		UserInterfaceSpriteResources& resources) {}
+	/// Normal rendering (passthrough of UI-level render())
 	virtual bool render(GameStage::Type stage, GameSetup& setup, Game* game,
 		uint32_t ticks, UserInterfaceSpriteResources& resources) = 0;
 

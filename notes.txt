@@ -49,7 +49,7 @@ There is quite a lot of state for each of these which the GameLogic and the UI n
  Land grab: current cursor position
  Land auction: cursor position again (then on to Auction)
  Pre-development: player coming up, random event
- Development (human): player, position, colony/town, mule, time, wampus
+ Development (human): player, position, dir, colony/town, mule, time, wampus
  Development (comp): player, cursor (last change)
  Wampus: player who caught, money awarded
  Post-development: player, gambling winnings or timeout
