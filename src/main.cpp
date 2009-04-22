@@ -90,7 +90,7 @@ static int realmain(bool fullscreen) {
 				ticks++;
 			} while(tickerror >= tickduration);
 
-			/* Poke UI to render gamestate */
+			/* Poke UI to render game state */
 			userintf->render(gamelogic->getStage(),
 				gamesetup, game, ticks); // TODO retval
 		} else {

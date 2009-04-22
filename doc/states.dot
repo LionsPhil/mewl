@@ -1,10 +1,10 @@
-/* dot states.dot -Tpng -o states.png */
-digraph states {
+/* dot stages.dot -Tpng -o stages.png */
+digraph stages {
 	title -> title [label="toggle controller (fire)"];
 	title -> title [label="difficulty (l/r)"];
-	title -> color [label="begin (all up)"];
-	color -> species;
-	species -> color [label="more players"];
+	title -> colour [label="begin (all up)"];
+	colour -> species;
+	species -> species [label="more players"];
 	species -> postproduct [label="game begin"];
 	postproduct -> scoreboard [label="colony ship arrives"];
 	scoreboard -> title [label="game over"];

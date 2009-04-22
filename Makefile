@@ -28,7 +28,7 @@ USERINTF = Sprite
 
 # Extra flags to control build type
 # Debugging:
-  CFLAGSEX = -g -O
+  CFLAGSEX = -g -O -DFPS_COUNTER
 CPPFLAGSEX = $(CFLAGSEX)
  LDFLAGSEX =
 # Release:
@@ -52,8 +52,8 @@ CPPSOURCES = controller.cpp difficulty.cpp game.cpp gamelogic.cpp gamesetup.cpp\
 
 # User interface files and flags
 ifeq ($(USERINTF),Sprite)
-    CPPSOURCES += ui_sprite.cpp
-    HEADERS    += 
+    CPPSOURCES += ui_sprite.cpp ui_sprite_title.cpp
+    HEADERS    += ui_sprite.hpp
     LDFLAGSEX  += -lSDL_image -lSDL_mixer -lSDL_ttf
 endif
 
