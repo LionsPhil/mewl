@@ -5,8 +5,8 @@ digraph states {
 	title -> color [label="begin (all up)"];
 	color -> species;
 	species -> color [label="more players"];
-	species -> postprod;
-	postprod -> scoreboard [label="colony ship arrives"];
+	species -> postproduct [label="game begin"];
+	postproduct -> scoreboard [label="colony ship arrives"];
 	scoreboard -> title [label="game over"];
 	scoreboard -> landgrab [label="next round"];
 	landgrab -> landauction;

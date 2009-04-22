@@ -140,7 +140,7 @@ public:
 
 	void toggleFullscreen() { fullscreen = !fullscreen; setupVideo(); }
 
-	bool render(GameStage::Type stage, GameSetup* setup, Game* game,
+	bool render(GameStage::Type stage, GameSetup& setup, Game* game,
 		uint32_t ticks) {
 		
 		// Horribly inefficient---strictly temporary

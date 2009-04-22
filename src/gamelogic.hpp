@@ -2,6 +2,15 @@
 #define GAMELOGIC_HPP_
 #include "game.hpp"
 
+/*struct GameLogicJumps {
+	void startTheGameAlready();
+	void destroyTheGameAlready();
+	bool isPlayerTouchingMountain();
+};*/
+
+/** Gamelogic drives the MEWL program, effectively, including during the setup
+ * when there isn't actually a Game object yet. */
+
 class GameLogic {
 public:
 	virtual ~GameLogic();
@@ -12,7 +21,7 @@ public:
 	 * tick; if NULL, continue using the current logic. Replaced logics
 	 * should be deleted. Simulation may be skipped while the UI
 	 * transitions. */
-	virtual GameLogic* simulate(Game& game) = 0;
+	virtual GameLogic* simulate(GameSetup& setup, Game* game) = 0;
 
 	/** Get the initial game logic, for the title screen. */
 	static GameLogic* getTitleState();

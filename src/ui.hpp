@@ -22,8 +22,8 @@ public:
 	 * to perform (e.g. an animation), return false and this will be
 	 * recalled without additional simulation work until it returns true.
 	 * If the stage is the same, also return true. Note that Game may be
-	 * NULL for some game stages, and GameSetup irrelevant for others. */
-	virtual bool render(GameStage::Type stage, GameSetup* setup, Game* game,
+	 * NULL for some game stages. */
+	virtual bool render(GameStage::Type stage, GameSetup& setup, Game* game,
 		uint32_t ticks) = 0;
 
 	/* Factory allows implementation detail to be completely opaque. */

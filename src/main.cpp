@@ -11,6 +11,8 @@ static const Uint32 tickduration = 10; /* ms -> 100Hz */
 static int realmain(bool fullscreen) {
 	bool run;
 	ControlManager controlman;
+	GameSetup gamesetup;
+	Game* game;
 	GameLogic* gamelogic;
 	UserInterface* userintf;
 	SDL_Event event;
@@ -43,6 +45,7 @@ static int realmain(bool fullscreen) {
 	controlman.populate();
 
 	gamelogic = GameLogic::getTitleState();
+	game = 0;
 
 	trace("Running");
 	tickerror = 0;
@@ -78,15 +81,18 @@ static int realmain(bool fullscreen) {
 		tickerror += (now - ticklast);
 		ticklast = now; }
 		if(tickerror >= tickduration) {
+			uint32_t ticks = 0;
 			do {
 				tickerror -= tickduration;
 
 				/* Poke game logic to tick */
-				// gamelogic.simulate(game); // TODO
+				gamelogic->simulate(gamesetup, game); // TODO
+				ticks++;
 			} while(tickerror >= tickduration);
 
 			/* Poke UI to render gamestate */
-			userintf->render(GameStage::TITLE , NULL, NULL, 1); // TODO
+			userintf->render(gamelogic->getStage(),
+				gamesetup, game, ticks); // TODO retval
 		} else {
 			/* Have a nap until we actually have at least one tick
 			 * to run */
@@ -96,7 +102,8 @@ static int realmain(bool fullscreen) {
 
 	trace("Clean exit");
 	delete userintf;
-	// delete gamelogic; // TODO (it's null for now)
+	delete gamelogic;
+	if(game) { delete game; }
 	SDL_Quit();
 	return EXIT_SUCCESS;
 }

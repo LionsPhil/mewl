@@ -61,7 +61,9 @@ There is quite a lot of state for each of these which the GameLogic and the UI n
  Auction: land or good, player role/bids[/quantitys, store buy/sell/qty], time
  Scoreboard: player land/goods values (money + month in game info), message type
 
-Wampus catching requires that the GameLogic can ask if the player is over the wampus (location + mountain index).
+Wampus catching requires that the GameLogic can ask the UI if the player is over the wampus (location + mountain index).
+
+How does the Game object get created? Main(?) needs to know that GameSetup is ready and Game needs to be spawned. Also when it can be deleted. GameLogic can't do it without pointer-to-pointer.
 
 Sprite tiles are 64x64 and alpha-blend on top of the background. Top-left offset is 32 horizontal and 80 vertical. The mountain is smaller and has 16px horizontal and 4px vertical random wiggle within its subrow (of which there are four).
 
