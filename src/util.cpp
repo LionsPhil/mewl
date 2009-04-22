@@ -19,7 +19,7 @@ int random_normal(int min, int max, double stddev) {
 int random_uniform(int min, int max) {
 	int r;
 	do {
-		r = (int) (platform_random() * ((max + 1) - min));
+		r = (int) (platform_random() * ((max + 1) - min)) + min;
 	} while(r > max); // 1/RAND_MAX chance of this happening
 	return r;
 }
