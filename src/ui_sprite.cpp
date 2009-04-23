@@ -41,6 +41,8 @@ class UserInterfaceSprite : public UserInterface {
 		// Shutdown TTF and Mixer
 		if(TTF_WasInit()) { TTF_Quit(); }
 		if(Mix_QuerySpec(&dum1, &dum2, &dum3)) { Mix_CloseAudio(); }
+		// Restore the mouse cursor
+		SDL_ShowCursor(SDL_ENABLE);
 	}
 
 private:
@@ -103,6 +105,8 @@ public:
 		// Set the video mode
 		this->fullscreen = fullscreen;
 		if(!setupVideo()) { return false; }
+		// Lose the mouse cursor
+		SDL_ShowCursor(SDL_DISABLE);
 		// Initialise mixer
 		if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) < 0) {
 			warn("Unable to initialise Mixer: %s", Mix_GetError());
@@ -129,6 +133,7 @@ public:
 		// Load music (failure is nonfatal)
 		if(!(resources.music_theme = Mix_LoadMUS(findThemeMusicFile())))
 			{ warn("Unable to load music: %s", Mix_GetError()); }
+		resources.music_theme_bpm = 120; // Correct for Mule-Funk-Shun
 		// Other initialisation
 		renderer = NULL;
 		laststage = GameStage::SCOREBOARD; // carefully crafted lie
@@ -190,7 +195,7 @@ public:
 					rc.c_str());
 				die();
 			}
-			renderer->init(setup, game, ticks, resources);
+			renderer->init(stage, setup, game, ticks, resources);
 			laststage = stage;
 		}
 

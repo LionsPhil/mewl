@@ -5,6 +5,29 @@
 #include "util.hpp"
 
 static const SDL_Color background = {178, 125, 20, 0};
+static const SDL_Color textcolour = { 55,   0,  0, 0};
+
+static const char* messages[] = { /* "max length " <- ends there */
+	"M.E.W.L. version " VERSION,
+	"Code: Philip Boulain; Music: DelMurice",
+	"Art: Philip Boulain; Font: Mark Simonson",
+	" ",
+
+	"Keyboard 1: W, D, S, A, Left control",
+	"Keyboard 2: K, L, J, H, Spacebar",
+	"Keyboard 3: Arrow keys, Right control",
+	"Keyboard 4: Numeric 8, 6, 2, 4, Enter",
+
+	"Mouse and joysticks also supported",
+	"Fire to toggle use of controller",
+	"Left and right to select difficulty",
+	"All players press up to begin",
+
+	" ",
+	"Licensed under the GNU GPL",
+	"Based on a game by Dani Bunten",
+	" ",
+0 };
 
 class UserInterfaceSpriteTitle : public UserInterfaceSpriteRenderer {
 private:
@@ -14,10 +37,15 @@ private:
 	int title_wmult;
 	int title_hmult;
 	bool title_cycledir;
+	unsigned int music_ticks;
+	int music_beats;
+	int message_idx;
 
 public:
-	void init(GameSetup& setup, Game* game, uint32_t ticks,
-		UserInterfaceSpriteResources& resources) {
+	void init(GameStage::Type stage, GameSetup& setup, Game* game,
+		uint32_t ticks, UserInterfaceSpriteResources& resources) {
+
+		message_idx = 0;
 
 		SDL_Surface* screen = SDL_GetVideoSurface();
 		// Blank the screen
@@ -100,6 +128,7 @@ public:
 	bool render(GameStage::Type stage, GameSetup& setup, Game* game,
 		uint32_t ticks, UserInterfaceSpriteResources& resources) {
 		
+		bool beat = false;
 		SDL_Surface* screen = SDL_GetVideoSurface();
 		// Colourise some random pixels
 		int k = title_hmult ?
@@ -134,9 +163,50 @@ public:
 		SDL_UpdateRect(screen,
 			title_pos.x, title_pos.y, title_pos.w, title_pos.h);
 
-		// TODO Draw characters running about, GameState, etc.
+		// Let there be music
+		if(Mix_PlayingMusic()) {
+			int newbeats;
+			long unsigned int bpmticks =
+				resources.music_theme_bpm * music_ticks;
+			music_ticks += ticks;
+			newbeats = bpmticks / 6000;
+			if(newbeats > music_beats) {
+				beat = true;
+				music_beats = newbeats;
+			}
+		} else if(resources.music_theme) {
+			Mix_PlayMusic(resources.music_theme, 1);
+			music_ticks = 0;
+			music_beats = -1;
+		}
 
-		return true; // TODO Music fadeout would be nice
+		// TODO Draw characters running about etc.
+
+		// Draw cycling message bar
+		if(beat && ((music_beats % 4) == 0)) {
+			const char* message = messages[message_idx];
+			if(!message) {
+				message_idx = 0;
+				message = messages[0];
+			}
+			message_idx++;			
+
+			SDL_Rect bar = {0, 384, 640, 0};
+			SDL_Surface* text = resources.renderText(
+				resources.font_small, message, textcolour);
+			bar.h = text->h;
+			SDL_FillRect(screen, &bar, SDL_MapRGB(screen->format,
+				background.r, background.g, background.b));
+			bar.w = text->w;
+			bar.x = (screen->w - bar.w) / 2;
+			SDL_BlitSurface(text, NULL, screen, &bar);
+			SDL_FreeSurface(text);
+			SDL_UpdateRect(screen, 0, 384, 640, bar.h);
+		}
+
+		// TODO Draw the GameSetup
+
+		return true; // TODO Put a music fadeout on the colour stage
 	}
 };
 /* Register with the factory */
