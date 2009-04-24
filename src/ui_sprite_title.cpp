@@ -56,7 +56,7 @@ public:
 		title_text = TTF_RenderUTF8_Solid(resources.font_title,
 			" M.E.W.L.", background);
 		if(!title_text)
-			{warn("TTF error: %s", TTF_GetError()); die();}
+			{warn("TTF error (title): %s", TTF_GetError()); die();}
 		title_pos.y = 32;
 		title_pos.x = (screen->w - title_text->w) / 2;
 		title_pos.w = title_text->w; title_pos.h = title_text->h;
