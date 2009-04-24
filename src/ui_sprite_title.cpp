@@ -98,7 +98,7 @@ public:
 		int g = random_uniform(0, 1);
 		if(r == g) { g++; }
 		int b;
-		for(b = 0; b == r || b == g; b++);
+		for(b = 0; b == r || b == g; b++) {}
 		bool leadbright = random_uniform(0, 2); // 2/3 likely
 		for(int i = 1; i < 255; i++) {
 			int j = leadbright ? i : 255 - i;

@@ -5,8 +5,8 @@
 Tile::Tile() : m_mountains(0), m_crystal(0), m_river(false), m_owned(false) {}
 uint8_t& Tile::mountains() { return m_mountains; }
 uint8_t& Tile::crystal() { return m_crystal; }
-const bool Tile::river() { return m_river; }
-const bool Tile::owned() { return m_owned; }
+bool Tile::river() { return m_river; }
+bool Tile::owned() { return m_owned; }
 const Player& Tile::owner() { assert(m_owned); return *m_owner; }
 const Resource::Type& Tile::equipment() { assert(m_owned); return m_equipment; }
 void Tile::setUnowned() { m_owned = false; }

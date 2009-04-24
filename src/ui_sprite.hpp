@@ -3,8 +3,15 @@
 /* NOTE: hash_map is not strictly standard (yet); it is a common extension.
  * Apparently Visual Studio of late has moved it out of std:: into stdext::,
  * so if this code won't compile in Microsoftland, that may be your problem.
- * (Add another special case, as GNU G++ has forced us to, hurrah.) */
+ * (Add another special case, as GNU G++ has forced us to, hurrah.)
+ * Of course, GNU being GNU, they changed it again some point during v4, and
+ * made the replacement also marked down as TR1 unstable fun. */
 #ifdef __GNUC__
+#  if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 3)
+#    undef __DEPRECATED
+/*#    include <unordered_map>
+typedef tr1::unordered_map hash_map;*/
+#  endif
 #  include <ext/hash_map>
 using __gnu_cxx::hash_map;
 #else

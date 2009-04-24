@@ -31,8 +31,8 @@ public:
 	Tile();
 	uint8_t& mountains(); // Can be mutated by planetquakes
 	uint8_t& crystal(); // Can be mutated by meteor strikes
-	const bool river();
-	const bool owned();
+	/*const*/ bool river();
+	/*const*/ bool owned();
 	const Player& owner();
 	const Resource::Type& equipment();
 	void setUnowned();
