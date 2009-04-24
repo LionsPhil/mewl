@@ -81,6 +81,9 @@ private:
 
 	bool setupVideo() {
 		if(SDL_SetVideoMode(640, 480, 0,
+#ifdef __APPLE__ /* Without this, blitting in toggleFullscreen fails */
+			SDL_HWSURFACE |
+#endif
 			SDL_HWPALETTE | (fullscreen ? SDL_FULLSCREEN : 0))) {
 			trace("Got %s video at %dbpp",
 				(fullscreen ? "fullscreen" : "windowed"),

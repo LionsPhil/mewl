@@ -4,6 +4,12 @@
 #include "ui_sprite.hpp"
 #include "util.hpp"
 
+/* Workaround _Solid failing without an error message. (This happens with
+ * SDL_ttf under OS X from Fink, so we do it automatically for OS X. */
+#ifdef __APPLE__
+# define WORKAROUND_SOLID
+#endif
+
 static const SDL_Color background = {178, 125, 20, 0};
 static const SDL_Color textcolour = { 55,   0,  0, 0};
 
@@ -45,6 +51,7 @@ public:
 	void init(GameStage::Type stage, GameSetup& setup, Game* game,
 		uint32_t ticks, UserInterfaceSpriteResources& resources) {
 
+		SDL_Color black = {0, 0, 0, 0};
 		message_idx = 0;
 
 		SDL_Surface* screen = SDL_GetVideoSurface();
@@ -53,8 +60,17 @@ public:
 			SDL_MapRGB(screen->format,
 				background.r, background.g, background.b));
 		// Generate the inner title text
+#ifdef WORKAROUND_SOLID
+		title_text = TTF_RenderUTF8_Shaded(resources.font_title,
+			" M.E.W.L.", background, black);
+		SDL_SetColorKey(title_text, SDL_SRCCOLORKEY | SDL_RLEACCEL,
+			SDL_MapRGB(title_text->format, 0, 0, 0));
+		SDL_SetColors(title_text, const_cast<SDL_Color*>(&background),
+			1, 1);
+#else
 		title_text = TTF_RenderUTF8_Solid(resources.font_title,
 			" M.E.W.L.", background);
+#endif
 		if(!title_text)
 			{warn("TTF error (title): %s", TTF_GetError()); die();}
 		title_pos.y = 32;
@@ -63,7 +79,6 @@ public:
 		// Draw the outline
 		SDL_Rect border_pos;
 		SDL_Surface* title_soft;
-		SDL_Color black = {0, 0, 0, 0};
 		title_soft = resources.renderText(resources.font_title,
 			" M.E.W.L.", black);
 		border_pos.w = title_pos.w; border_pos.h = title_pos.h;
@@ -85,6 +100,10 @@ public:
 			SDL_LockSurface(title_text);
 			for(int p = 0;
 				p < title_text->w*title_text->h; p++) {
+#ifdef WORKAROUND_SOLID
+				if(((char*) title_text->pixels)[p])
+					{ ((char*) title_text->pixels)[p] = 1; }
+#endif
 				if(((char*) title_text->pixels)[p])
 					{ title_pixels.push_back(p); }
 			}
