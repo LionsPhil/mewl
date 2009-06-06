@@ -240,3 +240,21 @@ SDL_Surface* UserInterfaceSpriteResources::renderText(TTF_Font* font,
 	return s;
 }
 
+bool UserInterfaceSpriteResources::displayTextLine(TTF_Font* font,
+	const char* text, SDL_Color foreground, SDL_Color background, int y) {
+
+	SDL_Surface* screen = SDL_GetVideoSurface();
+	SDL_Rect bar = {0, y, 640, 0};
+	SDL_Surface* textpix = renderText(font, text, foreground);
+	if(!textpix) { return false; }
+	bar.h = textpix->h;
+	SDL_FillRect(screen, &bar, SDL_MapRGB(screen->format,
+		background.r, background.g, background.b));
+	bar.w = textpix->w;
+	bar.x = (screen->w - bar.w) / 2;
+	SDL_BlitSurface(textpix, NULL, screen, &bar);
+	SDL_FreeSurface(textpix);
+	SDL_UpdateRect(screen, 0, y, 640, bar.h);
+	return true;
+}
+

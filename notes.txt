@@ -26,6 +26,7 @@ Tuning variables which couldn't be determined from the original game have been m
 
 
 http://www2.bitstream.net/~marksim/atarimac/fonts.html
+Have used FontForge to cut/paste the arrows from very high glyph points to the low control characters they are documented to occupy, thus allowing them to be used in C strings.
 
 [ GameSetup ]  Title/gametype screen
                Colour selection

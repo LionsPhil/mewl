@@ -4,6 +4,10 @@
 #include "ui_sprite.hpp"
 #include "util.hpp"
 
+/* This isn't an exact mirror of the M.U.L.E. titles (e.g. the text border
+ * starts visible, rather than dissolving in; we dissolve the filling instead);
+ * it's just supposed to evoke it. */
+
 /* Workaround _Solid failing without an error message. (This happens with
  * SDL_ttf under OS X from Fink, so we do it automatically for OS X. */
 #ifdef __APPLE__
@@ -210,7 +214,7 @@ public:
 			}
 			message_idx++;			
 
-			SDL_Rect bar = {0, 384, 640, 0};
+			/* SDL_Rect bar = {0, 384, 640, 0};
 			SDL_Surface* text = resources.renderText(
 				resources.font_small, message, textcolour);
 			bar.h = text->h;
@@ -220,10 +224,29 @@ public:
 			bar.x = (screen->w - bar.w) / 2;
 			SDL_BlitSurface(text, NULL, screen, &bar);
 			SDL_FreeSurface(text);
-			SDL_UpdateRect(screen, 0, 384, 640, bar.h);
+			SDL_UpdateRect(screen, 0, 384, 640, bar.h); */
+			resources.displayTextLine(resources.font_small,
+				message, textcolour, background, 384);
 		}
 
 		// TODO Draw the GameSetup
+		// TODO Only if it changes
+		{
+			resources.displayTextLine(resources.font_small,
+				ARROW_LEFT " Tournament " ARROW_RIGHT,
+				textcolour, background, 408);
+/*			resources.displayTextLine(resources.font_small,
+				"mouse key1 key2 joy1",
+				textcolour, background, 432); */
+
+			resources.displayTextLine(resources.font_small,
+				"      key1          ",
+				UserInterfaceSpriteConstants::col_text_white,
+				background, 432);
+			// TODO put each in a 1/4 of the screen, white if ready
+			// logic needs to keep active set to four, dropping out
+			// oldest. put "CPU" in place in gold if <4.
+		}
 
 		return true; // TODO Put a music fadeout on the colour stage
 	}

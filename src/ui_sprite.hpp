@@ -31,6 +31,14 @@ using std::hash_map;
  * header is instead for the other components of ui_sprite to know about the
  * common resources it provides. */
 
+/* These low control characters are where the Atari arrows are mapped in the
+ * font. (This is where they're documented; FontForge was needed to move them
+ * into place, as they were /originally/ at very high codepoints.) */
+#define ARROW_UP    "\x1c"
+#define ARROW_DOWN  "\x1d"
+#define ARROW_LEFT  "\x1e"
+#define ARROW_RIGHT "\x1f"
+
 namespace UserInterfaceSpriteConstants {
 	const SDL_Color col_player[] = {
 		{ 26,  68, 155, 0},
@@ -39,6 +47,7 @@ namespace UserInterfaceSpriteConstants {
 		{106,  26, 159, 0}};
 	const SDL_Color col_text_black = { 32,  31,  32, 0};
 	const SDL_Color col_text_gray  = {130, 129, 130, 0};
+	const SDL_Color col_text_white = {197, 197, 197, 0};
 	const SDL_Color col_text_gold  = {161,  85,  18, 0};
 	const SDL_Color col_text_red   = {109,   0,   3, 0};
 	const SDL_Color col_text_green = { 39, 105,   0, 0};
@@ -54,8 +63,12 @@ struct UserInterfaceSpriteResources {
 	hash_map<const char*, Mix_Chunk*> samples;
 	hash_map<const char*, SDL_Surface*> textures;
 
+	/** Render some text in a sprite to a new surface. */
 	SDL_Surface* renderText(TTF_Font* font, const char* text,
 		SDL_Color colour);
+	/** Render a full-width line of text to the screen. */
+	bool displayTextLine(TTF_Font* font, const char* text,
+		SDL_Color foreground, SDL_Color background, int y);
 	/* TODO utility method to render a pointer for mouse/wiimotes when
 	 * their controller is enabled + in use (title, develop, auctions...) */
 };
