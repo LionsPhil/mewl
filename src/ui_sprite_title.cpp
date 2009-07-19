@@ -95,7 +95,7 @@ public:
 					&border_pos);
 			}
 		}
-		SDL_UpdateRect(screen, 0, 0, 0, 0);
+		SDL_Flip(screen); //SDL_UpdateRect(screen, 0, 0, 0, 0);
 		SDL_FreeSurface(title_soft);
 		// Draw the inner text
 		SDL_BlitSurface(title_text, NULL, screen, &title_pos);
@@ -143,7 +143,7 @@ public:
 		title_cycledir = random_uniform(0, 1);
 		
 		// TODO Set up sprites for the four player pointers.
-		sprites.push_back(new UserInterfaceSpriteSprite(
+		sprites.push_back(new UserInterfaceSpriteSprite(resources,
 			resources.textures["pointer1"]));
 	}
 
@@ -192,8 +192,7 @@ public:
 		// Blit, because we don't write directly to screen (it's 32-bit)
 		SDL_BlitSurface(title_text, NULL, screen, &title_pos);
 		// Redraw the title area
-		SDL_UpdateRect(screen,
-			title_pos.x, title_pos.y, title_pos.w, title_pos.h);
+		resources.updateRect(title_pos.x,title_pos.y, title_pos.w,title_pos.h);
 
 		// Let there be music
 		if(Mix_PlayingMusic()) {
@@ -225,17 +224,6 @@ public:
 			}
 			message_idx++;			
 
-			/* SDL_Rect bar = {0, 384, 640, 0};
-			SDL_Surface* text = resources.renderText(
-				resources.font_small, message, textcolour);
-			bar.h = text->h;
-			SDL_FillRect(screen, &bar, SDL_MapRGB(screen->format,
-				background.r, background.g, background.b));
-			bar.w = text->w;
-			bar.x = (screen->w - bar.w) / 2;
-			SDL_BlitSurface(text, NULL, screen, &bar);
-			SDL_FreeSurface(text);
-			SDL_UpdateRect(screen, 0, 384, 640, bar.h); */
 			resources.displayTextLine(resources.font_small,
 				message, textcolour, background, 384);
 		}

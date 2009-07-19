@@ -2,6 +2,7 @@
 #include <typeinfo>
 #include "controller.hpp"
 #include "platform.hpp"
+#include "util.hpp"
 
 Controller::Controller() : fired(false) {}
 Controller::~Controller() {}
@@ -236,9 +237,8 @@ void ControlManager::addController(std::vector<Controller*>& set,
 	}
 }
 
-static void _deleteCtrlr(Controller* stlfoo) { delete stlfoo; } // sigh
 ControlManager::~ControlManager() {
-	for_each(controllers.begin(), controllers.end(), _deleteCtrlr);
+	for_each(controllers.begin(), controllers.end(), delete_functor());
 }
 
 void ControlManager::populate() {

@@ -97,7 +97,7 @@ private:
 #ifdef __APPLE__ /* Without this, blitting in toggleFullscreen fails */
 			SDL_HWSURFACE |
 #endif
-#ifdef DOUBLE_BUFFER /* Performance hit on Felix/Win98; 95 FPS -> 30. */
+#ifdef DOUBLE_BUFFER /* Performance hit on Felix/Win98; 95 FPS -> 40. */
 			SDL_HWSURFACE | SDL_DOUBLEBUF |
 #endif
 			SDL_HWPALETTE | (fullscreen ? SDL_FULLSCREEN : 0))) {
@@ -175,7 +175,7 @@ public:
 		// Restore the framebuffer
 		SDL_BlitSurface(liferaft, NULL, screen, NULL);
 		SDL_FreeSurface(liferaft);
-		SDL_UpdateRect(screen, 0, 0, 0, 0);
+		SDL_Flip(screen); // or SDL_UpdateRect(screen, 0, 0, 0, 0);
 	}
 
 	bool render(GameStage::Type stage, GameSetup& setup, Game* game,
@@ -237,12 +237,23 @@ public:
 			SDL_FillRect(screen, &rect,
 				SDL_MapRGB(screen->format, 0, 0, 0));
 			SDL_BlitSurface(sur, NULL, screen, NULL);
-			SDL_UpdateRect(screen, 0, 0, sur->w, sur->h);
+			resources.updateRect(0, 0, sur->w, sur->h);
 			SDL_FreeSurface(sur);
 		}
 #endif
 #ifdef DOUBLE_BUFFER
 		SDL_Flip(SDL_GetVideoSurface());
+#else
+		/* Theoretically, the documentation suggests attempting to avoid
+		 * overdraw here. Realistically, there's not much we can do about that
+		 * without subdivision, and apparently SDL ships out all the rectangles
+		 * in one go to the graphics driver, so we'll let that do it if it feels
+		 * so inclined. (We _could_ remove trivially subsumed rectangles, or
+		 * replace them all with a tight bounding rectangle, but neither fits
+		 * our usage pattern well.) */
+		SDL_UpdateRects(SDL_GetVideoSurface(), resources.dirtyrects.size(),
+			&resources.dirtyrects[0]); /* impl. assumption supported by docs */
+		resources.dirtyrects.clear();
 #endif
 
 		return allowtransition;
@@ -250,6 +261,21 @@ public:
 };
 /* Register with the factory */
 FACTORY_REGISTER_IMPL(UserInterface,UserInterfaceSprite)
+
+void UserInterfaceSpriteResources::updateRect(
+	Sint16 x, Sint16 y, Uint16 w, Uint16 h) {
+#ifndef DOUBLE_BUFFER /* Don't track what we don't use */
+	SDL_Surface* screen = SDL_GetVideoSurface();
+	Uint16 sw = screen->w - 1;
+	Uint16 sh = screen->h - 1;
+	SDL_Rect rect;
+	rect.x = x < 0 ? 0 : (x > sw ? sw : x); sw -= rect.x;
+	rect.y = y < 0 ? 0 : (y > sh ? sh : y); sh -= rect.y;
+	rect.w = w > sw ? sw : w;
+	rect.h = h > sh ? sh : h;
+	dirtyrects.push_back(rect);
+#endif
+}
 
 SDL_Surface* UserInterfaceSpriteResources::renderText(TTF_Font* font,
 	const char* text, SDL_Color colour) {
@@ -274,7 +300,7 @@ bool UserInterfaceSpriteResources::displayTextLine(TTF_Font* font,
 	bar.x = (screen->w - bar.w) / 2;
 	SDL_BlitSurface(textpix, NULL, screen, &bar);
 	SDL_FreeSurface(textpix);
-	SDL_UpdateRect(screen, 0, y, 640, bar.h);
+	updateRect(0, y, 640, bar.h);
 	return true;
 }
 
@@ -297,8 +323,9 @@ void UserInterfaceSpriteResources::eraseSprites(
 			screen));
 }
 
-UserInterfaceSpriteSprite::UserInterfaceSpriteSprite(SDL_Surface* pixmap)
-	: pixmap(pixmap), saved(false) {
+UserInterfaceSpriteSprite::UserInterfaceSpriteSprite(
+	UserInterfaceSpriteResources& resources, SDL_Surface* pixmap)
+	: resources(resources), pixmap(pixmap), saved(false) {
 	
 	assert(pixmap);
 	SDL_PixelFormat* format = pixmap->format;
@@ -325,21 +352,22 @@ void UserInterfaceSpriteSprite::save(SDL_Surface* screen) {
 }
 
 void UserInterfaceSpriteSprite::draw(SDL_Surface* screen) {
-	// FIXME UpdateRect does NOT get clipped, so we should be doing it
-	// ourselves here!
+	
 	SDL_BlitSurface(pixmap, 0, screen, &pos);
-	SDL_UpdateRect(screen, pos.x, pos.y, pos.w, pos.h);
+	resources.updateRect(pos.x, pos.y, pos.w, pos.h);
 	// Also update where the old cursor image was.
 	if((pos.x != erasepos.x) || (pos.y != erasepos.y)) {
-		SDL_UpdateRect(screen, erasepos.x, erasepos.y, erasepos.w, erasepos.h);
+		resources.updateRect(erasepos.x, erasepos.y, erasepos.w, erasepos.h);
 	}
 }
 
 void UserInterfaceSpriteSprite::restore(SDL_Surface* screen) {
+	
 	if(!saved) { return; } // Avoid restoring garbage first frame
 	SDL_BlitSurface(background, 0, screen, &pos);
 	// DON'T UpdateRect, else we will give a full render()'s worth of flicker.
 	// Instead, remember where we're going to update later.
+	// FIXME resources.updateRect means we queue for later anyway
 	erasepos.x = pos.x;
 	erasepos.y = pos.y;
 }

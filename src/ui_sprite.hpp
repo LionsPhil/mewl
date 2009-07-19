@@ -58,26 +58,7 @@ namespace UserInterfaceSpriteConstants {
 	const SDL_Color col_text_blue  = { 13,  21, 144, 0};
 };
 
-class UserInterfaceSpriteSprite {
-private:
-	SDL_Surface* pixmap;
-	SDL_Surface* background;
-	SDL_Rect pos;
-	SDL_Rect erasepos;
-	bool saved;
-public:
-	/** Create a sprite using the given surface. Takes ownship of it. */
-	UserInterfaceSpriteSprite(SDL_Surface* pixmap);
-	~UserInterfaceSpriteSprite();
-	/** Position the sprite. Do not do this while drawn! */
-	void move(Sint16 x, Sint16 y);
-	/** Save the background. */
-	void save(SDL_Surface* screen);
-	/** Draw the sprite, and update this and erased region. */
-	void draw(SDL_Surface* screen);
-	/** Restore the background. */
-	void restore(SDL_Surface* screen);
-};
+class UserInterfaceSpriteSprite;
 
 struct UserInterfaceSpriteResources {
 	TTF_Font* font_title;
@@ -91,7 +72,13 @@ struct UserInterfaceSpriteResources {
 		hash<const char*>, hash_eqcstr> textures_type;
 	samples_type samples;
 	textures_type textures;
+	// Dynamic resources which the UI core will read and reset
+	std::vector<SDL_Rect> dirtyrects;
 
+	/** Register a new update rectangle. Use this instead of UpdateRect directly
+	 *  so that they can be coalesced into a single update. This mechanism also
+	 *  provides clipping, which SDL_UpdateRect itself does not. */
+	void updateRect(Sint16 x, Sint16 y, Uint16 w, Uint16 h);
 	/** Render some text in a sprite to a new surface. */
 	SDL_Surface* renderText(TTF_Font* font, const char* text,
 		SDL_Color colour);
@@ -106,6 +93,30 @@ struct UserInterfaceSpriteResources {
 	 * their controller is enabled + in use (title, develop, auctions...)
 	 * NO: inteferes with sprites; need stock resources for it that can be
 	 * added to the sprite vector as needed. */
+};
+
+class UserInterfaceSpriteSprite {
+private:
+	UserInterfaceSpriteResources& resources;
+	SDL_Surface* pixmap;
+	SDL_Surface* background;
+	SDL_Rect pos;
+	SDL_Rect erasepos;
+	bool saved;
+public:
+	/** Create a sprite using the given surface. Takes ownship of it.
+	 *  Uses the resources pointer to do updateRects after screen updates. */
+	UserInterfaceSpriteSprite(UserInterfaceSpriteResources& resources,
+		SDL_Surface* pixmap);
+	~UserInterfaceSpriteSprite();
+	/** Position the sprite. Do not do this while drawn! */
+	void move(Sint16 x, Sint16 y);
+	/** Save the background. */
+	void save(SDL_Surface* screen);
+	/** Draw the sprite, and update this and erased region. */
+	void draw(SDL_Surface* screen);
+	/** Restore the background. */
+	void restore(SDL_Surface* screen);
 };
 
 class UserInterfaceSpriteRenderer {
