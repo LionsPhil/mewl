@@ -213,7 +213,9 @@ public:
 
 		// TODO Draw characters running about etc.
 		// DEBUG dance the mouse pointer for sprite debug
-		sprites[0]->move((music_ticks % 640), ((music_beats % 4) * 12) + 128);
+		sprites[0]->move(
+			/*(music_ticks % 640),*/ (music_ticks % 670)-31,
+			((music_beats % 4) * 12) + 128);
 
 		// Draw cycling message bar
 		if(beat && ((music_beats % 4) == 0)) {

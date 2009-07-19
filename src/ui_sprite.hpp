@@ -101,7 +101,6 @@ private:
 	SDL_Surface* pixmap;
 	SDL_Surface* background;
 	SDL_Rect pos;
-	SDL_Rect erasepos;
 	bool saved;
 public:
 	/** Create a sprite using the given surface. Takes ownship of it.
