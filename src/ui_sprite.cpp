@@ -1,8 +1,11 @@
 #include <string>
+#include <algorithm>
+#include <functional>
 #ifdef FPS_COUNTER
 # include <deque>
 # include <stdio.h>
 #endif
+#include <assert.h>
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
@@ -28,12 +31,12 @@ class UserInterfaceSprite : public UserInterface {
 			Mix_FreeMusic(resources.music_theme);
 			resources.music_theme = NULL;
 		}
-		for(hash_map<const char*, Mix_Chunk*>::iterator i =
+		for(UserInterfaceSpriteResources::samples_type::iterator i =
 			resources.samples.begin();
 			i != resources.samples.end(); i++) {
 				Mix_FreeChunk(i->second); }
 		resources.samples.clear();
-		for(hash_map<const char*, SDL_Surface*>::iterator i =
+		for(UserInterfaceSpriteResources::textures_type::iterator i =
 			resources.textures.begin();
 			i != resources.textures.end(); i++) {
 				SDL_FreeSurface(i->second); }
@@ -53,12 +56,19 @@ private:
 	const char* findFontFile() { return "data/mainfont.ttf"; }
 	const char* findThemeMusicFile() { return "data/theme.mp3"; }
 
+	std::string removeSuffix(const char* name) {
+		std::string key(name);
+		size_t dot = key.find_last_of('.');
+		return key.substr(0, dot);
+	}
+
 	bool loadSample(const char* name) {
 		std::string file(getDataDir());
 		file += name;
 		Mix_Chunk* sample = Mix_LoadWAV(file.c_str());
 		if(sample) {
-			resources.samples[name] = sample;
+			std::string key = removeSuffix(name);
+			resources.samples[key.c_str()] = sample;
 			return true;
 		} else {
 			warn("Unable to load sample: %s", Mix_GetError());
@@ -71,7 +81,10 @@ private:
 		file += name;
 		SDL_Surface* texture = IMG_Load(file.c_str());
 		if(texture) {
-			resources.textures[name] = texture;
+			// Unnecessary: looks like SDL-image sets alpha if 32-bit source.
+			//SDL_SetAlpha(texture, SDL_SRCALPHA|SDL_RLEACCEL, SDL_ALPHA_OPAQUE);
+			std::string key = removeSuffix(name);
+			resources.textures[key.c_str()] = texture;
 			return true;
 		} else {
 			warn("Unable to load texture: %s", IMG_GetError());
@@ -83,6 +96,9 @@ private:
 		if(SDL_SetVideoMode(640, 480, 0,
 #ifdef __APPLE__ /* Without this, blitting in toggleFullscreen fails */
 			SDL_HWSURFACE |
+#endif
+#ifdef DOUBLE_BUFFER /* Performance hit on Felix/Win98; 95 FPS -> 30. */
+			SDL_HWSURFACE | SDL_DOUBLEBUF |
 #endif
 			SDL_HWPALETTE | (fullscreen ? SDL_FULLSCREEN : 0))) {
 			trace("Got %s video at %dbpp",
@@ -132,6 +148,7 @@ public:
 			return false;
 		}
 		// Load sprite textures TODO
+		loadTexture("pointer1.png");
 		// Load audio samples TODO
 		// Load music (failure is nonfatal)
 		if(!(resources.music_theme = Mix_LoadMUS(findThemeMusicFile())))
@@ -224,6 +241,9 @@ public:
 			SDL_FreeSurface(sur);
 		}
 #endif
+#ifdef DOUBLE_BUFFER
+		SDL_Flip(SDL_GetVideoSurface());
+#endif
 
 		return allowtransition;
 	}
@@ -258,3 +278,68 @@ bool UserInterfaceSpriteResources::displayTextLine(TTF_Font* font,
 	return true;
 }
 
+void UserInterfaceSpriteResources::displaySprites(
+	const std::vector<UserInterfaceSpriteSprite*>& sprites) {
+	
+	SDL_Surface* screen = SDL_GetVideoSurface();
+	for_each(sprites.begin(), sprites.end(),
+		std::bind2nd(std::mem_fun(&UserInterfaceSpriteSprite::save), screen));
+	for_each(sprites.begin(), sprites.end(),
+		std::bind2nd(std::mem_fun(&UserInterfaceSpriteSprite::draw), screen));
+}
+
+void UserInterfaceSpriteResources::eraseSprites(
+	const std::vector<UserInterfaceSpriteSprite*>& sprites) {
+	
+	SDL_Surface* screen = SDL_GetVideoSurface();
+	for_each(sprites.begin(), sprites.end(),
+		std::bind2nd(std::mem_fun(&UserInterfaceSpriteSprite::restore),
+			screen));
+}
+
+UserInterfaceSpriteSprite::UserInterfaceSpriteSprite(SDL_Surface* pixmap)
+	: pixmap(pixmap), saved(false) {
+	
+	assert(pixmap);
+	SDL_PixelFormat* format = pixmap->format;
+	background = SDL_CreateRGBSurface(SDL_HWSURFACE, pixmap->w, pixmap->h,
+		format->BitsPerPixel,
+		format->Rmask, format->Gmask, format->Bmask, format->Amask);
+	// We do NOT want to blend restored background!
+	SDL_SetAlpha(background, SDL_RLEACCEL, SDL_ALPHA_OPAQUE);
+	pos.x = 0; pos.w = pixmap->w; erasepos.w = pos.w;
+	pos.y = 0; pos.h = pixmap->h; erasepos.h = pos.h;
+}
+
+UserInterfaceSpriteSprite::~UserInterfaceSpriteSprite() {
+	SDL_FreeSurface(pixmap);     pixmap = 0;
+	SDL_FreeSurface(background); background = 0;
+}
+
+void UserInterfaceSpriteSprite::move(Sint16 x, Sint16 y)
+	{ pos.x = x; pos.y = y; }
+	
+void UserInterfaceSpriteSprite::save(SDL_Surface* screen) {
+	SDL_BlitSurface(screen, &pos, background, 0);
+	saved = true;
+}
+
+void UserInterfaceSpriteSprite::draw(SDL_Surface* screen) {
+	// FIXME UpdateRect does NOT get clipped, so we should be doing it
+	// ourselves here!
+	SDL_BlitSurface(pixmap, 0, screen, &pos);
+	SDL_UpdateRect(screen, pos.x, pos.y, pos.w, pos.h);
+	// Also update where the old cursor image was.
+	if((pos.x != erasepos.x) || (pos.y != erasepos.y)) {
+		SDL_UpdateRect(screen, erasepos.x, erasepos.y, erasepos.w, erasepos.h);
+	}
+}
+
+void UserInterfaceSpriteSprite::restore(SDL_Surface* screen) {
+	if(!saved) { return; } // Avoid restoring garbage first frame
+	SDL_BlitSurface(background, 0, screen, &pos);
+	// DON'T UpdateRect, else we will give a full render()'s worth of flicker.
+	// Instead, remember where we're going to update later.
+	erasepos.x = pos.x;
+	erasepos.y = pos.y;
+}

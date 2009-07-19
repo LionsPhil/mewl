@@ -14,10 +14,13 @@ typedef tr1::unordered_map hash_map;*/
 #  endif
 #  include <ext/hash_map>
 using __gnu_cxx::hash_map;
+using __gnu_cxx::hash;
 #else
 #  include <hash_map>
 using std::hash_map;
+using std::hash;
 #endif
+#include <vector>
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
@@ -25,6 +28,7 @@ using std::hash_map;
 #include "factory.hpp"
 #include "game.hpp"
 #include "gamesetup.hpp"
+#include "util.hpp"
 
 /* Note that this is NOT a header for ui_sprite per se, as that is a subclass
  * which is instantiated via a factory---it isn't known to main, etc. This
@@ -54,14 +58,39 @@ namespace UserInterfaceSpriteConstants {
 	const SDL_Color col_text_blue  = { 13,  21, 144, 0};
 };
 
+class UserInterfaceSpriteSprite {
+private:
+	SDL_Surface* pixmap;
+	SDL_Surface* background;
+	SDL_Rect pos;
+	SDL_Rect erasepos;
+	bool saved;
+public:
+	/** Create a sprite using the given surface. Takes ownship of it. */
+	UserInterfaceSpriteSprite(SDL_Surface* pixmap);
+	~UserInterfaceSpriteSprite();
+	/** Position the sprite. Do not do this while drawn! */
+	void move(Sint16 x, Sint16 y);
+	/** Save the background. */
+	void save(SDL_Surface* screen);
+	/** Draw the sprite, and update this and erased region. */
+	void draw(SDL_Surface* screen);
+	/** Restore the background. */
+	void restore(SDL_Surface* screen);
+};
+
 struct UserInterfaceSpriteResources {
 	TTF_Font* font_title;
 	TTF_Font* font_large;
 	TTF_Font* font_small;
 	Mix_Music* music_theme;
 	Uint16 music_theme_bpm;
-	hash_map<const char*, Mix_Chunk*> samples;
-	hash_map<const char*, SDL_Surface*> textures;
+	typedef hash_map<const char*, Mix_Chunk*,
+		hash<const char*>, hash_eqcstr> samples_type;
+	typedef hash_map<const char*, SDL_Surface*,
+		hash<const char*>, hash_eqcstr> textures_type;
+	samples_type samples;
+	textures_type textures;
 
 	/** Render some text in a sprite to a new surface. */
 	SDL_Surface* renderText(TTF_Font* font, const char* text,
@@ -69,8 +98,14 @@ struct UserInterfaceSpriteResources {
 	/** Render a full-width line of text to the screen. */
 	bool displayTextLine(TTF_Font* font, const char* text,
 		SDL_Color foreground, SDL_Color background, int y);
+	/** Render a set of sprites in the correct order (all save, then draw). */
+	void displaySprites(const std::vector<UserInterfaceSpriteSprite*>& sprites);
+	/** Erase a set of sprites, to match the above. */
+	void eraseSprites(const std::vector<UserInterfaceSpriteSprite*>& sprites);
 	/* TODO utility method to render a pointer for mouse/wiimotes when
-	 * their controller is enabled + in use (title, develop, auctions...) */
+	 * their controller is enabled + in use (title, develop, auctions...)
+	 * NO: inteferes with sprites; need stock resources for it that can be
+	 * added to the sprite vector as needed. */
 };
 
 class UserInterfaceSpriteRenderer {

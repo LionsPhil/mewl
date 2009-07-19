@@ -4,7 +4,7 @@
 /// Print an error string to the appropriate place. Automatic newline.
 void warn(const char* fmt, ...);
 
-/// Print a string to standard error or equiv. only on debug builds.
+// Print a string to standard error or equiv. only on debug builds.
 #ifdef NDEBUG
 static inline void _noop(const char* fmt, ...) {}
 # define trace _noop

@@ -47,6 +47,7 @@ private:
 	int title_wmult;
 	int title_hmult;
 	bool title_cycledir;
+	std::vector<UserInterfaceSpriteSprite*> sprites;
 	unsigned int music_ticks;
 	int music_beats;
 	int message_idx;
@@ -140,12 +141,17 @@ public:
 			default: title_wmult = 0; title_hmult = 0;
 		}
 		title_cycledir = random_uniform(0, 1);
-
-		// TODO intro text with color 55,0,0
+		
+		// TODO Set up sprites for the four player pointers.
+		sprites.push_back(new UserInterfaceSpriteSprite(
+			resources.textures["pointer1"]));
 	}
 
 	~UserInterfaceSpriteTitle() {
 		if(title_text) { SDL_FreeSurface(title_text); }
+		
+		for_each(sprites.begin(), sprites.end(), delete_functor());
+		sprites.clear();
 	}
 
 	bool render(GameStage::Type stage, GameSetup& setup, Game* game,
@@ -153,6 +159,9 @@ public:
 		
 		bool beat = false;
 		SDL_Surface* screen = SDL_GetVideoSurface();
+		
+		resources.eraseSprites(sprites);
+		
 		// Colourise some random pixels
 		int k = title_hmult ?
 			((title_text->w * title_wmult) /
@@ -204,6 +213,8 @@ public:
 		}
 
 		// TODO Draw characters running about etc.
+		// DEBUG dance the mouse pointer for sprite debug
+		sprites[0]->move((music_ticks % 640), ((music_beats % 4) * 12) + 128);
 
 		// Draw cycling message bar
 		if(beat && ((music_beats % 4) == 0)) {
@@ -247,6 +258,8 @@ public:
 			// logic needs to keep active set to four, dropping out
 			// oldest. put "CPU" in place in gold if <4.
 		}
+		
+		resources.displaySprites(sprites);
 
 		return true; // TODO Put a music fadeout on the colour stage
 	}

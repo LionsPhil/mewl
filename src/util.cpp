@@ -24,3 +24,5 @@ int random_uniform(int min, int max) {
 	return r;
 }
 
+bool hash_eqcstr::operator()(const char* one, const char* two) const
+	{ return strcmp(one, two) == 0; }

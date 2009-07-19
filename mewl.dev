@@ -1,7 +1,7 @@
 [Project]
 FileName=mewl.dev
 Name=mewl
-UnitCount=22
+UnitCount=24
 Type=0
 Ver=1
 ObjFiles=
@@ -11,10 +11,10 @@ PrivateResource=mewl_private.rc
 ResourceIncludes=
 MakeIncludes=
 Compiler=-Dmain=SDL_main_@@_
-CppCompiler=-DVERSION=\"0.1\" -DPLATFORMwin -DUSERINTF=\"Sprite\"_@@_
+CppCompiler=-DVERSION=\"0.1\" -DPLATFORMwin -DUSERINTF=\"Sprite\" -DFPS_COUNTER_@@_
 Linker=-lmingw32 -lSDLmain -lSDL -lSDL_image -lSDL_mixer -lSDL_ttf_@@_
 IsCpp=1
-Icon=mewl.ico
+Icon=
 ExeOutput=
 ObjectOutput=
 OverrideOutput=0
@@ -253,7 +253,7 @@ BuildCmd=
 Major=0
 Minor=1
 Release=1
-Build=31
+Build=93
 LanguageID=2057
 CharsetID=1252
 CompanyName=
@@ -266,4 +266,24 @@ OriginalFilename=
 ProductName=M.E.W.L.
 ProductVersion=
 AutoIncBuildNr=1
+
+[Unit23]
+FileName=src\ui_sprite_title.cpp
+CompileCpp=1
+Folder=mewl
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit24]
+FileName=src\ui_sprite.hpp
+CompileCpp=1
+Folder=mewl
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
 
