@@ -44,7 +44,7 @@ Have used FontForge to cut/paste the arrows from very high glyph points to the l
                Goods auctions
                Scoreboard (possibly for game end)
 
-There is quite a lot of state for each of these which the GameLogic and the UI need to share but is only pertinent to that stage; not to the state of the game in general.
+There is quite a lot of state for each of these which the GameLogic and the UI need to share but is only pertinent to that stage; not to the state of the game in general. (Careful, though: UI will need access to it during transition-block animations even though GameLogic has moved on.)
  Title: difficulty (in GameSetup), number of humans
  Colour/species: current player being configured (rest is in GameSetup)
  Land grab: current cursor position

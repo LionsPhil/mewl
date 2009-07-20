@@ -353,16 +353,6 @@ void UserInterfaceSpriteSprite::move(Sint16 x, Sint16 y)
 	{ pos.x = x; pos.y = y; }
 	
 void UserInterfaceSpriteSprite::save(SDL_Surface* screen) {
-	// FIXED Negatively positioned sprites seem to leak uninitialised background
-	// (made magenta here) onto the screen. Can't quite track this down, and
-	// BlitSurface DOES clip. -- It was modifying pos during the draw call and
-	// removing negatives.
-	SDL_FillRect(background, 0, 0x33ff55ff); // DEBUG
-	/*SDL_Rect from = pos;
-	SDL_Rect to; to.x = 0; to.y = 0;
-	if(from.x < 0) { to.x = -from.x; from.w += from.x; from.x = 0; }
-	if(from.y < 0) { to.y = -from.y; from.h += from.y; from.y = 0; }
-	SDL_BlitSurface(screen, &from, background, &to);*/
 	SDL_BlitSurface(screen, &pos, background, 0);
 	saved = true;
 }
@@ -375,17 +365,8 @@ void UserInterfaceSpriteSprite::draw(SDL_Surface* screen) {
 
 void UserInterfaceSpriteSprite::restore(SDL_Surface* screen) {	
 	if(!saved) { return; } // Avoid restoring garbage first frame
-	// Using this manual clipping at least makes the corruption not jump ahead
-	// SDL still seems to get this wrong
-	SDL_Rect from; from.x = 0; from.y = 0; from.w = pos.w; from.h = pos.h;
-	SDL_Rect to = pos;
-	if(to.x < 0) { from.x = -to.x; from.w += to.x; to.x = 0; }
-	if(to.x < 0) { from.y = -to.y; from.h += to.y; to.y = 0; }
-	SDL_BlitSurface(background, &from, screen, &to);
-	/* warn("FROM %d %d %u %u TO %d %d %u %u",
-		from.x, from.y, from.w, from.h,
-		to.x, to.y, to.w, to.h); die(); */
-	//SDL_BlitSurface(background, 0, screen, &pos);
+	SDL_Rect clip = pos;
+	SDL_BlitSurface(background, 0, screen, &clip);
 	resources.updateRect(pos.x, pos.y, pos.w, pos.h);
 	/* This doesn't cause flicker, as the update is deferred until the same time
 	 * as the draw() update thanks to updateRect()'s coalescing. */

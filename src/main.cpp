@@ -14,6 +14,7 @@ static int realmain(bool fullscreen) {
 	GameSetup gamesetup;
 	Game* game;
 	GameLogic* gamelogic;
+	bool transitionok;
 	UserInterface* userintf;
 	SDL_Event event;
 	Uint32 tickerror, ticklast;
@@ -46,6 +47,7 @@ static int realmain(bool fullscreen) {
 
 	gamelogic = GameLogic::getTitleState();
 	game = 0;
+	transitionok = true;
 
 	trace("Running");
 	tickerror = 0;
@@ -61,8 +63,11 @@ static int realmain(bool fullscreen) {
 			case SDL_QUIT:
 				run = false; break;
 			case SDL_KEYDOWN:
-				if(event.key.keysym.sym == SDLK_ESCAPE)
-					{ userintf->toggleFullscreen(); }
+				switch(event.key.keysym.sym) {
+					case SDLK_ESCAPE: run = false; break;
+					case SDLK_F11: userintf->toggleFullscreen(); break;
+					default: break;
+				}
 				// and chain down to control manager
 			case SDL_KEYUP:
 			case SDL_MOUSEMOTION:
@@ -86,13 +91,20 @@ static int realmain(bool fullscreen) {
 				tickerror -= tickduration;
 
 				/* Poke game logic to tick */
-				gamelogic->simulate(gamesetup, game); // TODO
+				if(transitionok) {
+					GameLogic* nextlogic;
+					nextlogic = gamelogic->simulate(gamesetup, game);
+					if(nextlogic) {
+						delete gamelogic;
+						gamelogic = nextlogic;
+					}
+				}
 				ticks++;
 			} while(tickerror >= tickduration);
 
 			/* Poke UI to render game state */
-			userintf->render(gamelogic->getStage(),
-				gamesetup, game, ticks); // TODO retval
+			transitionok = userintf->render(gamelogic->getStage(),
+				gamesetup, game, ticks);
 		} else {
 			/* Have a nap until we actually have at least one tick
 			 * to run */
@@ -130,7 +142,7 @@ int main(int argc, char** argv) {
 		}
 	}
 
-	// Now do the 'real' main route
+	// Now do the 'real' main routine
 	return realmain(fullscreen);
 }
 
