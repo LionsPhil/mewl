@@ -25,6 +25,8 @@ public:
 	 * NULL for some game stages. */
 	virtual bool render(GameStage::Type stage, GameSetup& setup, Game* game,
 		uint32_t ticks) = 0;
+	
+	// TODO Determine if the player is touching a mountain, return which
 
 	/* Factory allows implementation detail to be completely opaque. */
 	FACTORY_REGISTER_IF(UserInterface)

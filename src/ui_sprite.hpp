@@ -75,9 +75,9 @@ struct UserInterfaceSpriteResources {
 	// Dynamic resources which the UI core will read and reset
 	std::vector<SDL_Rect> dirtyrects;
 
-	/** Register a new update rectangle. Use this instead of UpdateRect directly
-	 *  so that they can be coalesced into a single update. This mechanism also
-	 *  provides clipping, which SDL_UpdateRect itself does not. */
+	/** Register a new update rectangle. Use this instead of UpdateRect
+	 *  directly so that they can be coalesced into a single update. This
+	 *  mechanism also provides clipping, which SDL_UpdateRect does not. */
 	void updateRect(Sint16 x, Sint16 y, Uint16 w, Uint16 h);
 	/** Render some text in a sprite to a new surface. */
 	SDL_Surface* renderText(TTF_Font* font, const char* text,
@@ -85,14 +85,15 @@ struct UserInterfaceSpriteResources {
 	/** Render a full-width line of text to the screen. */
 	bool displayTextLine(TTF_Font* font, const char* text,
 		SDL_Color foreground, SDL_Color background, int y);
-	/** Render a set of sprites in the correct order (all save, then draw). */
-	void displaySprites(const std::vector<UserInterfaceSpriteSprite*>& sprites);
+	/** Render a set of sprites in the correct order (all save, all draw).*/
+	void displaySprites(
+		const std::vector<UserInterfaceSpriteSprite*>& sprites);
 	/** Erase a set of sprites, to match the above. */
-	void eraseSprites(const std::vector<UserInterfaceSpriteSprite*>& sprites);
-	/* TODO utility method to render a pointer for mouse/wiimotes when
-	 * their controller is enabled + in use (title, develop, auctions...)
-	 * NO: inteferes with sprites; need stock resources for it that can be
-	 * added to the sprite vector as needed. */
+	void eraseSprites(
+		const std::vector<UserInterfaceSpriteSprite*>& sprites);
+	/** Make a sprite to use as a pointer for a given player ID. */
+	UserInterfaceSpriteSprite* spriteForPlayerPointer(int player);
+	// TODO Make sprite for species + dir + anim frame + ID (recolour)
 };
 
 class UserInterfaceSpriteSprite {
@@ -131,6 +132,10 @@ public:
 	/* It's time for that delicious factory pattern again, folks. */
 	FACTORY_REGISTER_IF(UserInterfaceSpriteRenderer)
 };
+
+namespace Difficulty { // UI-specific difficulty information
+	const char* getName(Difficulty::Type self);
+}
 
 #endif
 

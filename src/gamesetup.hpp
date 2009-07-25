@@ -21,6 +21,7 @@ public: // This is just a struct with an ego problem
 
 class GameSetup {
 public: // Another fancy-pants struct
+	GameSetup();
 	PlayerSetup playersetup[PLAYERS];
 	Difficulty::Type difficulty;
 };

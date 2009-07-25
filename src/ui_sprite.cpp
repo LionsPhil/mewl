@@ -66,11 +66,11 @@ private:
 	const char* findThemeMusicFile() { return "data/theme.mp3"; }
 
 	/* Why do we strdup here?
-	 * The hash can't copy the string storage (it only sees a pointer type), and
-	 * while you can convince std::strings to work, we'd then have to keep
-	 * constructing them ad-hoc for lookups, which is just silly overhead.
-	 * So we give the hash a C-string of its own (it's that or manual
-	 * string-constant keys). */
+	 * The hash can't copy the string storage (it only sees a pointer type),
+	 * and while you can convince std::strings to work, we'd then have to
+	 * keep constructing them ad-hoc for lookups, which is just silly
+	 * overhead. So we give the hash a C-string of its own (it's that or
+	 * manual string-constant keys). */
 	char* removeSuffix(const char* name) {
 		char* keycpy;
 		std::string key(name);
@@ -161,8 +161,11 @@ public:
 			warn("Unable to load font: %s", TTF_GetError());
 			return false;
 		}
-		// Load sprite textures TODO
+		// Load sprite textures
 		if(!loadTexture("pointer1.png")
+		|| !loadTexture("pointer2.png")
+		|| !loadTexture("pointer3.png")
+		|| !loadTexture("pointer4.png")
 			) { return false; }
 		// Load audio samples TODO
 		// Load music (failure is nonfatal)
@@ -260,14 +263,16 @@ public:
 		SDL_Flip(SDL_GetVideoSurface());
 #else
 		/* Theoretically, the documentation suggests attempting to avoid
-		 * overdraw here. Realistically, there's not much we can do about that
-		 * without subdivision, and apparently SDL ships out all the rectangles
-		 * in one go to the graphics driver, so we'll let that do it if it feels
-		 * so inclined. (We _could_ remove trivially subsumed rectangles, or
-		 * replace them all with a tight bounding rectangle, but neither fits
-		 * our usage pattern well.) */
-		SDL_UpdateRects(SDL_GetVideoSurface(), resources.dirtyrects.size(),
-			&resources.dirtyrects[0]); /* impl. assumption supported by docs */
+		 * overdraw here. Realistically, there's not much we can do
+		 * about that without subdivision, and apparently SDL ships out
+		 * all the rectangles in one go to the graphics driver, so we'll
+		 * let that do it if it feels so inclined. (We _could_ remove
+		 * trivially subsumed rectangles, or replace them all with a
+		 * tight bounding rectangle, but neither fits our usage pattern
+		 * well.) */
+		SDL_UpdateRects(SDL_GetVideoSurface(),
+			resources.dirtyrects.size(),
+			&resources.dirtyrects[0]); /* docs imply this is safe */
 		resources.dirtyrects.clear();
 #endif
 
@@ -279,7 +284,7 @@ FACTORY_REGISTER_IMPL(UserInterface,UserInterfaceSprite)
 
 void UserInterfaceSpriteResources::updateRect(
 	Sint16 x, Sint16 y, Uint16 w, Uint16 h) {
-#ifndef DOUBLE_BUFFER /* Don't track what we don't use */
+#ifndef DOUBLE_BUFFER /* Don't track what we don't use (or clear!) */
 	SDL_Surface* screen = SDL_GetVideoSurface();
 	Uint16 sw = screen->w - 1;
 	Uint16 sh = screen->h - 1;
@@ -328,10 +333,10 @@ void UserInterfaceSpriteResources::displaySprites(
 	const std::vector<UserInterfaceSpriteSprite*>& sprites) {
 	
 	SDL_Surface* screen = SDL_GetVideoSurface();
-	for_each(sprites.begin(), sprites.end(),
-		std::bind2nd(std::mem_fun(&UserInterfaceSpriteSprite::save), screen));
-	for_each(sprites.begin(), sprites.end(),
-		std::bind2nd(std::mem_fun(&UserInterfaceSpriteSprite::draw), screen));
+	for_each(sprites.begin(), sprites.end(), std::bind2nd(
+		std::mem_fun(&UserInterfaceSpriteSprite::save), screen));
+	for_each(sprites.begin(), sprites.end(), std::bind2nd(
+		std::mem_fun(&UserInterfaceSpriteSprite::draw), screen));
 }
 
 void UserInterfaceSpriteResources::eraseSprites(
@@ -341,6 +346,21 @@ void UserInterfaceSpriteResources::eraseSprites(
 	for_each(sprites.begin(), sprites.end(),
 		std::bind2nd(std::mem_fun(&UserInterfaceSpriteSprite::restore),
 			screen));
+}
+
+UserInterfaceSpriteSprite* UserInterfaceSpriteResources::spriteForPlayerPointer(
+	int player) {
+
+	const char* texture;
+	switch(player) { // Must match texture names loaded above
+		case 0: texture = "pointer1"; break;
+		case 1: texture = "pointer2"; break;
+		case 2: texture = "pointer3"; break;
+		case 3: texture = "pointer4"; break;
+		default:
+			warn("Player %d out of range", player); die(); return 0;
+	}
+	return new UserInterfaceSpriteSprite(*this, textures[texture]);
 }
 
 UserInterfaceSpriteSprite::UserInterfaceSpriteSprite(
@@ -382,6 +402,14 @@ void UserInterfaceSpriteSprite::restore(SDL_Surface* screen) {
 	SDL_Rect clip = pos;
 	SDL_BlitSurface(background, 0, screen, &clip);
 	resources.updateRect(pos.x, pos.y, pos.w, pos.h);
-	/* This doesn't cause flicker, as the update is deferred until the same time
-	 * as the draw() update thanks to updateRect()'s coalescing. */
+	/* This doesn't cause flicker, as the update is deferred until the same
+	 * time as the draw() update thanks to updateRect()'s coalescing. */
+}
+
+const char* Difficulty::getName(Difficulty::Type self) {
+	switch(self) {
+		case Difficulty::BEGINNER:   return "Beginner";
+		case Difficulty::STANDARD:   return "Standard";
+		case Difficulty::TOURNAMENT: return "Tournament";
+	}
 }

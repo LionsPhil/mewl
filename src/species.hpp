@@ -24,7 +24,5 @@ namespace Species {
 	double getTimeModifier(Type self);
 }
 
-//namespace Species { void TheoreticalPerUIData(Type self); } // XXX
-
 #endif
 

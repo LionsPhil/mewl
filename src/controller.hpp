@@ -50,7 +50,7 @@ public:
 /** The ControlManager owns all Controller instances, and is responsible for
  * probing hardware and creating them in the first place. */
 class ControlManager {
-	/* Specific sets allow us to avoid spamming everything with all events */
+	// Specific sets allow us to avoid spamming everything with all events
 	std::vector<Controller*> controllers_key;
 	std::vector<Controller*> controllers_mouse;
 	std::vector<Controller*> controllers_joy;

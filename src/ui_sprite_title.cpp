@@ -48,7 +48,12 @@ private:
 	int title_wmult;
 	int title_hmult;
 	bool title_cycledir;
+	std::vector<UserInterfaceSpriteSprite*> pointers;
 	std::vector<UserInterfaceSpriteSprite*> sprites;
+	Difficulty::Type last_difficulty;
+	PlayerSetup last_playersetup[PLAYERS];
+	bool last_playerready[PLAYERS];
+	bool first_frame;
 	unsigned int music_ticks;
 	int music_beats;
 	int message_idx;
@@ -58,6 +63,10 @@ public:
 		uint32_t ticks, UserInterfaceSpriteResources& resources) {
 
 		SDL_Color black = {0, 0, 0, 0};
+		last_difficulty = Difficulty::BEGINNER;
+		for(int player = 0; player < PLAYERS; player++)
+			{ last_playerready[player] = false; }
+		first_frame = true;
 		message_idx = 0;
 
 		SDL_Surface* screen = SDL_GetVideoSurface();
@@ -143,16 +152,29 @@ public:
 		}
 		title_cycledir = random_uniform(0, 1);
 		
-		// TODO Set up sprites for the four player pointers.
-		sprites.push_back(new UserInterfaceSpriteSprite(resources,
-			resources.textures["pointer1"]));
+		// Set up sprites for the four player pointers.
+		pointers.reserve(PLAYERS);
+		for(int player = 0; player < PLAYERS; player++) {
+			pointers.push_back(
+				resources.spriteForPlayerPointer(player));
+		}
+		
+		// DEBUG activate all pointer sprites
+		for(int i = 0; i < PLAYERS; i++) {
+			sprites.push_back(pointers[i]);
+		}
+		
+		//sprites.push_back(new UserInterfaceSpriteSprite(resources,
+		//	resources.textures["pointer1"]));
 	}
 
 	~UserInterfaceSpriteTitle() {
 		if(title_text) { SDL_FreeSurface(title_text); }
 		
-		for_each(sprites.begin(), sprites.end(), delete_functor());
+		// Do NOT delete sprites' contents; union of subset of others
 		sprites.clear();
+		for_each(pointers.begin(), pointers.end(), delete_functor());
+		pointers.clear();
 	}
 
 	bool render(GameStage::Type stage, GameSetup& setup, Game* game,
@@ -193,7 +215,8 @@ public:
 		// Blit, because we don't write directly to screen (it's 32-bit)
 		SDL_BlitSurface(title_text, NULL, screen, &title_pos);
 		// Redraw the title area
-		resources.updateRect(title_pos.x,title_pos.y, title_pos.w,title_pos.h);
+		resources.updateRect(title_pos.x, title_pos.y,
+			title_pos.w, title_pos.h);
 
 		// Let there be music
 		if(Mix_PlayingMusic()) {
@@ -210,13 +233,23 @@ public:
 			Mix_PlayMusic(resources.music_theme, 1);
 			music_ticks = 0;
 			music_beats = -1;
+			message_idx = 0; // It's the right length to resync
 		}
 
 		// TODO Draw characters running about etc.
-		// DEBUG dance the mouse pointer for sprite debug
-		sprites[0]->move(
-			/*(music_ticks % 640),*/ (music_ticks % 670)-31,
+		// DEBUG dance the mouse pointers for sprite debug
+		pointers[0]->move(
+			(music_ticks % 670)-31,
 			((music_beats % 4) * 12) + 128);
+		pointers[1]->move(
+			(music_ticks % 670)-31 + 4,
+			((music_beats % 3) * 12) + 128 + 16);
+		pointers[2]->move(
+			(music_ticks % 670)-31 + 8,
+			((music_beats % 2) * 12) + 128 + 32);
+		pointers[3]->move(
+			(music_ticks % 670)-31 + 12,
+			((music_beats % 5) * 12) + 128 + 48);
 
 		// Draw cycling message bar
 		if(beat && ((music_beats % 4) == 0)) {
@@ -231,12 +264,16 @@ public:
 				message, textcolour, background, 384);
 		}
 
-		// TODO Draw the GameSetup
-		// TODO Only if it changes
-		{
+		// Draw the GameSetup
+		if(first_frame || last_difficulty != setup.difficulty) {
+			std::string difftext(ARROW_LEFT " ");
+			difftext += Difficulty::getName(setup.difficulty);
+			difftext += " " ARROW_RIGHT;
 			resources.displayTextLine(resources.font_small,
-				ARROW_LEFT " Tournament " ARROW_RIGHT,
-				textcolour, background, 408);
+				difftext.c_str(), textcolour, background, 408);
+		}
+		// TODO
+		{
 /*			resources.displayTextLine(resources.font_small,
 				"mouse key1 key2 joy1",
 				textcolour, background, 432); */
@@ -249,8 +286,15 @@ public:
 			// logic needs to keep active set to four, dropping out
 			// oldest. put "CPU" in place in gold if <4.
 		}
+		// Remember the last GameSetup state
+		last_difficulty = setup.difficulty;
+		for(int player = 0; player < PLAYERS; player++) {
+			last_playersetup[player] = setup.playersetup[player];
+			// TODO last_playerready[PLAYERS];
+		}
 		
 		resources.displaySprites(sprites);
+		first_frame = false;
 
 		return true; // TODO Put a music fadeout on the colour stage
 	}

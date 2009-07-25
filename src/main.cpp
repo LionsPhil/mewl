@@ -13,6 +13,7 @@ static int realmain(bool fullscreen) {
 	ControlManager controlman;
 	GameSetup gamesetup;
 	Game* game;
+	GameLogicJumps* gamejumps;
 	GameLogic* gamelogic;
 	bool transitionok;
 	UserInterface* userintf;
@@ -45,8 +46,9 @@ static int realmain(bool fullscreen) {
 
 	controlman.populate();
 
-	gamelogic = GameLogic::getTitleState();
 	game = 0;
+	gamejumps = new GameLogicJumps(&game, *userintf);
+	gamelogic = GameLogic::getTitleState(gamejumps);
 	transitionok = true;
 
 	trace("Running");
@@ -64,17 +66,23 @@ static int realmain(bool fullscreen) {
 				run = false; break;
 			case SDL_KEYDOWN:
 				switch(event.key.keysym.sym) {
-					/* Easy to mistrigger; ^Q is even worse due to controls.
-					 * Once we have load/save, we can autosave on quit and
+					/* Easy to mistrigger; ^Q is even worse
+					 * due to controls. Once we have load/
+					 * save, we can autosave on quit and
 					 * make this much less of a problem. */
 					case SDLK_ESCAPE: run = false; break;
-					case SDLK_F4: // Doesn't reach WM to generate SDL_QUIT
-						if(event.key.keysym.mod & KMOD_ALT) { run = false; }
+					// Doesn't reach WM to generate SDL_QUIT
+					case SDLK_F4:
+						if(event.key.keysym.mod &
+							KMOD_ALT) {run = false;}
 						break;
-					case SDLK_F11: userintf->toggleFullscreen(); break;
+					case SDLK_F11:
+						userintf->toggleFullscreen();
+						break;
 					case SDLK_RETURN:
-						if(event.key.keysym.mod & KMOD_ALT)
-							{ userintf->toggleFullscreen(); }
+						if(event.key.keysym.mod &
+							KMOD_ALT) { userintf->
+							toggleFullscreen(); }
 						break;
 					default: break;
 				}
@@ -103,7 +111,8 @@ static int realmain(bool fullscreen) {
 				/* Poke game logic to tick */
 				if(transitionok) {
 					GameLogic* nextlogic;
-					nextlogic = gamelogic->simulate(gamesetup, game);
+					nextlogic = gamelogic->simulate(
+						gamesetup, game);
 					if(nextlogic) {
 						delete gamelogic;
 						gamelogic = nextlogic;
@@ -125,6 +134,7 @@ static int realmain(bool fullscreen) {
 	trace("Clean exit");
 	delete userintf;
 	delete gamelogic;
+	delete gamejumps;
 	if(game) { delete game; }
 	SDL_Quit();
 	return EXIT_SUCCESS;

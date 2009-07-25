@@ -30,7 +30,7 @@ struct free_functor {
 
 /** A functor that compares C strings. This is because the STL-extension
  *  hash_map uses a default equal_to that compares pointers. D'oy. Be sure to
- *  provide this as the third template argument to make them actually work. */
+ *  provide this as the fourth template argument to make them actually work. */
 struct hash_eqcstr {
 	bool operator()(const char* one, const char* two) const;
 };
