@@ -23,6 +23,7 @@ class UserInterfaceSprite : public UserInterface {
 
 	~UserInterfaceSprite() {
 		int dum1; Uint16 dum2; int dum3;
+		std::vector<char*> keys;
 		// Free resources (can has C++0x type inference plz?)
 		TTF_CloseFont(resources.font_title);
 		TTF_CloseFont(resources.font_large);
@@ -31,21 +32,24 @@ class UserInterfaceSprite : public UserInterface {
 			Mix_FreeMusic(resources.music_theme);
 			resources.music_theme = NULL;
 		}
-		/* See removeSuffix for why we're freeing the keys too. This requires a
-		 * const_cast; I hope the hash doesn't need its keys about to clear(),
-		 * or it's going to be accessing freed memory. FIXME: apply valgrind. */
+		/* See removeSuffix for why we're freeing the keys too. We have
+		 * to collect them up for later free(), else we'll pull them out
+		 * from under the hash iterator's operator++ (yay valgrind). */
 		for(UserInterfaceSpriteResources::samples_type::iterator i =
 			resources.samples.begin();
 			i != resources.samples.end(); i++) {
-				free(const_cast<char*>(i->first));
+				keys.push_back(const_cast<char*>(i->first));
 				Mix_FreeChunk(i->second); }
 		resources.samples.clear();
 		for(UserInterfaceSpriteResources::textures_type::iterator i =
 			resources.textures.begin();
 			i != resources.textures.end(); i++) {
-				free(const_cast<char*>(i->first));
+				keys.push_back(const_cast<char*>(i->first));
 				SDL_FreeSurface(i->second); }
 		resources.textures.clear();
+		for_each(keys.begin(), keys.end(), free_functor());
+		// Zap the renderer
+		if(renderer) { delete renderer; renderer = 0; }
 		// Shutdown TTF and Mixer
 		if(TTF_WasInit()) { TTF_Quit(); }
 		if(Mix_QuerySpec(&dum1, &dum2, &dum3)) { Mix_CloseAudio(); }
@@ -340,7 +344,7 @@ void UserInterfaceSpriteResources::eraseSprites(
 }
 
 UserInterfaceSpriteSprite::UserInterfaceSpriteSprite(
-	UserInterfaceSpriteResources& resources, SDL_Surface* pixmap)
+	UserInterfaceSpriteResources& resources, const SDL_Surface* pixmap)
 	: resources(resources), pixmap(pixmap), saved(false) {
 	
 	assert(pixmap);
@@ -355,7 +359,7 @@ UserInterfaceSpriteSprite::UserInterfaceSpriteSprite(
 }
 
 UserInterfaceSpriteSprite::~UserInterfaceSpriteSprite() {
-	SDL_FreeSurface(pixmap);     pixmap = 0;
+	//SDL_FreeSurface(pixmap);     pixmap = 0;
 	SDL_FreeSurface(background); background = 0;
 }
 
@@ -368,8 +372,8 @@ void UserInterfaceSpriteSprite::save(SDL_Surface* screen) {
 }
 
 void UserInterfaceSpriteSprite::draw(SDL_Surface* screen) {
-	SDL_Rect clip = pos;
-	SDL_BlitSurface(pixmap, 0, screen, &clip); // modifies clip!
+	SDL_Rect clip = pos; // SDL_BlitSurface will trample
+	SDL_BlitSurface(const_cast<SDL_Surface*>(pixmap), 0, screen, &clip);
 	resources.updateRect(pos.x, pos.y, pos.w, pos.h);
 }
 

@@ -1,6 +1,7 @@
 #ifndef UTIL_HPP_
 #define UTIL_HPP_
 #include <string.h>
+#include <stdlib.h>
 
 /** Generate a random integer in the inclusive range given with probability
  *  given by the normal distribution with mean zero and standard deviation
@@ -19,6 +20,12 @@ int random_uniform(int min, int max);
  *  (Boost apparently does, as boost::lambda::delete_ptr().) */
 struct delete_functor {
 	template <class T> void operator() (T* p) const { delete p; }
+};
+
+/** A version of delete_functor that uses free() instead, e.g. for C strings.
+ *  Valgrind can spot the difference, so we shall assume that it may matter. */
+struct free_functor {
+	template <class T> void operator() (T* p) const { free(p); }
 };
 
 /** A functor that compares C strings. This is because the STL-extension

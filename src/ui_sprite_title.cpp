@@ -1,4 +1,5 @@
 #include <vector>
+#include <stdlib.h>
 #include <SDL_ttf.h>
 #include "platform.hpp"
 #include "ui_sprite.hpp"
@@ -185,7 +186,7 @@ public:
 				title_text->format->palette->colors;
 			int t = title_cycledir ? ticks : 254 - ticks;
 			for(int i = 0; i < 254; i++) {
-				newpalette[i] = oldpalette[((i + t) % 254) + 2];
+				newpalette[i] = oldpalette[abs((i+t) % 254) +2];
 			}
 			SDL_SetColors(title_text, newpalette, 2, 254);
 		}
