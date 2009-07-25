@@ -31,14 +31,19 @@ class UserInterfaceSprite : public UserInterface {
 			Mix_FreeMusic(resources.music_theme);
 			resources.music_theme = NULL;
 		}
+		/* See removeSuffix for why we're freeing the keys too. This requires a
+		 * const_cast; I hope the hash doesn't need its keys about to clear(),
+		 * or it's going to be accessing freed memory. FIXME: apply valgrind. */
 		for(UserInterfaceSpriteResources::samples_type::iterator i =
 			resources.samples.begin();
 			i != resources.samples.end(); i++) {
+				free(const_cast<char*>(i->first));
 				Mix_FreeChunk(i->second); }
 		resources.samples.clear();
 		for(UserInterfaceSpriteResources::textures_type::iterator i =
 			resources.textures.begin();
 			i != resources.textures.end(); i++) {
+				free(const_cast<char*>(i->first));
 				SDL_FreeSurface(i->second); }
 		resources.textures.clear();
 		// Shutdown TTF and Mixer
@@ -56,10 +61,19 @@ private:
 	const char* findFontFile() { return "data/mainfont.ttf"; }
 	const char* findThemeMusicFile() { return "data/theme.mp3"; }
 
-	std::string removeSuffix(const char* name) {
+	/* Why do we strdup here?
+	 * The hash can't copy the string storage (it only sees a pointer type), and
+	 * while you can convince std::strings to work, we'd then have to keep
+	 * constructing them ad-hoc for lookups, which is just silly overhead.
+	 * So we give the hash a C-string of its own (it's that or manual
+	 * string-constant keys). */
+	char* removeSuffix(const char* name) {
+		char* keycpy;
 		std::string key(name);
 		size_t dot = key.find_last_of('.');
-		return key.substr(0, dot);
+		keycpy = strdup(key.substr(0, dot).c_str());
+		if(!keycpy) { warn("Out of memory"); die(); }
+		return keycpy;
 	}
 
 	bool loadSample(const char* name) {
@@ -67,8 +81,7 @@ private:
 		file += name;
 		Mix_Chunk* sample = Mix_LoadWAV(file.c_str());
 		if(sample) {
-			std::string key = removeSuffix(name);
-			resources.samples[key.c_str()] = sample;
+			resources.samples[removeSuffix(name)] = sample;
 			return true;
 		} else {
 			warn("Unable to load sample: %s", Mix_GetError());
@@ -81,10 +94,7 @@ private:
 		file += name;
 		SDL_Surface* texture = IMG_Load(file.c_str());
 		if(texture) {
-			// Unnecessary: looks like SDL-image sets alpha if 32-bit source.
-			//SDL_SetAlpha(texture, SDL_SRCALPHA|SDL_RLEACCEL, SDL_ALPHA_OPAQUE);
-			std::string key = removeSuffix(name);
-			resources.textures[key.c_str()] = texture;
+			resources.textures[removeSuffix(name)] = texture;
 			return true;
 		} else {
 			warn("Unable to load texture: %s", IMG_GetError());

@@ -22,7 +22,7 @@ Species are an interesting modelling challenge:
    multiple places, but that's inevitable as we allow for differing UIs; a
    simple struct record cannot know what information every UI may want.
 
-Tuning variables which couldn't be determined from the original game have been marked with 'TWEAK' comments.
+Tuning variables which couldn't be determined from the original game have been marked with 'TWEAK' comments. (Thanks to decompilation below, none at present.)
 
 
 http://www2.bitstream.net/~marksim/atarimac/fonts.html
@@ -68,6 +68,8 @@ How does the Game object get created? Main(?) needs to know that GameSetup is re
 
 Sprite tiles are 64x64 and alpha-blend on top of the background. Top-left offset is 32 horizontal and 80 vertical. The mountain is smaller and has 16px horizontal and 4px vertical random wiggle within its subrow (of which there are four).
 
+"Active players push up to begin" doesn't allow for computer-only games. May want to add SELECT/START support.
+
 -- Original game documentation --
 Manual:
 http://muttoo.on.ca/mulemanual/
@@ -89,4 +91,4 @@ covers using the SDL sublibraries with Dev-C++: only the .lib goes in lib; the .
 fakeroot can be useful to convince Linux Subversion to operate on a workspace on FAT32, where chmod fails.
 tofrodos is the Ubuntu package for dos2unix, for when Dev-C++ rudely converts source files.
 For all this, svn commit may still fail due to being unable to set atime, *sigh*. cp -a to /tmp/ and commit that copy if needs be.
-
+Thankfully, 1.1.7 runs on Windows 98.

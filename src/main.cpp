@@ -64,11 +64,21 @@ static int realmain(bool fullscreen) {
 				run = false; break;
 			case SDL_KEYDOWN:
 				switch(event.key.keysym.sym) {
+					/* Easy to mistrigger; ^Q is even worse due to controls.
+					 * Once we have load/save, we can autosave on quit and
+					 * make this much less of a problem. */
 					case SDLK_ESCAPE: run = false; break;
+					case SDLK_F4: // Doesn't reach WM to generate SDL_QUIT
+						if(event.key.keysym.mod & KMOD_ALT) { run = false; }
+						break;
 					case SDLK_F11: userintf->toggleFullscreen(); break;
+					case SDLK_RETURN:
+						if(event.key.keysym.mod & KMOD_ALT)
+							{ userintf->toggleFullscreen(); }
+						break;
 					default: break;
 				}
-				// and chain down to control manager
+				// ...and chain down to control manager
 			case SDL_KEYUP:
 			case SDL_MOUSEMOTION:
 			case SDL_MOUSEBUTTONDOWN:
