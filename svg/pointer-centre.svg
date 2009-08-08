@@ -6,6 +6,7 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="32"
@@ -18,7 +19,37 @@
    sodipodi:docname="pointer-centre.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
-     id="defs4" />
+     id="defs4">
+    <linearGradient
+       id="linearGradient4119">
+      <stop
+         style="stop-color:#ff0000;stop-opacity:0;"
+         offset="0"
+         id="stop4121" />
+      <stop
+         id="stop5164"
+         offset="0.125"
+         style="stop-color:#ff0000;stop-opacity:0;" />
+      <stop
+         id="stop5096"
+         offset="0.5"
+         style="stop-color:#ff0000;stop-opacity:1;" />
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="1"
+         id="stop4123" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4119"
+       id="radialGradient4125"
+       cx="11.75"
+       cy="11.75"
+       fx="11.75"
+       fy="11.75"
+       r="8"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -42,7 +73,7 @@
      gridempspacing="4"
      inkscape:window-width="822"
      inkscape:window-height="554"
-     inkscape:window-x="-17"
+     inkscape:window-x="0"
      inkscape:window-y="34"
      inkscape:grid-points="true" />
   <metadata
@@ -62,7 +93,7 @@
      id="layer1">
     <path
        sodipodi:type="arc"
-       style="fill:#ff0000;fill-opacity:1;stroke:#00ff00;stroke-width:1.4545455;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:url(#radialGradient4125);fill-opacity:1.0;stroke:#00ff00;stroke-width:1.4545455;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path2180"
        sodipodi:cx="12"
        sodipodi:cy="12"

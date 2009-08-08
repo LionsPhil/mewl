@@ -3,6 +3,7 @@
 #include <SDL_ttf.h>
 #include "platform.hpp"
 #include "ui_sprite.hpp"
+#include "ui_sprite_pointer.hpp"
 #include "util.hpp"
 
 /* This isn't an exact mirror of the M.U.L.E. titles (e.g. the text border
@@ -48,7 +49,6 @@ private:
 	int title_wmult;
 	int title_hmult;
 	bool title_cycledir;
-	std::vector<UserInterfaceSpriteSprite*> pointers;
 	std::vector<UserInterfaceSpriteSprite*> sprites;
 	Difficulty::Type last_difficulty;
 	PlayerSetup last_playersetup[PLAYERS];
@@ -152,17 +152,23 @@ public:
 		}
 		title_cycledir = random_uniform(0, 1);
 		
-		// Set up sprites for the four player pointers.
+/*		// Set up sprites for the four player pointers.
 		pointers.reserve(PLAYERS);
 		for(int player = 0; player < PLAYERS; player++) {
 			pointers.push_back(
 				resources.spriteForPlayerPointer(player));
-		}
+		} */ // XXX
 		
 		// DEBUG activate all pointer sprites
 		for(int i = 0; i < PLAYERS; i++) {
-			sprites.push_back(pointers[i]);
+			// sprites.push_back(pointers[i]); // XXX
+			sprites.push_back(resources.playerpointers[i]);
 		}
+
+		// DEBUG set some directions
+		resources.playerpointers[1]->direction(DIR_E);
+		resources.playerpointers[2]->direction(DIR_SW);
+		resources.playerpointers[3]->direction(DIR_S);
 		
 		//sprites.push_back(new UserInterfaceSpriteSprite(resources,
 		//	resources.textures["pointer1"]));
@@ -173,8 +179,8 @@ public:
 		
 		// Do NOT delete sprites' contents; union of subset of others
 		sprites.clear();
-		for_each(pointers.begin(), pointers.end(), delete_functor());
-		pointers.clear();
+/*		for_each(pointers.begin(), pointers.end(), delete_functor());
+		pointers.clear(); */ // XXX
 	}
 
 	bool render(GameStage::Type stage, GameSetup& setup, Game* game,
@@ -238,18 +244,18 @@ public:
 
 		// TODO Draw characters running about etc.
 		// DEBUG dance the mouse pointers for sprite debug
-		pointers[0]->move(
+		resources.playerpointers[0]->move(
 			(music_ticks % 670)-31,
-			((music_beats % 4) * 12) + 128);
-		pointers[1]->move(
-			(music_ticks % 670)-31 + 4,
+			((music_beats % 2) * 12) + 128);
+		resources.playerpointers[1]->move(
+			(((int)(0.9*music_ticks)) % 670)-31 + 4,
 			((music_beats % 3) * 12) + 128 + 16);
-		pointers[2]->move(
-			(music_ticks % 670)-31 + 8,
-			((music_beats % 2) * 12) + 128 + 32);
-		pointers[3]->move(
-			(music_ticks % 670)-31 + 12,
-			((music_beats % 5) * 12) + 128 + 48);
+		resources.playerpointers[2]->move(
+			(((int)(0.8*music_ticks)) % 670)-31 + 8,
+			((music_beats % 5) * 12) + 128 + 32);
+		resources.playerpointers[3]->move(
+			320, //(((int)(0.7*music_ticks)) % 670)-31 + 12,
+			((music_beats % 4) * 12) + 128 + 48);
 
 		// Draw cycling message bar
 		if(beat && ((music_beats % 4) == 0)) {

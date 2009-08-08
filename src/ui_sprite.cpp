@@ -14,6 +14,7 @@
 #include "platform.hpp"
 #include "ui.hpp"
 #include "ui_sprite.hpp"
+#include "ui_sprite_pointer.hpp"
 
 class UserInterfaceSprite : public UserInterface {
 	bool fullscreen;
@@ -32,6 +33,8 @@ class UserInterfaceSprite : public UserInterface {
 			Mix_FreeMusic(resources.music_theme);
 			resources.music_theme = NULL;
 		}
+		for(int p = 0; p < PLAYERS; p++)
+			{ delete resources.playerpointers[p]; }
 		/* See removeSuffix for why we're freeing the keys too. We have
 		 * to collect them up for later free(), else we'll pull them out
 		 * from under the hash iterator's operator++ (yay valgrind). */
@@ -162,16 +165,24 @@ public:
 			return false;
 		}
 		// Load sprite textures
-		if(!loadTexture("pointer1.png")
-		|| !loadTexture("pointer2.png")
-		|| !loadTexture("pointer3.png")
-		|| !loadTexture("pointer4.png")
+		if(!loadTexture("pointer-centre.png")
+		|| !loadTexture("pointer-north.png")
+		|| !loadTexture("pointer-northeast.png")
 			) { return false; }
 		// Load audio samples TODO
 		// Load music (failure is nonfatal)
 		if(!(resources.music_theme = Mix_LoadMUS(findThemeMusicFile())))
 			{ warn("Unable to load music: %s", Mix_GetError()); }
 		resources.music_theme_bpm = 120; // Correct for Mule-Funk-Shun
+		// Generate player pointers
+		for(int p = 0; p < PLAYERS; p++) {
+			resources.playerpointers[p] = new
+				UserInterfaceSpritePointer(resources,
+				UserInterfaceSpriteConstants::col_player[p],
+				resources.textures["pointer-centre"],
+				resources.textures["pointer-north"],
+				resources.textures["pointer-northeast"]);
+		}
 		// Other initialisation
 		renderer = NULL;
 		laststage = GameStage::SCOREBOARD; // carefully crafted lie
@@ -346,21 +357,6 @@ void UserInterfaceSpriteResources::eraseSprites(
 	for_each(sprites.begin(), sprites.end(),
 		std::bind2nd(std::mem_fun(&UserInterfaceSpriteSprite::restore),
 			screen));
-}
-
-UserInterfaceSpriteSprite* UserInterfaceSpriteResources::spriteForPlayerPointer(
-	int player) {
-
-	const char* texture;
-	switch(player) { // Must match texture names loaded above
-		case 0: texture = "pointer1"; break;
-		case 1: texture = "pointer2"; break;
-		case 2: texture = "pointer3"; break;
-		case 3: texture = "pointer4"; break;
-		default:
-			warn("Player %d out of range", player); die(); return 0;
-	}
-	return new UserInterfaceSpriteSprite(*this, textures[texture]);
 }
 
 UserInterfaceSpriteSprite::UserInterfaceSpriteSprite(

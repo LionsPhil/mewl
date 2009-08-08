@@ -59,6 +59,7 @@ namespace UserInterfaceSpriteConstants {
 };
 
 class UserInterfaceSpriteSprite;
+class UserInterfaceSpritePointer;
 
 struct UserInterfaceSpriteResources {
 	TTF_Font* font_title;
@@ -72,6 +73,7 @@ struct UserInterfaceSpriteResources {
 		hash<const char*>, hash_eqcstr> textures_type;
 	samples_type samples;
 	textures_type textures;
+	UserInterfaceSpritePointer* playerpointers[PLAYERS];
 	// Dynamic resources which the UI core will read and reset
 	std::vector<SDL_Rect> dirtyrects;
 
@@ -91,8 +93,6 @@ struct UserInterfaceSpriteResources {
 	/** Erase a set of sprites, to match the above. */
 	void eraseSprites(
 		const std::vector<UserInterfaceSpriteSprite*>& sprites);
-	/** Make a sprite to use as a pointer for a given player ID. */
-	UserInterfaceSpriteSprite* spriteForPlayerPointer(int player);
 	// TODO Make sprite for species + dir + anim frame + ID (recolour)
 };
 

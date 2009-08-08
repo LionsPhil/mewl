@@ -115,8 +115,8 @@ WHITE=\033[0m
 RV=\033[7m
 COLUMN2 = \033[40G
 
-# Phony targets - these produce no output files
-.PHONY: all clean dist disttest work env info
+# Phony targets - these produce no output files (and are not files themselves)
+.PHONY: all clean dist disttest work env info run
 
 # Cygwin handling =============================================================
 # Autodetect a Cygwin enviroment. make imports enviroment variables, and
@@ -224,4 +224,8 @@ info: env
 	@$(ECHO) "C sources        : $(CSOURCES)"
 	@$(ECHO) "C++ sources      : $(CPPSOURCES)"
 	@$(ECHO) "Objects          : $(OBJECTS)"
+
+run: all
+	@$(PRINTF) "$(WHITE)--- $(RV)EXECUTING $(WHITE) $(BINARY)\n"
+	@./$(BINARY)
 
