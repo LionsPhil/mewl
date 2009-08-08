@@ -99,18 +99,19 @@ struct UserInterfaceSpriteResources {
 class UserInterfaceSpriteSprite {
 private:
 	UserInterfaceSpriteResources& resources;
-	const SDL_Surface* pixmap;
 	SDL_Surface* background;
-	SDL_Rect pos;
 	bool saved;
+protected:
+	const SDL_Surface* pixmap;
+	SDL_Rect pos;
 public:
 	/** Create a sprite using the given surface. Does NOT copy or own it.
 	 *  Uses the resources pointer for updateRects after screen updates. */
 	UserInterfaceSpriteSprite(UserInterfaceSpriteResources& resources,
 		const SDL_Surface* pixmap);
-	~UserInterfaceSpriteSprite();
+	virtual ~UserInterfaceSpriteSprite();
 	/** Position the sprite. Do not do this while drawn! */
-	void move(Sint16 x, Sint16 y);
+	virtual void move(Sint16 x, Sint16 y);
 	/** Save the background. */
 	void save(SDL_Surface* screen);
 	/** Draw the sprite, and update this and erased region. */

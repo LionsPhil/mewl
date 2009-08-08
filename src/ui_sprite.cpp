@@ -365,7 +365,7 @@ UserInterfaceSpriteSprite* UserInterfaceSpriteResources::spriteForPlayerPointer(
 
 UserInterfaceSpriteSprite::UserInterfaceSpriteSprite(
 	UserInterfaceSpriteResources& resources, const SDL_Surface* pixmap)
-	: resources(resources), pixmap(pixmap), saved(false) {
+	: resources(resources), saved(false), pixmap(pixmap) {
 	
 	assert(pixmap);
 	SDL_PixelFormat* format = pixmap->format;
@@ -412,4 +412,5 @@ const char* Difficulty::getName(Difficulty::Type self) {
 		case Difficulty::STANDARD:   return "Standard";
 		case Difficulty::TOURNAMENT: return "Tournament";
 	}
+	return 0; // shush, g++
 }

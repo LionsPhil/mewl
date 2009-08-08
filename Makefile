@@ -5,26 +5,27 @@
  SCRATCH = /tmp/$(BINARY)-scratch/
 DISTFILE = $(BINARY)-$(VERSION).zip
  DISTMSG = "M.E.W.L. $(VERSION)"
-# Platform can be one of 'posix', 'win', and hopefully soon 'wii'
+# Platform can be one of 'posix', 'win', and hopefully one day 'wii'
 PLATFORM = posix
 # User interface can currently only be 'Sprite'
 USERINTF = Sprite
 
 # Expects GNU-flavoured tools
 # Because we need C++ linkage, this will use CPPC to compile/link C sources!
-     AS = nasm
-   CPPC = g++
-     LD = g++
-    ZIP = zip
-  UNZIP = unzip
-     SH = sh
-   ECHO = echo
- PRINTF = printf
-     RM = rm
-  MKDIR = mkdir
-     CP = cp
-     MV = mv
-  EGREP = egrep
+      AS = nasm
+    CPPC = g++
+      LD = g++
+     ZIP = zip
+   UNZIP = unzip
+      SH = sh
+    ECHO = echo
+  PRINTF = printf
+      RM = rm
+   MKDIR = mkdir
+      CP = cp
+      MV = mv
+   EGREP = egrep
+INKSCAPE = inkscape
 
 # Extra flags to control build type
 # Debugging:
@@ -52,14 +53,19 @@ CPPSOURCES = controller.cpp difficulty.cpp game.cpp gamelogic.cpp gamesetup.cpp\
 
 # User interface files and flags
 ifeq ($(USERINTF),Sprite)
-    CPPSOURCES += ui_sprite.cpp ui_sprite_title.cpp
-    HEADERS    += ui_sprite.hpp
+    CPPSOURCES += ui_sprite.cpp ui_sprite_pointer.cpp ui_sprite_title.cpp
+    HEADERS    += ui_sprite.hpp ui_sprite_pointer.hpp
     LDFLAGSEX  += -lSDL_image -lSDL_mixer -lSDL_ttf
 endif
 
+# SVGs from which we autogenerate PNGs
+# (We don't actually catch the dervied PNGs with make clean)
+SVGPNGS = pointer-centre.svg pointer-north.svg pointer-northeast.svg
+
 # Anything else you want put in the distributed version
 # (Include all platform files here; duplication doesn't matter)
- EXTRADIST = Makefile INSTALL VERSION LICENSE \
+# FIXME We won't distribute USERINTFs other than the currently-set one
+ EXTRADIST = $(SVGPNGS) Makefile INSTALL VERSION LICENSE \
              platform_posix.cpp platform_win.cpp
 
 # PREAMBLE / AUTOCONFIGURATION / DERIVED --------------------------------------
@@ -95,7 +101,7 @@ EXTRACDEPS = Makefile $(HEADERS)
 
 # MAKEFILE METADATA AND MISCELLANY --------------------------------------------
 # Vpath is a colon separated list of source directories
-VPATH = src
+VPATH = src:svg
 
 # Gratuitous colours. While they make your build process look like an
 # '80s disco, they also make it easy to see what it's doing at-a-glance.
@@ -147,7 +153,7 @@ endif
 # a fair amount of noise.
 
 # This is the default target
-all: $(BINARY)
+all: $(BINARY) $(SVGPNGS:%.svg=data/%.png)
 
 $(BINARY): $(OBJECTS)
 	@$(PRINTF) "$(BLUE)--- $(RV)LINKING   $(WHITE) $@\n"
@@ -166,6 +172,10 @@ $(BINARY): $(OBJECTS)
 %.o : %.S
 	@$(PRINTF) "$(YELLOW)--- $(RV)ASSEMBLING$(WHITE) $<\n"
 	@$(AS) $(AFLAGS) $<
+
+data/%.png: %.svg
+	@$(PRINTF) "$(YELLOW)--- $(RV)RENDERING $(WHITE) $<\n"
+	@$(INKSCAPE) -z -f $< -C -e $@
 
 # A 'clean' target is handy to zap the intermediate object files
 # Typing "make clean" asks make to try to make a "clean", so it follows
