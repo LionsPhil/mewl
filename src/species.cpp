@@ -24,5 +24,3 @@ double Species::getTimeModifier(Species::Type self) {
 	}
 }
 
-//void Species::TheoreticalPerUIData(Species::Type self) { } // XXX
-

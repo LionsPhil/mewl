@@ -2,6 +2,25 @@
 #include "game.hpp"
 #include "util.hpp"
 
+/* The logic can reset a stage's state by using placement new:
+ * http://www.parashift.com/c++-faq-lite/dtors.html#faq-11.10
+ * http://stackoverflow.com/questions/222557/cs-placement-new
+ * http://www.research.att.com/~bs/bs_faq2.html
+ * Don't forget to call the dtor first (even though it's CURRENTLY a no-op). */
+ProductionEvent::ProductionEvent() : type(NONE), landslide(DIR_CENTRE) {}
+GameStageState::GameStageState() {} // it's all up to the inner contructors
+GameStageState::title::title() {for(int i=0;i<PLAYERS;i++)playerready[i]=false;}
+GameStageState::colour::colour() : player(0) {}
+GameStageState::species::species() : player(0) {}
+GameStageState::scoreboard::scoreboard() {
+	for(int i=0; i<PLAYERS; i++) {
+		landvalue[ i] = 0;
+		goodsvalue[i] = 0;
+	}
+}
+// TODO a bunch more of these
+GameStageState::preproduct::preproduct() {}
+
 Tile::Tile() : m_mountains(0), m_crystal(0), m_river(false), m_owned(false) {}
 uint8_t& Tile::mountains() { return m_mountains; }
 uint8_t& Tile::crystal() { return m_crystal; }

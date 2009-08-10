@@ -152,16 +152,8 @@ public:
 		}
 		title_cycledir = random_uniform(0, 1);
 		
-/*		// Set up sprites for the four player pointers.
-		pointers.reserve(PLAYERS);
-		for(int player = 0; player < PLAYERS; player++) {
-			pointers.push_back(
-				resources.spriteForPlayerPointer(player));
-		} */ // XXX
-		
 		// DEBUG activate all pointer sprites
 		for(int i = 0; i < PLAYERS; i++) {
-			// sprites.push_back(pointers[i]); // XXX
 			sprites.push_back(resources.playerpointers[i]);
 		}
 
@@ -169,9 +161,6 @@ public:
 		resources.playerpointers[1]->direction(DIR_E);
 		resources.playerpointers[2]->direction(DIR_SW);
 		resources.playerpointers[3]->direction(DIR_S);
-		
-		//sprites.push_back(new UserInterfaceSpriteSprite(resources,
-		//	resources.textures["pointer1"]));
 	}
 
 	~UserInterfaceSpriteTitle() {
@@ -179,8 +168,6 @@ public:
 		
 		// Do NOT delete sprites' contents; union of subset of others
 		sprites.clear();
-/*		for_each(pointers.begin(), pointers.end(), delete_functor());
-		pointers.clear(); */ // XXX
 	}
 
 	bool render(GameStage::Type stage, GameSetup& setup, Game* game,
