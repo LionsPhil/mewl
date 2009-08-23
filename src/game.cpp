@@ -6,8 +6,12 @@
  * http://www.parashift.com/c++-faq-lite/dtors.html#faq-11.10
  * http://stackoverflow.com/questions/222557/cs-placement-new
  * http://www.research.att.com/~bs/bs_faq2.html
- * Don't forget to call the dtor first (even though it's CURRENTLY a no-op). */
-ProductionEvent::ProductionEvent() : type(NONE), landslide(DIR_CENTRE) {}
+ * Don't forget to call the dtor first (even though it's CURRENTLY a no-op).
+ * These are zealously thorought initialisers, doing a little more work than
+ * is strictly necessary, but the cost is immeasurable, and null-bugs are
+ * much easier to deal with than random-uninitialised-bugs. */
+ProductionEvent::ProductionEvent() : type(NONE), x(0), y(0),
+	landslide(DIR_CENTRE) {}
 GameStageState::GameStageState() {} // it's all up to the inner contructors
 GameStageState::title::title() {for(int i=0;i<PLAYERS;i++)playerready[i]=false;}
 GameStageState::colour::colour() : player(0) {}
@@ -18,8 +22,35 @@ GameStageState::scoreboard::scoreboard() {
 		goodsvalue[i] = 0;
 	}
 }
-// TODO a bunch more of these
+GameStageState::landgrab::landgrab() : x(0), y(0) {}
+GameStageState::landauction::landauction() : x(0), y(0) {}
+GameStageState::preauction::preauction() : resource(Resource::NONE), store(0) {
+	for(int i=0; i<PLAYERS; i++) {
+		stock[     i] = 0;
+		production[i] = 0;
+		spoilage[  i] = 0;
+		surplus[   i] = 0;
+	}
+}
+GameStageState::auctiondeclare::auctiondeclare() : time(0), timemax(0)
+	{ for(int i=0; i<PLAYERS; i++) { buyer[i] = false; } }
+GameStageState::auction::auction() : storebuy(0), storesell(0) {
+	for(int i=0; i<PLAYERS; i++) {
+		bid[   i] = 0;
+		traded[i] = 0;
+	}
+}
+GameStageState::predevelop::predevelop() : player(0), eventhappens(false),
+	eventtype(PlayerEvent::CARE_PACKAGE) {}
+GameStageState::develophuman::develophuman() : dir(DIR_N), town(true),
+	mule(false), muletype(Resource::NONE), time(0), timemax(0)
+	{ /* TODO more */ }
+GameStageState::wampus::wampus() : player(0), prize(0) {}
+GameStageState::developcomp::developcomp() : player(0), x(0), y(0) {}
+GameStageState::postdevelop::postdevelop() : player(0), winnings(0) {}
 GameStageState::preproduct::preproduct() {}
+GameStageState::product::product() { /* TODO more */ }
+GameStageState::postproduct::postproduct() {}
 
 Tile::Tile() : m_mountains(0), m_crystal(0), m_river(false), m_owned(false) {}
 uint8_t& Tile::mountains() { return m_mountains; }
@@ -137,16 +168,16 @@ uint8_t countTilesOfType(const Game& game, int player, const Stock& types) {
 				((player < 0) || (tile.owner() == player))) {
 				
 				switch(tile.equipment()) {
-					case Resource::None:
+					case Resource::NONE:
 						if(types.workers){count++;}
 						break;
-					case Resource::Food:
+					case Resource::FOOD:
 						if(types.food){count++;} break;
-					case Resource::Energy:
+					case Resource::ENERGY:
 						if(types.energy){count++;}break;
-					case Resource::Ore:
+					case Resource::ORE:
 						if(types.ore){count++;} break;
-					case Resource::Crystal:
+					case Resource::CRYSTAL:
 						if(types.crystal){count++;}
 						break;
 				}

@@ -2,7 +2,7 @@
 #define RESOURCES_HPP_
 #include <stdint.h>
 
-namespace Resource { typedef enum { None, Food, Energy, Ore, Crystal } Type; }
+namespace Resource { typedef enum { NONE, FOOD, ENERGY, ORE, CRYSTAL } Type; }
 
 /* The constructor zeros out the fields for miscellaneous use, e.g. showing
  * differences in auctions. Initialised correctly for player/store by difficulty

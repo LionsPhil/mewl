@@ -3,8 +3,9 @@
 
 #include <vector>
 #include "controller.hpp"
-#include "resources.hpp"
 #include "gamesetup.hpp"
+#include "playerevent.hpp"
+#include "resources.hpp"
 
 /** Current stage of the entire game programme. */
 namespace GameStage { typedef enum { TITLE, COLOUR, SPECIES, SCOREBOARD,
@@ -76,7 +77,8 @@ public:
 	};
 	struct predevelop     { predevelop();
 		int player;
-		// TODO type/parameters of random event
+		bool eventhappens;
+		PlayerEvent::Type eventtype; // only defined if eventhappens
 	};
 	struct develophuman   { develophuman();
 		int player;
