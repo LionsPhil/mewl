@@ -4,13 +4,16 @@
 
 namespace Resource { typedef enum { None, Food, Energy, Ore, Crystal } Type; }
 
-// Initialised by difficulty level; this gets used for both price AND quantity
+/* The constructor zeros out the fields for miscellaneous use, e.g. showing
+ * differences in auctions. Initialised correctly for player/store by difficulty
+ * level; this gets used for both price AND quantity. */
 struct Stock {
-	uint32_t food;
-	uint32_t energy;
-	uint32_t ore;     // (Smithore)
-	uint32_t crystal; // (Crystite)
-	uint32_t workers; // (Mules) (Players never have workers 'in stock')
+	Stock();
+	int32_t food;
+	int32_t energy;
+	int32_t ore;     // (Smithore)
+	int32_t crystal; // (Crystite)
+	int32_t workers; // (Mules) (Players never have workers 'in stock')
 };
 
 #endif

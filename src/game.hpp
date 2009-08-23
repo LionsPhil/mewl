@@ -128,19 +128,19 @@ class Tile {
 	uint8_t m_crystal; // 0--4
 	bool m_river;
 	bool m_owned; // Owned; otherwise, owner and equipment are undefined.
-	Player* m_owner; // Needs to be ptr, as can be reseated
+	int m_owner;
 	// What has it been outfitted to produce? Only valid if owned.
 	Resource::Type m_equipment;
 public:
 	Tile();
 	uint8_t& mountains(); // Can be mutated by planetquakes
 	uint8_t& crystal(); // Can be mutated by meteor strikes
-	/*const*/ bool river();
-	/*const*/ bool owned();
-	const Player& owner();
-	const Resource::Type& equipment();
+	/*const*/ bool river() const;
+	/*const*/ bool owned() const;
+	/*const*/ int owner() const;
+	const Resource::Type& equipment() const;
 	void setUnowned();
-	void setOwnership(Player& owner, Resource::Type equipment);
+	void setOwnership(int owner, Resource::Type equipment);
 	friend class Game; // Let the terrain generator set the river
 };
 
@@ -160,9 +160,10 @@ public:
 	 *  or panning, and the terrain generator won't adjust densities.
 	 *  (Logically, pairs would be a nice way to model this; realistically,
 	 *  they're a hell of a lot of 'fluff' to just get some damn values. */
-	uint8_t getSizeX(); uint8_t getSizeY();
-	uint8_t getCityX(); uint8_t getCityY();
+	uint8_t getSizeX() const; uint8_t getSizeY() const;
+	uint8_t getCityX() const; uint8_t getCityY() const;
 	Tile& tile(uint8_t x, uint8_t y);
+	const Tile& tile(uint8_t x, uint8_t y) const;
 };
 
 /** The state of one game in progress. This covers things like inventory; it
@@ -178,6 +179,16 @@ public: // Another fancypants struct
 
 	Game(const GameSetup& setup);
 };
+
+/* Utility functions which operate upon Games but are not part of manipulating
+ * its state. */
+/** Count the number of tiles of land owned by the given player which match one
+ * of the types specified by nonzero fields in the Stock structure. 'Workers'
+ * matches 'None'. A player of -1 will match fields owned by anyone.
+ *  e.g. p= 0, stock={ore,crystal}     : count player 1's mining workers
+ *       p= 2, stock={all but workers} : count player 3's workers
+ *       p=-1, stock={all nonzero}     : count owned tiles, even idle ones */
+uint8_t countTilesOfType(const Game& game, int player, const Stock& types);
 
 #endif
 

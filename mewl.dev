@@ -1,7 +1,7 @@
 [Project]
 FileName=mewl.dev
 Name=mewl
-UnitCount=27
+UnitCount=28
 Type=0
 Ver=1
 ObjFiles=
@@ -253,7 +253,7 @@ BuildCmd=
 Major=0
 Minor=1
 Release=1
-Build=240
+Build=272
 LanguageID=2057
 CharsetID=1252
 CompanyName=
@@ -309,6 +309,16 @@ BuildCmd=
 
 [Unit27]
 FileName=src\playerevent.hpp
+CompileCpp=1
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit28]
+FileName=src\playerevent.cpp
 CompileCpp=1
 Folder=
 Compile=1

@@ -22,7 +22,7 @@ Species are an interesting modelling challenge:
    multiple places, but that's inevitable as we allow for differing UIs; a
    simple struct record cannot know what information every UI may want.
 
-Tuning variables which couldn't be determined from the original game have been marked with 'TWEAK' comments. (Thanks to decompilation below, none at present.)
+Tuning variables which couldn't be determined from the original game have been marked with 'TWEAK' comments. (Thanks to decompilation below, these are rare.)
 
 
 http://www2.bitstream.net/~marksim/atarimac/fonts.html

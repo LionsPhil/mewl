@@ -24,26 +24,36 @@ GameStageState::preproduct::preproduct() {}
 Tile::Tile() : m_mountains(0), m_crystal(0), m_river(false), m_owned(false) {}
 uint8_t& Tile::mountains() { return m_mountains; }
 uint8_t& Tile::crystal() { return m_crystal; }
-bool Tile::river() { return m_river; }
-bool Tile::owned() { return m_owned; }
-const Player& Tile::owner() { assert(m_owned); return *m_owner; }
-const Resource::Type& Tile::equipment() { assert(m_owned); return m_equipment; }
+bool Tile::river() const { return m_river; }
+bool Tile::owned() const { return m_owned; }
+int Tile::owner() const { assert(m_owned); return m_owner; }
+const Resource::Type& Tile::equipment() const {
+	assert(m_owned);
+	return m_equipment;
+}
 void Tile::setUnowned() { m_owned = false; }
-void Tile::setOwnership(Player& owner, Resource::Type equipment) {
+void Tile::setOwnership(int owner, Resource::Type equipment) {
 	m_owned = true;
-	m_owner = &owner;
+	m_owner = owner;
 	m_equipment = equipment;
 }
 
 Terrain::Terrain() : width(9), height(5), cityx(4), cityy(2) {
 	tiles.resize(width * height);
 }
-uint8_t Terrain::getSizeX() { return width; }
-uint8_t Terrain::getSizeY() { return height; }
-uint8_t Terrain::getCityX() { return cityx; }
-uint8_t Terrain::getCityY() { return cityy; }
+uint8_t Terrain::getSizeX() const { return width; }
+uint8_t Terrain::getSizeY() const { return height; }
+uint8_t Terrain::getCityX() const { return cityx; }
+uint8_t Terrain::getCityY() const { return cityy; }
 Tile& Terrain::tile(uint8_t x, uint8_t y) {
 	assert(x < width); assert(y < height);
+	return tiles[x + (y * width)];
+}
+const Tile& Terrain::tile(uint8_t x, uint8_t y) const {
+	/* I can't for the life of me work out the syntax to just call the
+	 * const overload, and then cast some delicious const on top. */
+	// FIXME *something* better than this copypaste
+ 	assert(x < width); assert(y < height);
 	return tiles[x + (y * width)];
 }
 
@@ -118,3 +128,30 @@ Game::Game(const GameSetup& setup) : difficulty(setup.difficulty), month(0) {
 	Difficulty::initialStorePrices(difficulty, prices);
 }
 
+uint8_t countTilesOfType(const Game& game, int player, const Stock& types) {
+	uint8_t count = 0;
+	for(uint8_t y = 0; y < game.terrain.getSizeY(); y++) {
+		for(uint8_t x = 0; x < game.terrain.getSizeX(); x++) {
+			const Tile& tile = game.terrain.tile(x, y);
+			if(tile.owned() &&
+				((player < 0) || (tile.owner() == player))) {
+				
+				switch(tile.equipment()) {
+					case Resource::None:
+						if(types.workers){count++;}
+						break;
+					case Resource::Food:
+						if(types.food){count++;} break;
+					case Resource::Energy:
+						if(types.energy){count++;}break;
+					case Resource::Ore:
+						if(types.ore){count++;} break;
+					case Resource::Crystal:
+						if(types.crystal){count++;}
+						break;
+				}
+			}
+		}
+	}
+	return count;
+}
