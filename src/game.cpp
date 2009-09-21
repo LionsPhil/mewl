@@ -16,8 +16,8 @@ GameStageState::GameStageState() {} // it's all up to the inner contructors
 GameStageState::title::title() {for(int i=0;i<PLAYERS;i++)playerready[i]=false;}
 GameStageState::colour::colour() : player(0) {}
 GameStageState::species::species() : player(0) {}
-GameStageState::scoreboard::scoreboard() {
-	for(int i=0; i<PLAYERS; i++) {
+GameStageState::scoreboard::scoreboard() : message(ScoreboardMessage::NONE) {
+	for(int i = 0; i < PLAYERS; i++) {
 		landvalue[ i] = 0;
 		goodsvalue[i] = 0;
 	}
@@ -25,7 +25,7 @@ GameStageState::scoreboard::scoreboard() {
 GameStageState::landgrab::landgrab() : x(0), y(0) {}
 GameStageState::landauction::landauction() : x(0), y(0) {}
 GameStageState::preauction::preauction() : resource(Resource::NONE), store(0) {
-	for(int i=0; i<PLAYERS; i++) {
+	for(int i = 0; i < PLAYERS; i++) {
 		stock[     i] = 0;
 		production[i] = 0;
 		spoilage[  i] = 0;
@@ -33,9 +33,9 @@ GameStageState::preauction::preauction() : resource(Resource::NONE), store(0) {
 	}
 }
 GameStageState::auctiondeclare::auctiondeclare() : time(0), timemax(0)
-	{ for(int i=0; i<PLAYERS; i++) { buyer[i] = false; } }
+	{ for(int i = 0; i < PLAYERS; i++) { buyer[i] = false; } }
 GameStageState::auction::auction() : storebuy(0), storesell(0) {
-	for(int i=0; i<PLAYERS; i++) {
+	for(int i = 0; i < PLAYERS; i++) {
 		bid[   i] = 0;
 		traded[i] = 0;
 	}
@@ -49,7 +49,12 @@ GameStageState::wampus::wampus() : player(0), prize(0) {}
 GameStageState::developcomp::developcomp() : player(0), x(0), y(0) {}
 GameStageState::postdevelop::postdevelop() : player(0), winnings(0) {}
 GameStageState::preproduct::preproduct() {}
-GameStageState::product::product() { /* TODO more */ }
+GameStageState::product::product() {
+	for(int y = 0; y < TERRAIN_HEIGHT; y++) {
+		for(int x = 0; x < TERRAIN_WIDTH; x++)
+			{ production[x][y] = 0; }
+	}
+}
 GameStageState::postproduct::postproduct() {}
 
 Tile::Tile() : m_mountains(0), m_crystal(0), m_river(false), m_owned(false) {}
@@ -69,7 +74,9 @@ void Tile::setOwnership(int owner, Resource::Type equipment) {
 	m_equipment = equipment;
 }
 
-Terrain::Terrain() : width(9), height(5), cityx(4), cityy(2) {
+Terrain::Terrain() : width(TERRAIN_WIDTH), height(TERRAIN_HEIGHT),
+	cityx(4), cityy(2) {
+
 	tiles.resize(width * height);
 }
 uint8_t Terrain::getSizeX() const { return width; }
@@ -81,11 +88,8 @@ Tile& Terrain::tile(uint8_t x, uint8_t y) {
 	return tiles[x + (y * width)];
 }
 const Tile& Terrain::tile(uint8_t x, uint8_t y) const {
-	/* I can't for the life of me work out the syntax to just call the
-	 * const overload, and then cast some delicious const on top. */
-	// FIXME *something* better than this copypaste
- 	assert(x < width); assert(y < height);
-	return tiles[x + (y * width)];
+	// This should call the non-const version, rather than a tight loop
+	return const_cast<Terrain*>(this)->tile(x, y);
 }
 
 /* Oh, how I'd love to have closures for this sort of thing. */

@@ -7,6 +7,10 @@
 #include "playerevent.hpp"
 #include "resources.hpp"
 
+/* Changing these is not advised. See Terrain class. Simple stuff first. */
+const uint8_t TERRAIN_WIDTH  = 9;
+const uint8_t TERRAIN_HEIGHT = 5;
+
 /** Current stage of the entire game programme. */
 namespace GameStage { typedef enum { TITLE, COLOUR, SPECIES, SCOREBOARD,
 	LANDGRAB, LANDAUCTION, PREAUCTION, AUCTIONDECLARE, AUCTION, PREDEVELOP,
@@ -17,14 +21,18 @@ namespace GameStage { typedef enum { TITLE, COLOUR, SPECIES, SCOREBOARD,
  *  row, others nothing at all. The quake needs a mountain, but since the
  *  details of such are left to the UI, we just give it a tile and direction.
  *  The 'none' event is used because of the pre/post separation. */
-/*namespace ProductionEvent { typedef enum { NONE, PESTS, PIRATES, RAIN, QUAKE,
-	SUN, METEORITE, RADIATION, FIRE } Type; };*/
 struct ProductionEvent { ProductionEvent();
 	enum { NONE, PESTS, PIRATES, RAIN, QUAKE, SUN, METEORITE, RADIATION,
 	FIRE } type;
 	uint8_t x; uint8_t y;
 	Direction landslide; // may be centre if no mountain moves
 };
+
+/** Scoreboard messages; during-game warnings, and end-game result. */
+namespace ScoreboardMessage { typedef enum { NONE, FAILFOOD, FAILENERGY,
+	LOWFOOD, LOWENERGY, LOWBOTH, LOWORE,
+	ENDREALBAD, ENDBAD, ENDSURVIVE, ENDOK, ENDGOOD, ENDREALGOOD, ENDAWESOME
+	/* "First Founder" requires 'OK' or better. */ } Type; };
 
 /** Stage-specific data pertinent to both logic and UI.
  * It's not quite MVC---this is only the shared part of the model. */
@@ -46,7 +54,9 @@ public:
 	struct scoreboard     { scoreboard();
 		uint32_t landvalue[PLAYERS];
 		uint32_t goodsvalue[PLAYERS];
-		// TODO type/parameters of message
+		// Player score is sum of money and land/goods values
+		// Colony score is sum of player scores
+		ScoreboardMessage::Type message;
 	};
 	struct landgrab       { landgrab();
 		uint8_t x; uint8_t y;
@@ -108,7 +118,13 @@ public:
 		ProductionEvent event;
 	};
 	struct product        { product();
-		// TODO production in each square
+		/* The production in each square here does NOT include the
+		 * effects of the post-production event. The two which may
+		 * affect it are PEST and PIRATES, both of which are
+		 * deterministic. The UI must animate the production change
+		 * away, and the logic must remember not to count it. */
+		/// The type of production is the exploitation type.
+		uint8_t production[TERRAIN_WIDTH][TERRAIN_HEIGHT];
 	};
 	struct postproduct    { postproduct();
 		ProductionEvent event;
