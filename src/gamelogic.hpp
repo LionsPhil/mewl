@@ -36,7 +36,8 @@ public:
 	 * tick; if NULL, continue using the current logic. Replaced logics
 	 * should be deleted. Simulation may be skipped while the UI
 	 * transitions. */
-	virtual GameLogic* simulate(GameSetup& setup, Game* game) = 0;
+	virtual GameLogic* simulate(GameSetup& setup, Game* game,
+		GameStageState& state) = 0;
 
 	/** Get the initial game logic, for the title screen. */
 	static GameLogic* getTitleState(GameLogicJumps* jumps);

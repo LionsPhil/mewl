@@ -13,7 +13,9 @@ void GameLogicJumps::destroyTheGameAlready() {
 
 class GameLogicTitle : public GameLogic {
 	virtual GameStage::Type getStage() { return GameStage::TITLE; }
-	virtual GameLogic* simulate(GameSetup& setup, Game* game) {
+	virtual GameLogic* simulate(GameSetup& setup, Game* game,
+		GameStageState& state) {
+		
 		return 0; // TODO
 	}
 public:

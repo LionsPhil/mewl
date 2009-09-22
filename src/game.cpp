@@ -13,18 +13,18 @@
 ProductionEvent::ProductionEvent() : type(NONE), x(0), y(0),
 	landslide(DIR_CENTRE) {}
 GameStageState::GameStageState() {} // it's all up to the inner contructors
-GameStageState::title::title() {for(int i=0;i<PLAYERS;i++)playerready[i]=false;}
-GameStageState::colour::colour() : player(0) {}
-GameStageState::species::species() : player(0) {}
-GameStageState::scoreboard::scoreboard() : message(ScoreboardMessage::NONE) {
+GameStageState::Title::Title() {for(int i=0;i<PLAYERS;i++)playerready[i]=false;}
+GameStageState::Colour::Colour() : player(0) {}
+GameStageState::Species::Species() : player(0) {}
+GameStageState::Scoreboard::Scoreboard() : message(ScoreboardMessage::NONE) {
 	for(int i = 0; i < PLAYERS; i++) {
 		landvalue[ i] = 0;
 		goodsvalue[i] = 0;
 	}
 }
-GameStageState::landgrab::landgrab() : x(0), y(0) {}
-GameStageState::landauction::landauction() : x(0), y(0) {}
-GameStageState::preauction::preauction() : resource(Resource::NONE), store(0) {
+GameStageState::LandGrab::LandGrab() : x(0), y(0) {}
+GameStageState::LandAuction::LandAuction() : x(0), y(0) {}
+GameStageState::PreAuction::PreAuction() : resource(Resource::NONE), store(0) {
 	for(int i = 0; i < PLAYERS; i++) {
 		stock[     i] = 0;
 		production[i] = 0;
@@ -32,30 +32,30 @@ GameStageState::preauction::preauction() : resource(Resource::NONE), store(0) {
 		surplus[   i] = 0;
 	}
 }
-GameStageState::auctiondeclare::auctiondeclare() : time(0), timemax(0)
+GameStageState::AuctionDeclare::AuctionDeclare() : time(0), timemax(0)
 	{ for(int i = 0; i < PLAYERS; i++) { buyer[i] = false; } }
-GameStageState::auction::auction() : storebuy(0), storesell(0) {
+GameStageState::Auction::Auction() : storebuy(0), storesell(0) {
 	for(int i = 0; i < PLAYERS; i++) {
 		bid[   i] = 0;
 		traded[i] = 0;
 	}
 }
-GameStageState::predevelop::predevelop() : player(0), eventhappens(false),
+GameStageState::PreDevelop::PreDevelop() : player(0), eventhappens(false),
 	eventtype(PlayerEvent::CARE_PACKAGE) {}
-GameStageState::develophuman::develophuman() : dir(DIR_N), town(true),
+GameStageState::DevelopHuman::DevelopHuman() : dir(DIR_N), town(true),
 	mule(false), muletype(Resource::NONE), time(0), timemax(0)
 	{ /* TODO more */ }
-GameStageState::wampus::wampus() : player(0), prize(0) {}
-GameStageState::developcomp::developcomp() : player(0), x(0), y(0) {}
-GameStageState::postdevelop::postdevelop() : player(0), winnings(0) {}
-GameStageState::preproduct::preproduct() {}
-GameStageState::product::product() {
+GameStageState::Wampus::Wampus() : player(0), prize(0) {}
+GameStageState::DevelopComp::DevelopComp() : player(0), x(0), y(0) {}
+GameStageState::PostDevelop::PostDevelop() : player(0), winnings(0) {}
+GameStageState::PreProduct::PreProduct() {}
+GameStageState::Product::Product() {
 	for(int y = 0; y < TERRAIN_HEIGHT; y++) {
 		for(int x = 0; x < TERRAIN_WIDTH; x++)
 			{ production[x][y] = 0; }
 	}
 }
-GameStageState::postproduct::postproduct() {}
+GameStageState::PostProduct::PostProduct() {}
 
 Tile::Tile() : m_mountains(0), m_crystal(0), m_river(false), m_owned(false) {}
 uint8_t& Tile::mountains() { return m_mountains; }

@@ -208,10 +208,11 @@ public:
 	}
 
 	bool render(GameStage::Type stage, GameSetup& setup, Game* game,
-		uint32_t ticks) {
+		GameStageState& state, uint32_t ticks) {
 
 		bool allowtransition = renderer ?
-			renderer->render(stage, setup, game, ticks, resources)
+			renderer->render(stage, setup, game, state, ticks,
+				resources)
 			: true;
 		
 		if(allowtransition && (stage != laststage)) {

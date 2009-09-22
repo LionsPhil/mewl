@@ -42,55 +42,55 @@ public:
 	 * that we don't have to worry about the UI and the logic being one
 	 * stage transition apart: the logic shouldn't trample state the UI is
 	 * still using. (The disadvantage is all this verbosity :/ ) */
-	struct title          { title();
+	struct Title          { Title();
 		bool playerready[PLAYERS];
-	};
-	struct colour         { colour();
+	} title;
+	struct Colour         { Colour();
 		int player; // of colour up for grabs
-	};
-	struct species        { species();
+	} colour;
+	struct Species        { Species();
 		int player;
-	};
-	struct scoreboard     { scoreboard();
+	} species;
+	struct Scoreboard     { Scoreboard();
 		uint32_t landvalue[PLAYERS];
 		uint32_t goodsvalue[PLAYERS];
 		// Player score is sum of money and land/goods values
 		// Colony score is sum of player scores
 		ScoreboardMessage::Type message;
-	};
-	struct landgrab       { landgrab();
+	} scoreboard;
+	struct LandGrab       { LandGrab();
 		uint8_t x; uint8_t y;
-	};
-	struct landauction    { landauction();
+	} landgrab;
+	struct LandAuction    { LandAuction();
 		uint8_t x; uint8_t y;
-	};
-	struct preauction { preauction();
+	} landauction;
+	struct PreAuction     { PreAuction();
 		Resource::Type resource; // 'none' means 'land'; rest varied
 		uint32_t stock[     PLAYERS];
 		uint32_t production[PLAYERS];
 		uint32_t spoilage[  PLAYERS];
 		 int32_t surplus[   PLAYERS]; // negative = deficit
 		uint32_t store;
-	};
-	struct auctiondeclare { auctiondeclare();
+	} preauction;
+	struct AuctionDeclare { AuctionDeclare();
 		// Preauction still valid, plus:
 		bool buyer[PLAYERS]; // else seller
 		double time;
 		double timemax;
-	};
-	struct auction        { auction();
+	} auctiondeclare;
+	struct Auction        { Auction();
 		// Preauction and auctiondeclare still valid (inc. time), plus:
 		uint32_t bid[   PLAYERS];
 		uint32_t traded[PLAYERS];
 		uint32_t storebuy;
 		uint32_t storesell;
-	};
-	struct predevelop     { predevelop();
+	} auction;
+	struct PreDevelop     { PreDevelop();
 		int player;
 		bool eventhappens;
 		PlayerEvent::Type eventtype; // only defined if eventhappens
-	};
-	struct develophuman   { develophuman();
+	} predevelop;
+	struct DevelopHuman   { DevelopHuman();
 		int player;
 		// TODO position...more specific than per-tile: float? fixed?
 		Direction dir;
@@ -100,24 +100,24 @@ public:
 		double time; // seconds remaining
 		double timemax; // 'normal' maximum time for player for scale
 		// TODO wampus mountain, visibility
-	};
-	struct wampus         { wampus();
+	} develophuman;
+	struct Wampus         { Wampus();
 		int player;
 		uint32_t prize;
-	};
-	struct developcomp    { developcomp();
+	} wampus;
+	struct DevelopComp    { DevelopComp();
 		int player;
 		uint8_t x; // cursor, not player-character, position
 		uint8_t y;
-	};
-	struct postdevelop    { postdevelop();
+	} developcomp;
+	struct PostDevelop    { PostDevelop();
 		int player;
 		uint32_t winnings; // if zero, ran out of time
-	};
-	struct preproduct     { preproduct();
+	} postdevelop;
+	struct PreProduct     { PreProduct();
 		ProductionEvent event;
-	};
-	struct product        { product();
+	} preproduct;
+	struct Product        { Product();
 		/* The production in each square here does NOT include the
 		 * effects of the post-production event. The two which may
 		 * affect it are PEST and PIRATES, both of which are
@@ -125,10 +125,10 @@ public:
 		 * away, and the logic must remember not to count it. */
 		/// The type of production is the exploitation type.
 		uint8_t production[TERRAIN_WIDTH][TERRAIN_HEIGHT];
-	};
-	struct postproduct    { postproduct();
+	} product;
+	struct PostProduct    { PostProduct();
 		ProductionEvent event;
-	};
+	} postproduct;
 
 	GameStageState();
 };

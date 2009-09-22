@@ -171,7 +171,8 @@ public:
 	}
 
 	bool render(GameStage::Type stage, GameSetup& setup, Game* game,
-		uint32_t ticks, UserInterfaceSpriteResources& resources) {
+		GameStageState& state, uint32_t ticks,
+		UserInterfaceSpriteResources& resources) {
 		
 		bool beat = false;
 		SDL_Surface* screen = SDL_GetVideoSurface();
@@ -283,7 +284,8 @@ public:
 		last_difficulty = setup.difficulty;
 		for(int player = 0; player < PLAYERS; player++) {
 			last_playersetup[player] = setup.playersetup[player];
-			// TODO last_playerready[PLAYERS];
+			last_playerready[player] =
+				state.title.playerready[player];
 		}
 		
 		resources.displaySprites(sprites);

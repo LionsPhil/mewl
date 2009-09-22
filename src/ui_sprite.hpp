@@ -128,7 +128,8 @@ public:
 		game, uint32_t ticks, UserInterfaceSpriteResources& resources){}
 	/// Normal rendering (passthrough of UI-level render())
 	virtual bool render(GameStage::Type stage, GameSetup& setup, Game* game,
-		uint32_t ticks, UserInterfaceSpriteResources& resources) = 0;
+		GameStageState& state, uint32_t ticks,
+		UserInterfaceSpriteResources& resources) = 0;
 
 	/* It's time for that delicious factory pattern again, folks. */
 	FACTORY_REGISTER_IF(UserInterfaceSpriteRenderer)

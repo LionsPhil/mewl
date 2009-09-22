@@ -12,6 +12,7 @@ static int realmain(bool fullscreen) {
 	bool run;
 	ControlManager controlman;
 	GameSetup gamesetup;
+	GameStageState gamestate;
 	Game* game;
 	GameLogicJumps* gamejumps;
 	GameLogic* gamelogic;
@@ -112,7 +113,7 @@ static int realmain(bool fullscreen) {
 				if(transitionok) {
 					GameLogic* nextlogic;
 					nextlogic = gamelogic->simulate(
-						gamesetup, game);
+						gamesetup, game, gamestate);
 					if(nextlogic) {
 						delete gamelogic;
 						gamelogic = nextlogic;
@@ -123,7 +124,7 @@ static int realmain(bool fullscreen) {
 
 			/* Poke UI to render game state */
 			transitionok = userintf->render(gamelogic->getStage(),
-				gamesetup, game, ticks);
+				gamesetup, game, gamestate, ticks);
 		} else {
 			/* Have a nap until we actually have at least one tick
 			 * to run */

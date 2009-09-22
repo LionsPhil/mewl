@@ -24,7 +24,7 @@ public:
 	 * If the stage is the same, also return true. Note that Game may be
 	 * NULL for some game stages. */
 	virtual bool render(GameStage::Type stage, GameSetup& setup, Game* game,
-		uint32_t ticks) = 0;
+		GameStageState& state, uint32_t ticks) = 0;
 	
 	// TODO Determine if the player is touching a mountain, return which
 
