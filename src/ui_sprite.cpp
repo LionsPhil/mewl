@@ -259,7 +259,7 @@ public:
 			int sumfps = 0;
 			for(std::deque<int>::iterator i = fps_history.begin();
 				i < fps_history.end(); i++) { sumfps += *i; }
-			snprintf(str, 7, "%3d", sumfps / fps_history.size());
+			snprintf(str,7, "%3d",(int)(sumfps/fps_history.size()));
 			str[7] = '\0';
 			SDL_Surface* sur = resources.renderText(
 				resources.font_small, str, white);

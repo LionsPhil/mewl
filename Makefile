@@ -85,7 +85,8 @@ WARNFLAGS = -Werror -W -Wall -Wpointer-arith -Wcast-align -Wwrite-strings \
 CWFLAGS   = $(WARNFLAGS) -Wcast-qual -Wmissing-declarations \
             -Wnested-externs -Wredundant-decls -Wundef \
             -Wstrict-prototypes -Wmissing-prototypes
-CPPWFLAGS = $(WARNFLAGS)
+CPPWFLAGS = $(WARNFLAGS) -Wno-deprecated
+# Need no-depricated due to hash_map getting bitchy in recent GCC.
 
 # Tool flags
 # Don't make CXXFLAGS include CFLAGS or it'll get duplicate CFLAGSEX
