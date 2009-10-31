@@ -105,7 +105,7 @@ class MouseController : public Controller {
 public:
 	MouseController() : calibx(0.5), caliby(0.5) {}
 
-	const char* getDescription() { return "(default)"; }
+	const char* getDescription() { return "Mouse"; }
 	bool hasPosition() { return updatePosition(); }
 
 	std::pair<double, double> getPosition() {

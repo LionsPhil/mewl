@@ -18,6 +18,11 @@ public: // This is just a struct with an ego problem
 	bool computer;
 	Controller* controller; // meaningless if computer player
 };
+inline bool operator==(const PlayerSetup& one, const PlayerSetup& two) {
+	return one.species == two.species
+		&& one.computer == two.computer
+		&& one.controller == two.controller;
+}
 
 class GameSetup {
 public: // Another fancy-pants struct

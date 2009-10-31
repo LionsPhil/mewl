@@ -266,19 +266,44 @@ public:
 			resources.displayTextLine(resources.font_small,
 				difftext.c_str(), textcolour, background, 408);
 		}
-		// TODO
-		{
-/*			resources.displayTextLine(resources.font_small,
-				"mouse key1 key2 joy1",
-				textcolour, background, 432); */
+		for(int player = 0; player < PLAYERS; player++) {
+			// Put each player in a 1/4 of the screen, RV if ready.
+			// TODO logic needs to keep active set to four, dropping
+			// out oldest.
+			const int playw = 640 / PLAYERS;
+			SDL_Rect bar = {0, 432, playw, 0};
+			if(first_frame || !(setup.playersetup[player] ==
+				last_playersetup[player])) {
 
-			resources.displayTextLine(resources.font_small,
-				"      key1          ",
-				UserInterfaceSpriteConstants::col_text_white,
-				background, 432);
-			// TODO put each in a 1/4 of the screen, white if ready
-			// logic needs to keep active set to four, dropping out
-			// oldest. put "CPU" in place in gold if <4.
+				SDL_Color fg =setup.playersetup[player].computer
+? UserInterfaceSpriteConstants::col_text_gold
+: UserInterfaceSpriteConstants::col_text_white;
+				SDL_Color bg = background;
+				if(random_uniform(0, 1)) { // FIXME TODO ifready
+					SDL_Color swap = fg; fg = bg; bg = swap;
+				}
+				SDL_Surface* textpix = resources.renderText(
+					resources.font_small,
+					setup.playersetup[player].computer
+						? "CPU" // Retrotacular!
+						: setup.playersetup[player].
+						  controller->getDescription(),
+					fg);
+				if(textpix) {
+					bar.x = player * playw;
+					bar.h = textpix->h;
+					SDL_FillRect(screen, &bar, SDL_MapRGB(
+						screen->format,bg.r,bg.g,bg.b));
+					resources.updateRect(bar.x, bar.y,
+						bar.w, bar.h);
+					bar.w = textpix->w;
+					if(bar.w > playw) { bar.w = playw; }
+					bar.x += (playw - bar.w) / 2;
+					SDL_BlitSurface(textpix, NULL,
+						screen, &bar);
+					SDL_FreeSurface(textpix);
+				}
+			}
 		}
 		// Remember the last GameSetup state
 		last_difficulty = setup.difficulty;
