@@ -99,7 +99,7 @@ class MouseController : public Controller {
 		// Attempt two to identify out-of-window state
 		if(cx < 0 || cx >= 1 || cy < 0 || cy >= 1 ) { return false; }
 		// Ok, we think we're inside the window
-		calibx = cx; caliby = cx;
+		calibx = cx; caliby = cy;
 		return true;
 	}
 public:

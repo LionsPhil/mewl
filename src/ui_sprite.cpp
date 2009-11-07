@@ -362,7 +362,7 @@ void UserInterfaceSpriteResources::eraseSprites(
 
 UserInterfaceSpriteSprite::UserInterfaceSpriteSprite(
 	UserInterfaceSpriteResources& resources, const SDL_Surface* pixmap)
-	: resources(resources), saved(false), pixmap(pixmap) {
+	: resources(resources), saved(false), visible(true), pixmap(pixmap) {
 	
 	assert(pixmap);
 	SDL_PixelFormat* format = pixmap->format;
@@ -382,20 +382,27 @@ UserInterfaceSpriteSprite::~UserInterfaceSpriteSprite() {
 
 void UserInterfaceSpriteSprite::move(Sint16 x, Sint16 y)
 	{ pos.x = x; pos.y = y; }
+
+void UserInterfaceSpriteSprite::showhide(bool visible) {
+	saved = false; // Skip restore from old data after becoming visible
+	this->visible = visible;
+}
 	
 void UserInterfaceSpriteSprite::save(SDL_Surface* screen) {
+	if(!visible) { return; }
 	SDL_BlitSurface(screen, &pos, background, 0);
 	saved = true;
 }
 
 void UserInterfaceSpriteSprite::draw(SDL_Surface* screen) {
+	if(!visible) { return; }
 	SDL_Rect clip = pos; // SDL_BlitSurface will trample
 	SDL_BlitSurface(const_cast<SDL_Surface*>(pixmap), 0, screen, &clip);
 	resources.updateRect(pos.x, pos.y, pos.w, pos.h);
 }
 
 void UserInterfaceSpriteSprite::restore(SDL_Surface* screen) {	
-	if(!saved) { return; } // Avoid restoring garbage first frame
+	if(!saved || !visible) { return; }// Avoid restoring garbage first frame
 	SDL_Rect clip = pos;
 	SDL_BlitSurface(background, 0, screen, &clip);
 	resources.updateRect(pos.x, pos.y, pos.w, pos.h);

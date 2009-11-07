@@ -1,6 +1,6 @@
 #ifndef UI_SPRITE_POINTER_
 #define UI_SPRITE_POINTER_
-#include "controller.hpp" // for Direction
+#include "controller.hpp" // for Direction and utility function
 #include "ui_sprite.hpp"
 
 /** Dynamic sprite which renders as an appropriate pointer graphic.
@@ -38,6 +38,10 @@ public:
 	/** Position the sprite's *hotspot*. Again, not while drawn. */
 	virtual void move(Sint16 x, Sint16 y);
 };
+
+/// Set up a UISP based on controller state. Needs screen for co-ord scaling.
+void UserInterfaceSpritePointer_byController(SDL_Surface* screen,
+	UserInterfaceSpritePointer& uisp, Controller* controller);
 
 #endif
 

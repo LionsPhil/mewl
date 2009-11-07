@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <utility> // (pair)
 #include "ui_sprite_pointer.hpp"
 #include "platform.hpp"
 
@@ -134,5 +135,21 @@ SDL_Surface* UserInterfaceSpritePointer::copyRotated(SDL_Surface* source) {
 	SDL_UnlockSurface(dest);
 	SDL_UnlockSurface(source);
 	return dest;
+}
+
+void UserInterfaceSpritePointer_byController(SDL_Surface* screen,
+	UserInterfaceSpritePointer& uisp, Controller* controller) {
+
+	if(controller && controller->hasPosition()) {
+		Sint16 x, y;
+		std::pair<double, double> position = controller->getPosition();
+		x = (Sint16) (position.first  * screen->w);
+		y = (Sint16) (position.second * screen->h);
+		uisp.move(x, y);
+		uisp.direction(controller->getDirection());
+		uisp.showhide(true);
+	} else {
+		uisp.showhide(false);
+	}
 }
 

@@ -152,15 +152,11 @@ public:
 		}
 		title_cycledir = random_uniform(0, 1);
 		
-		// DEBUG activate all pointer sprites
+		// Activate all pointer sprites
+		// FIXME Nice pattern demo for later stages, but overkill here
 		for(int i = 0; i < PLAYERS; i++) {
 			sprites.push_back(resources.playerpointers[i]);
 		}
-
-		// DEBUG set some directions
-		resources.playerpointers[1]->direction(DIR_E);
-		resources.playerpointers[2]->direction(DIR_SW);
-		resources.playerpointers[3]->direction(DIR_S);
 	}
 
 	~UserInterfaceSpriteTitle() {
@@ -231,7 +227,7 @@ public:
 		}
 
 		// TODO Draw characters running about etc.
-		// DEBUG dance the mouse pointers for sprite debug
+		/* DEBUG dance the mouse pointers for sprite debug
 		resources.playerpointers[0]->move(
 			(music_ticks % 670)-31,
 			((music_beats % 2) * 12) + 128);
@@ -244,6 +240,10 @@ public:
 		resources.playerpointers[3]->move(
 			320, //(((int)(0.7*music_ticks)) % 670)-31 + 12,
 			((music_beats % 4) * 12) + 128 + 48);
+		if(beat) { for(int i = 0; i < 4; ++i) {
+			resources.playerpointers[i]->showhide(
+				random_uniform(0, 1));
+		}}*/
 
 		// Draw cycling message bar
 		if(beat && ((music_beats % 4) == 0)) {
@@ -308,10 +308,14 @@ public:
 		}
 		// Remember the last GameSetup state and GameStageState
 		last_difficulty = setup.difficulty;
-		for(int player = 0; player < PLAYERS; player++) {
+		for(int player = 0; player < PLAYERS; ++player) {
 			last_playersetup[player] = setup.playersetup[player];
 			last_playerready[player] =
 				state.title.playerready[player];
+			// While looping, update the player pointers
+			UserInterfaceSpritePointer_byController(screen,
+				*resources.playerpointers[player],
+				setup.playersetup[player].controller);
 		}
 		
 		resources.displaySprites(sprites);

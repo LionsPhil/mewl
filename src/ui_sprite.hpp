@@ -101,6 +101,7 @@ private:
 	UserInterfaceSpriteResources& resources;
 	SDL_Surface* background;
 	bool saved;
+	bool visible;
 protected:
 	const SDL_Surface* pixmap;
 	SDL_Rect pos;
@@ -112,6 +113,9 @@ public:
 	virtual ~UserInterfaceSpriteSprite();
 	/** Position the sprite. Do not do this while drawn! */
 	virtual void move(Sint16 x, Sint16 y);
+	/** Change visibility, default true. Do not do this while drawn!
+	 * Invisible sprites dirty their buffers and no-op save/draw/restore. */
+	void showhide(bool visible);
 	/** Save the background. */
 	void save(SDL_Surface* screen);
 	/** Draw the sprite, and update this and erased region. */

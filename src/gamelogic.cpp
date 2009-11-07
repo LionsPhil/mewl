@@ -1,7 +1,6 @@
 #include <new> // Fear the placement new! See game.cpp.
 
 #include "gamelogic.hpp"
-#include "platform.hpp" // DEBUG
 
 GameLogicJumps::GameLogicJumps(Game** ptrgame, const UserInterface& ui)
 	: ptrgame(ptrgame), ui(ui) {}
@@ -65,8 +64,6 @@ next_controller: ;
 				setup.playersetup[player].controller
 					->getDirection() == DIR_N;
 		}
-//if(!setup.playersetup[0].computer) { trace("%d", setup.playersetup[0].controller->getDirection()); } // DEBUG
-//trace("%s", state.title.playerready[0] ? "RDY" : "not"); // DEBUG
 
 		return 0; // TODO next state if all ready
 	}
