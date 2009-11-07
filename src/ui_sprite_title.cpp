@@ -268,24 +268,25 @@ public:
 		}
 		for(int player = 0; player < PLAYERS; player++) {
 			// Put each player in a 1/4 of the screen, RV if ready.
-			// TODO logic needs to keep active set to four, dropping
-			// out oldest.
 			const int playw = 640 / PLAYERS;
 			SDL_Rect bar = {0, 432, playw, 0};
-			if(first_frame || !(setup.playersetup[player] ==
-				last_playersetup[player])) {
+			if(first_frame // outdent for clarity
+	|| !(setup.playersetup[player] == last_playersetup[player])
+	|| state.title.playerready[player] != last_playerready[player]) {
 
-				SDL_Color fg =setup.playersetup[player].computer
+				const bool comp =
+					setup.playersetup[player].computer;
+				SDL_Color fg = comp
 ? UserInterfaceSpriteConstants::col_text_gold
 : UserInterfaceSpriteConstants::col_text_white;
 				SDL_Color bg = background;
-				if(random_uniform(0, 1)) { // FIXME TODO ifready
+				// We don't show comps as ready; meaningless
+				if(state.title.playerready[player] && !comp) {
 					SDL_Color swap = fg; fg = bg; bg = swap;
 				}
 				SDL_Surface* textpix = resources.renderText(
 					resources.font_small,
-					setup.playersetup[player].computer
-						? "CPU" // Retrotacular!
+						comp ? "CPU" // Retrotacular!
 						: setup.playersetup[player].
 						  controller->getDescription(),
 					fg);
@@ -305,7 +306,7 @@ public:
 				}
 			}
 		}
-		// Remember the last GameSetup state
+		// Remember the last GameSetup state and GameStageState
 		last_difficulty = setup.difficulty;
 		for(int player = 0; player < PLAYERS; player++) {
 			last_playersetup[player] = setup.playersetup[player];

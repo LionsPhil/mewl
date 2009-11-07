@@ -7,7 +7,7 @@
  * http://stackoverflow.com/questions/222557/cs-placement-new
  * http://www.research.att.com/~bs/bs_faq2.html
  * Don't forget to call the dtor first (even though it's CURRENTLY a no-op).
- * These are zealously thorought initialisers, doing a little more work than
+ * These are zealously thorough initialisers, doing a little more work than
  * is strictly necessary, but the cost is immeasurable, and null-bugs are
  * much easier to deal with than random-uninitialised-bugs. */
 ProductionEvent::ProductionEvent() : type(NONE), x(0), y(0),

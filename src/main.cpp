@@ -49,7 +49,7 @@ static int realmain(bool fullscreen) {
 
 	game = 0;
 	gamejumps = new GameLogicJumps(&game, *userintf);
-	gamelogic = GameLogic::getTitleState(gamejumps);
+	gamelogic = GameLogic::getTitleState(gamejumps, gamestate, controlman);
 	transitionok = true;
 
 	trace("Running");
@@ -113,10 +113,15 @@ static int realmain(bool fullscreen) {
 				if(transitionok) {
 					GameLogic* nextlogic;
 					nextlogic = gamelogic->simulate(
-						gamesetup, game, gamestate);
+						gamesetup, game);
 					if(nextlogic) {
 						delete gamelogic;
 						gamelogic = nextlogic;
+						// Block any more simulation,
+						// so that we don't jump two
+						// states before the UI gets
+						// to react.
+						transitionok = false;
 					}
 				}
 				ticks++;

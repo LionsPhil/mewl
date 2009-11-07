@@ -1,5 +1,7 @@
 #ifndef GAMELOGIC_HPP_
 #define GAMELOGIC_HPP_
+
+#include "controller.hpp"
 #include "game.hpp"
 
 class UserInterface;
@@ -26,8 +28,11 @@ public:
 class GameLogic {
 protected:
 	GameLogicJumps* jumps;
+	// We need this permanently, rather than in simulate(), because stage
+	// logic constructors need to reinitialise parts of it.
+	GameStageState& state;
+	GameLogic(GameLogicJumps* jumps, GameStageState& state);
 public:
-	GameLogic(GameLogicJumps* jumps);
 	virtual ~GameLogic();
 	/** Get the stage this object does the processing for, so that the
 	 * renderer can be told to transition. */
@@ -36,11 +41,11 @@ public:
 	 * tick; if NULL, continue using the current logic. Replaced logics
 	 * should be deleted. Simulation may be skipped while the UI
 	 * transitions. */
-	virtual GameLogic* simulate(GameSetup& setup, Game* game,
-		GameStageState& state) = 0;
+	virtual GameLogic* simulate(GameSetup& setup, Game* game) = 0;
 
 	/** Get the initial game logic, for the title screen. */
-	static GameLogic* getTitleState(GameLogicJumps* jumps);
+	static GameLogic* getTitleState(GameLogicJumps* jumps,
+		GameStageState& state, ControlManager& controlman);
 };
 
 #endif
