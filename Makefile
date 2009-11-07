@@ -53,7 +53,8 @@ CPPSOURCES = controller.cpp difficulty.cpp game.cpp gamelogic.cpp gamesetup.cpp\
 
 # User interface files and flags
 ifeq ($(USERINTF),Sprite)
-    CPPSOURCES += ui_sprite.cpp ui_sprite_pointer.cpp ui_sprite_title.cpp
+    CPPSOURCES += ui_sprite.cpp ui_sprite_pointer.cpp ui_sprite_title.cpp \
+                  ui_sprite_setup.cpp
     HEADERS    += ui_sprite.hpp ui_sprite_pointer.hpp
     LDFLAGSEX  += -lSDL_image -lSDL_mixer -lSDL_ttf
 endif

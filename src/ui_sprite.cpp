@@ -220,23 +220,36 @@ public:
 			if(renderer) { delete renderer; renderer = NULL; }
 			switch(stage) {
 				case GameStage::TITLE: rc += "Title"; break;
-				// TODO all others
-				case GameStage::COLOUR: rc += ""; break;
-				case GameStage::SPECIES: rc += ""; break;
-				case GameStage::SCOREBOARD: rc += ""; break;
-				case GameStage::LANDGRAB: rc += ""; break;
-				case GameStage::LANDAUCTION: rc += ""; break;
-				case GameStage::PREAUCTION: rc += ""; break;
-				case GameStage::AUCTIONDECLARE: rc += ""; break;
-				case GameStage::AUCTION: rc += ""; break;
-				case GameStage::PREDEVELOP: rc += ""; break;
-				case GameStage::DEVELOPHUMAN: rc += ""; break;
-				case GameStage::WAMPUS: rc += ""; break;
-				case GameStage::DEVELOPCOMP: rc += ""; break;
-				case GameStage::POSTDEVELOP: rc += ""; break;
-				case GameStage::PREPRODUCT: rc += ""; break;
-				case GameStage::PRODUCT: rc += ""; break;
-				case GameStage::POSTPRODUCT: rc += ""; break;
+				case GameStage::COLOUR: rc += "Colour"; break;
+				case GameStage::SPECIES: rc += "Species"; break;
+				case GameStage::SCOREBOARD:
+					rc += "Scoreboard"; break;
+				case GameStage::LANDGRAB:
+					rc += "LandGrab"; break;
+				case GameStage::LANDAUCTION:
+					rc += "LandAuction"; break;
+				case GameStage::PREAUCTION:
+					rc += "PreAuction"; break;
+				case GameStage::AUCTIONDECLARE:
+					rc += "AuctionDeclare"; break;
+				case GameStage::AUCTION:
+					rc += "Auction"; break;
+				case GameStage::PREDEVELOP:
+					rc += "PreDevelop"; break;
+				case GameStage::DEVELOPHUMAN:
+					rc += "DevelopHuman"; break;
+				case GameStage::WAMPUS:
+					rc += "Wampus"; break;
+				case GameStage::DEVELOPCOMP:
+					rc += "DevelopComp"; break;
+				case GameStage::POSTDEVELOP:
+					rc += "PostDevelop"; break;
+				case GameStage::PREPRODUCT:
+					rc += "PreProduct"; break;
+				case GameStage::PRODUCT:
+					rc += "Product"; break;
+				case GameStage::POSTPRODUCT:
+					rc += "PostProduct"; break;
 			}
 			renderer = FACTORY_FOR(UserInterfaceSpriteRenderer)
 				.create(rc.c_str());

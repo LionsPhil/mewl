@@ -2,6 +2,11 @@
 
 #include "gamelogic.hpp"
 
+// This be some serious voodoo, mon.
+#define STAGESTATE_RESET(FIELD, KLASS) \
+	state.FIELD.~KLASS(); \
+	new(&state.FIELD) GameStageState::KLASS();
+
 GameLogicJumps::GameLogicJumps(Game** ptrgame, const UserInterface& ui)
 	: ptrgame(ptrgame), ui(ui) {}
 
@@ -12,6 +17,17 @@ void GameLogicJumps::startTheGameAlready(const GameSetup& setup) {
 void GameLogicJumps::destroyTheGameAlready() {
 	delete *ptrgame;
 }
+
+class GameLogicColour : public GameLogic {
+	virtual GameStage::Type getStage() { return GameStage::COLOUR; }
+	virtual GameLogic* simulate(GameSetup& setup, Game* game) {
+		return 0; // TODO
+	}
+public:
+	GameLogicColour(GameLogicJumps* jumps, GameStageState& state) :
+		GameLogic(jumps, state)
+		{ STAGESTATE_RESET(colour, Colour) }
+};
 
 class GameLogicTitle : public GameLogic {
 	// While later logics can use the references from Player, we need to
@@ -61,6 +77,8 @@ next_controller: ;
 
 		// Now that we have all the players
 		bool voting = false;
+		bool allready = true;
+		bool allcpu = true;
 		for(int player = 0; player < PLAYERS; ++player) {
 			PlayerSetup* ps = &setup.playersetup[player];
 
@@ -79,6 +97,9 @@ next_controller: ;
 			// Set ready flags
 			state.title.playerready[player] = ps->computer ||
 				ps->controller->getDirection() == DIR_N;
+			if(!state.title.playerready[player])
+				{ allready = false; }
+			if(!ps->computer) { allcpu = false; }
 		}
 
 		// Adjust difficulty
@@ -93,16 +114,14 @@ next_controller: ;
 			diffvotes = 0;
 		} 
 
-		return 0; // TODO next state if all ready
+		return allready && !allcpu
+			? new GameLogicColour(jumps, state) : 0;
 	}
 public:
 	GameLogicTitle(GameLogicJumps* jumps, GameStageState& state,
 		ControlManager& controlman) :
-		GameLogic(jumps, state), controlman(controlman), diffvotes(0) {
-		// This be some serious voodoo, mon.
-		state.title.~Title();
-		new(&state.title) GameStageState::Title();
-	}
+		GameLogic(jumps, state), controlman(controlman), diffvotes(0)
+		{ STAGESTATE_RESET(title, Title) }
 };
 
 GameLogic::GameLogic(GameLogicJumps* jumps, GameStageState& state) :

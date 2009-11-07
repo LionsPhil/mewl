@@ -164,6 +164,9 @@ public:
 		
 		// Do NOT delete sprites' contents; union of subset of others
 		sprites.clear();
+
+		// Music fades away as we leave the title
+		Mix_FadeOutMusic(2000);
 	}
 
 	bool render(GameStage::Type stage, GameSetup& setup, Game* game,
@@ -321,7 +324,7 @@ public:
 		resources.displaySprites(sprites);
 		first_frame = false;
 
-		return true; // TODO Put a music fadeout on the colour stage
+		return true; // TODO Fade screen?
 	}
 };
 /* Register with the factory */

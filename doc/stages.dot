@@ -1,8 +1,9 @@
 /* dot stages.dot -Tpng -o stages.png */
 digraph stages {
-	title -> title [label="toggle controller (fire)"];
+	/* title -> title [label="toggle controller (fire)"];
 	title -> title [label="difficulty (l/r)"];
-	title -> colour [label="begin (all up)"];
+	title -> colour [label="begin (all up)"]; */
+	title -> colour;
 	colour -> species;
 	species -> species [label="more players"];
 	species -> postproduct [label="game begin"];
