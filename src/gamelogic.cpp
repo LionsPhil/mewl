@@ -17,9 +17,14 @@ class GameLogicTitle : public GameLogic {
 	// While later logics can use the references from Player, we need to
 	// see the total set to detect controls activating/deactivating.
 	ControlManager& controlman;
+	// 'Votes' for moving the difficulty. This is actually a kind-of
+	// workaround for not having a latching mechanism on left/right in the
+	// control abstraction. One player * 50 ticks (one half-sec) = change.
+	Sint16 diffvotes;
+	
+	virtual GameStage::Type getStage() { return GameStage::TITLE; }
 	// TODO When a new controller tries to activate but there are no free
 	// player slots, either drop oldest or somehow poke UI to report it.
-	virtual GameStage::Type getStage() { return GameStage::TITLE; }
 	virtual GameLogic* simulate(GameSetup& setup, Game* game) {
 		const std::vector<Controller*>& controllers =
 			controlman.getControllers(); // may repopulate ad-hoc
@@ -37,9 +42,7 @@ class GameLogicTitle : public GameLogic {
 						== *controller) {
 						// Yes, yes it is.
 						setup.playersetup[player]
-							.computer = true;
-						setup.playersetup[player]
-							.controller = NULL;
+							.computerPlayer();
 						goto next_controller;
 					}
 				}
@@ -47,30 +50,55 @@ class GameLogicTitle : public GameLogic {
 				for(int player = 0; player < PLAYERS; ++player){
 					if(setup.playersetup[player].computer) {
 						setup.playersetup[player]
-							.computer = false;
-						setup.playersetup[player]
-							.controller=*controller;
-						player = PLAYERS; // break
+							.humanPlayer(
+								*controller);
+						goto next_controller;
 					}
 				}
 			}
 next_controller: ;
 		}
 
-		// Set ready flags
+		// Now that we have all the players
+		bool voting = false;
 		for(int player = 0; player < PLAYERS; ++player) {
-			state.title.playerready[player] =
-				setup.playersetup[player].computer ||
-				setup.playersetup[player].controller
-					->getDirection() == DIR_N;
+			PlayerSetup* ps = &setup.playersetup[player];
+
+			// Vote for difficulty
+			if(!ps->computer) {
+				switch(ps->controller->getDirection()) {
+					case DIR_W:
+						--diffvotes; voting = true;
+						break;
+					case DIR_E:
+						++diffvotes; voting = true;
+					default: ;
+				}
+			}
+
+			// Set ready flags
+			state.title.playerready[player] = ps->computer ||
+				ps->controller->getDirection() == DIR_N;
 		}
+
+		// Adjust difficulty
+		if(!voting) { diffvotes = 0; } // reset on release
+		if(diffvotes <= -50) {
+			if(setup.difficulty > Difficulty::FIRST)
+				{ --setup.difficulty; }
+			diffvotes = 0;
+		} else if(diffvotes >= 50) {
+			if(setup.difficulty < Difficulty::LAST)
+				{ ++setup.difficulty; }
+			diffvotes = 0;
+		} 
 
 		return 0; // TODO next state if all ready
 	}
 public:
 	GameLogicTitle(GameLogicJumps* jumps, GameStageState& state,
 		ControlManager& controlman) :
-		GameLogic(jumps, state), controlman(controlman) {
+		GameLogic(jumps, state), controlman(controlman), diffvotes(0) {
 		// This be some serious voodoo, mon.
 		state.title.~Title();
 		new(&state.title) GameStageState::Title();

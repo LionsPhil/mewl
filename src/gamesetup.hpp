@@ -17,6 +17,9 @@ public: // This is just a struct with an ego problem
 	Species::Type species;
 	bool computer;
 	Controller* controller; // meaningless if computer player
+	// Use these to set the above to keep comp => controller==NULL invariant
+	void humanPlayer(Controller* controller);
+	void computerPlayer();
 };
 inline bool operator==(const PlayerSetup& one, const PlayerSetup& two) {
 	return one.species == two.species

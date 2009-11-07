@@ -32,7 +32,7 @@ static const char* messages[] = { /* "max length " <- ends there */
 
 	"Mouse and joysticks also supported",
 	"Fire to toggle use of controller",
-	"Left and right to select difficulty",
+	"Hold left/right to select difficulty",
 	"All players press up to begin",
 
 	" ",

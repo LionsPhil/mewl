@@ -9,6 +9,10 @@ namespace Difficulty {
 		STANDARD,
 		TOURNAMENT
 	} Type;
+	const Type FIRST = BEGINNER;   // These are used by the logic
+	const Type LAST  = TOURNAMENT; // to bounds-limit the adjustment
+	// Note that we define preinc/decrement for Difficulty below.
+	// Values must be contiguous! (Easy: don't specify any.)
 
 	uint8_t getGameDuration(Type self);
 	double getMoveTime(Type self); // seconds (full food, normal species)
@@ -39,6 +43,11 @@ namespace Difficulty {
 	 * mechanic, but we do need to apply the species time modifier to its
 	 * motions, and another which allows for PTU calculations. */
 }
+
+inline void operator++(Difficulty::Type& d)
+	{ d = static_cast<Difficulty::Type>(d + 1); }
+inline void operator--(Difficulty::Type& d)
+	{ d = static_cast<Difficulty::Type>(d - 1); }
 
 #endif
 
