@@ -19,13 +19,20 @@ void GameLogicJumps::destroyTheGameAlready() {
 }
 
 class GameLogicColour : public GameLogic {
+	int time;
 	virtual GameStage::Type getStage() { return GameStage::COLOUR; }
 	virtual GameLogic* simulate(GameSetup& setup, Game* game) {
-		return 0; // TODO
+		if(++time > 150) { // incomplete for DEBUG; needs to skip claim
+			state.colour.player++;
+			if(state.colour.player > PLAYERS)
+				{ state.colour.player = 0; }
+			time = 0;
+		}
+		return 0; // TODO claims, and player shuffle when all done
 	}
 public:
 	GameLogicColour(GameLogicJumps* jumps, GameStageState& state) :
-		GameLogic(jumps, state)
+		GameLogic(jumps, state), time(0)
 		{ STAGESTATE_RESET(colour, Colour) }
 };
 

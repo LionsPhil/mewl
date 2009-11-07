@@ -5,8 +5,8 @@ digraph stages {
 	title -> colour [label="begin (all up)"]; */
 	title -> colour;
 	colour -> species;
-	species -> species [label="more players"];
-	species -> postproduct [label="game begin"];
+	species -> species [label="more players"];/* MULE goes back to colour */
+	species -> postproduct [label="game begin"];/* MULE has confirm stage */
 	postproduct -> scoreboard [label="colony ship arrives"];
 	scoreboard -> title [label="game over"];
 	scoreboard -> landgrab [label="next round"];

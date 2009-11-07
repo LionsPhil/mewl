@@ -62,7 +62,7 @@ public:
 	void init(GameStage::Type stage, GameSetup& setup, Game* game,
 		uint32_t ticks, UserInterfaceSpriteResources& resources) {
 
-		SDL_Color black = {0, 0, 0, 0};
+		const SDL_Color black = {0, 0, 0, 0};
 		last_difficulty = Difficulty::BEGINNER;
 		for(int player = 0; player < PLAYERS; player++)
 			{ last_playerready[player] = false; }
@@ -166,6 +166,8 @@ public:
 		sprites.clear();
 
 		// Music fades away as we leave the title
+		/* A little earlier than the real game; if moving this, need
+		 * to add looping replay to other setup stages. */
 		Mix_FadeOutMusic(2000);
 	}
 
