@@ -16,6 +16,14 @@
 #include "ui_sprite.hpp"
 #include "ui_sprite_pointer.hpp"
 
+/* Yay for API changes on patchlevel versions! */
+#if SDL_IMAGE_MAJOR_VERSION >= 1
+# if (SDL_IMAGE_MINOR_VERSION >  2) || \
+     ((SDL_IMAGE_MINOR_VERSION == 2) && (SDL_IMAGE_PATCHLEVEL >= 8))
+#  define IMG_NEEDS_INIT
+# endif
+#endif
+
 class UserInterfaceSprite : public UserInterface {
 	bool fullscreen;
 	UserInterfaceSpriteResources resources;
@@ -54,7 +62,9 @@ class UserInterfaceSprite : public UserInterface {
 		// Zap the renderer
 		if(renderer) { delete renderer; renderer = 0; }
 		// Shutdown Image, TTF and Mixer
+#ifdef IMG_NEEDS_INIT
 		IMG_Quit();
+#endif
 		if(TTF_WasInit()) { TTF_Quit(); }
 		if(Mix_QuerySpec(&dum1, &dum2, &dum3)) { Mix_CloseAudio(); }
 		// Restore the mouse cursor
@@ -156,10 +166,12 @@ public:
 			return false;
 		}
 		// Initialise Image
+#ifdef IMG_NEEDS_INIT
 		if(!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
 			warn("Unable to initialise Image: %s", IMG_GetError());
 			return false;
 		}
+#endif
 		// Load font
 		const char* fontfile = findFontFile();
 		resources.font_title = TTF_OpenFont(fontfile, 64);

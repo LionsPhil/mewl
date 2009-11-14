@@ -27,7 +27,7 @@ static const char* messages[] = { /* "max length " <- ends there */
 
 	"Keyboard 1: W, D, S, A, Left control",
 	"Keyboard 2: K, L, J, H, Spacebar",
-	"Keyboard 3: Arrow keys, Right control",
+	"Keyboard 3: Arrow keys, Right shift",
 	"Keyboard 4: Numeric 8, 6, 2, 4, Enter",
 
 	"Mouse and joysticks also supported",

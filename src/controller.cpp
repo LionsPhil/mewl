@@ -251,9 +251,9 @@ void ControlManager::populate() {
 		SDLK_w, nk, SDLK_d, nk, SDLK_s, nk, SDLK_a, nk, SDLK_LCTRL));
 	addController(controllers_key, new KeyboardController("HJKL+Space",
 		SDLK_k, nk, SDLK_l, nk, SDLK_j, nk, SDLK_h, nk, SDLK_SPACE));
-	addController(controllers_key, new KeyboardController("Arrows+R Ctrl",
+	addController(controllers_key, new KeyboardController("Arrows+R Shift",
 		SDLK_UP, nk, SDLK_RIGHT, nk,
-		SDLK_DOWN, nk, SDLK_LEFT, nk, SDLK_RCTRL));
+		SDLK_DOWN, nk, SDLK_LEFT, nk, SDLK_RSHIFT));
 	addController(controllers_key, new KeyboardController("Numpad",
 		SDLK_KP8, SDLK_KP9, SDLK_KP6, SDLK_KP3,
 		SDLK_KP2, SDLK_KP1, SDLK_KP4, SDLK_KP7, SDLK_KP_ENTER));
@@ -278,6 +278,10 @@ void ControlManager::feedEvent(SDL_Event& event) {
 		case SDL_MOUSEBUTTONDOWN:
 		case SDL_MOUSEBUTTONUP:
 			set = &controllers_mouse; break;
+		case SDL_JOYBALLMOTION:
+		case SDL_JOYHATMOTION:
+			set = NULL;
+			break; // We don't support balls or hats
 		case SDL_JOYAXISMOTION:
 		case SDL_JOYBUTTONDOWN:
 		case SDL_JOYBUTTONUP:
@@ -286,6 +290,7 @@ void ControlManager::feedEvent(SDL_Event& event) {
 			trace("ControlManager being fed unsupported events");
 			return;
 	}
+	if(!set) { return; }
 	for(std::vector<Controller*>::iterator i = set->begin(); i < set->end();
 		++i) { (*i)->feedEvent(event); }
 }
