@@ -53,7 +53,8 @@ class UserInterfaceSprite : public UserInterface {
 		for_each(keys.begin(), keys.end(), free_functor());
 		// Zap the renderer
 		if(renderer) { delete renderer; renderer = 0; }
-		// Shutdown TTF and Mixer
+		// Shutdown Image, TTF and Mixer
+		IMG_Quit();
 		if(TTF_WasInit()) { TTF_Quit(); }
 		if(Mix_QuerySpec(&dum1, &dum2, &dum3)) { Mix_CloseAudio(); }
 		// Restore the mouse cursor
@@ -104,7 +105,8 @@ private:
 			resources.textures[removeSuffix(name)] = texture;
 			return true;
 		} else {
-			warn("Unable to load texture: %s", IMG_GetError());
+			warn("Unable to load texture %s: %s", file.c_str(),
+				IMG_GetError());
 			return false;
 		}
 	}
@@ -151,6 +153,11 @@ public:
 		// Initialise TTF
 		if(TTF_Init() < 0) {
 			warn("Unable to initialise TTF: %s", TTF_GetError());
+			return false;
+		}
+		// Initialise Image
+		if(!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
+			warn("Unable to initialise Image: %s", IMG_GetError());
 			return false;
 		}
 		// Load font
