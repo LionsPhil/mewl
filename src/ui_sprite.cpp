@@ -23,6 +23,10 @@
 #  define IMG_NEEDS_INIT
 # endif
 #endif
+#if SDL_IMAGE_MAJOR_VERSION == 1 && SDL_IMAGE_MINOR_VERSION == 2 && \
+	SDL_IMAGE_PATCHLEVEL == 9
+# error sdl-image 1.2.9 is known-broken and will fail with no error message
+#endif
 
 class UserInterfaceSprite : public UserInterface {
 	bool fullscreen;

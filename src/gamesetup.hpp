@@ -26,6 +26,10 @@ inline bool operator==(const PlayerSetup& one, const PlayerSetup& two) {
 		&& one.computer == two.computer
 		&& one.controller == two.controller;
 }
+// std::rel_ops affects all types. Boost (operators.hpp) is overkill for this.
+inline bool operator!=(const PlayerSetup& one, const PlayerSetup& two)
+	{ return !(one==two); }
+// We use operator=, but the compiler-generated one is fine.
 
 class GameSetup {
 public: // Another fancy-pants struct

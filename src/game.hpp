@@ -46,7 +46,8 @@ public:
 		bool playerready[PLAYERS];
 	} title;
 	struct Colour         { Colour();
-		int player; // of colour up for grabs
+		int offer; // Player index of colour up for grabs
+		int claim[PLAYERS]; // Colour idx claimed by player; -1 for none
 	} colour;
 	struct Species        { Species();
 		int player;

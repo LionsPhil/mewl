@@ -13,11 +13,12 @@
 ProductionEvent::ProductionEvent() : type(NONE), x(0), y(0),
 	landslide(DIR_CENTRE) {}
 GameStageState::GameStageState() {} // it's all up to the inner contructors
-GameStageState::Title::Title() {for(int i=0;i<PLAYERS;i++)playerready[i]=false;}
-GameStageState::Colour::Colour() : player(0) {}
+GameStageState::Title::Title() {for(int i=0;i<PLAYERS;++i)playerready[i]=false;}
+GameStageState::Colour::Colour() : offer(0)
+	{ for(int i = 0; i < PLAYERS; ++i) { claim[i] = -1; } }
 GameStageState::Species::Species() : player(0) {}
 GameStageState::Scoreboard::Scoreboard() : message(ScoreboardMessage::NONE) {
-	for(int i = 0; i < PLAYERS; i++) {
+	for(int i = 0; i < PLAYERS; ++i) {
 		landvalue[ i] = 0;
 		goodsvalue[i] = 0;
 	}
@@ -25,7 +26,7 @@ GameStageState::Scoreboard::Scoreboard() : message(ScoreboardMessage::NONE) {
 GameStageState::LandGrab::LandGrab() : x(0), y(0) {}
 GameStageState::LandAuction::LandAuction() : x(0), y(0) {}
 GameStageState::PreAuction::PreAuction() : resource(Resource::NONE), store(0) {
-	for(int i = 0; i < PLAYERS; i++) {
+	for(int i = 0; i < PLAYERS; ++i) {
 		stock[     i] = 0;
 		production[i] = 0;
 		spoilage[  i] = 0;
@@ -33,9 +34,9 @@ GameStageState::PreAuction::PreAuction() : resource(Resource::NONE), store(0) {
 	}
 }
 GameStageState::AuctionDeclare::AuctionDeclare() : time(0), timemax(0)
-	{ for(int i = 0; i < PLAYERS; i++) { buyer[i] = false; } }
+	{ for(int i = 0; i < PLAYERS; ++i) { buyer[i] = false; } }
 GameStageState::Auction::Auction() : storebuy(0), storesell(0) {
-	for(int i = 0; i < PLAYERS; i++) {
+	for(int i = 0; i < PLAYERS; ++i) {
 		bid[   i] = 0;
 		traded[i] = 0;
 	}
@@ -50,8 +51,8 @@ GameStageState::DevelopComp::DevelopComp() : player(0), x(0), y(0) {}
 GameStageState::PostDevelop::PostDevelop() : player(0), winnings(0) {}
 GameStageState::PreProduct::PreProduct() {}
 GameStageState::Product::Product() {
-	for(int y = 0; y < TERRAIN_HEIGHT; y++) {
-		for(int x = 0; x < TERRAIN_WIDTH; x++)
+	for(int y = 0; y < TERRAIN_HEIGHT; ++y) {
+		for(int x = 0; x < TERRAIN_WIDTH; ++x)
 			{ production[x][y] = 0; }
 	}
 }

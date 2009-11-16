@@ -5,13 +5,14 @@
 
 class UserInterfaceSpriteColour : public UserInterfaceSpriteRenderer {
 private:
-	int last_player;
+	GameStageState::Colour last_state;
 
 public:
 	void init(GameStage::Type stage, GameSetup& setup, Game* game,
 		uint32_t ticks, UserInterfaceSpriteResources& resources) {
 
-		last_player = -1;
+		// Fudge this to force first-frame repaint
+		last_state.offer = -1;
 
 		using namespace UserInterfaceSpriteConstants;
 		SDL_Surface* screen = SDL_GetVideoSurface();
@@ -36,20 +37,44 @@ public:
 		UserInterfaceSpriteResources& resources) {
 
 		// Nice and easy
-		if(state.colour.player != last_player) {
-			last_player = state.colour.player;
-
+		if(state.colour.offer != last_state.offer) {
 			using namespace UserInterfaceSpriteConstants;
 			SDL_Rect box = { 320 - 32, 192, 64, 64 };
 			SDL_Surface* screen = SDL_GetVideoSurface();
 			SDL_FillRect(screen, &box,
 				SDL_MapRGB(screen->format,
-					col_player[last_player].r,
-					col_player[last_player].g,
-					col_player[last_player].b));
+					col_player[state.colour.offer].r,
+					col_player[state.colour.offer].g,
+					col_player[state.colour.offer].b));
 			resources.updateRect(box.x, box.y, box.w, box.h);
 		}
-		// TODO draw claims...controller name in colour?
+		
+		// Draw claims (controller name in colour)
+		for(int p = 0; p < PLAYERS; ++p) {
+			if((last_state.offer == -1) ||
+				(state.colour.claim[p] != last_state.claim[p])){
+			
+				const SDL_Color black = {0, 0, 0, 0};
+				PlayerSetup* ps = &setup.playersetup[p];
+				const char* description = ps->computer
+					? "Computer player"
+					: ps->controller->getDescription();
+				int claim = state.colour.claim[p];
+			
+				using namespace UserInterfaceSpriteConstants;	
+				resources.displayTextLine(resources.font_small,
+					description,
+					claim == -1
+						? (ps->computer
+							? col_text_black
+							: col_text_gray)
+						: col_player[claim],
+					black, 280 + (p * 24));
+			}
+		}
+		
+		// Update last state (can get away with shallow copy)
+		last_state = state.colour;
 
 		return true;
 	}

@@ -7,6 +7,16 @@
 	state.FIELD.~KLASS(); \
 	new(&state.FIELD) GameStageState::KLASS();
 
+/** Clear up any stray button presses by throwing away the controller flag.
+ *  Useful as a synchronisation point before players have to press buttons. */
+void clear_stray_presses(GameSetup& setup) {
+	for(int p = 0; p < PLAYERS; ++p) {
+		if(!setup.playersetup[p].computer) {
+			setup.playersetup[p].controller->hadButtonPress();
+		}
+	}
+}
+
 GameLogicJumps::GameLogicJumps(Game** ptrgame, const UserInterface& ui)
 	: ptrgame(ptrgame), ui(ui) {}
 
@@ -19,21 +29,75 @@ void GameLogicJumps::destroyTheGameAlready() {
 }
 
 class GameLogicColour : public GameLogic {
-	int time;
+	int time; // Ticks spent on the current colour
+	bool claimed[PLAYERS]; // Colour [i] has been claimed
 	virtual GameStage::Type getStage() { return GameStage::COLOUR; }
 	virtual GameLogic* simulate(GameSetup& setup, Game* game) {
-		if(++time > 150) { // incomplete for DEBUG; needs to skip claim
-			state.colour.player++;
-			if(state.colour.player > PLAYERS)
-				{ state.colour.player = 0; }
+		bool gone = false; // The current colour has been claimed
+		bool done = true; // Everybody who wants one has a colour
+
+		for(int p = 0; p < PLAYERS; ++p) {
+			// See if anyone is claiming this colour
+			if(!gone && !setup.playersetup[p].computer && setup
+				.playersetup[p].controller->hadButtonPress()) {
+				
+				if(state.colour.claim[p] == -1) {
+					state.colour.claim[p] =
+						state.colour.offer;
+					claimed[state.colour.offer] = true;
+					gone = true;
+				} // else you've already got one
+			}
+			// Does this player still need a colour?
+			if(!setup.playersetup[p].computer &&
+				state.colour.claim[p] == -1) { done = false; }
+		}
+		// Cycle to next colour
+		if(gone || (++time > 150)) {
+			do { ++state.colour.offer; }
+				while(claimed[state.colour.offer]);
+			if(state.colour.offer >= PLAYERS)
+				{ state.colour.offer = 0; }
+			while(claimed[state.colour.offer])
+				{ ++state.colour.offer; }
+			assert(state.colour.offer < PLAYERS);
 			time = 0;
 		}
-		return 0; // TODO claims, and player shuffle when all done
+		if(!done) { return 0; }
+		// We're done!
+		// Hokay, first allocate colours to computer players
+		for(int p = 0; p < PLAYERS; ++p) {
+			if(state.colour.claim[p] == -1) {
+				for(int c = 0; c < PLAYERS; ++c) {
+					if(!claimed[c]) {
+						state.colour.claim[p] = c;
+						claimed[c] = true;
+						break;
+					}
+				}
+			}
+		}
+		// Shuffle players into their new colour slots
+		{
+			PlayerSetup original[PLAYERS];
+			for(int p = 0; p < PLAYERS; ++p)
+				{ original[p] = setup.playersetup[p]; }
+			for(int p = 0; p < PLAYERS; ++p) {
+				setup.playersetup[state.colour.claim[p]]
+					= original[p];
+			}
+		}
+		// Clear up any mess players may have made on the way out
+		clear_stray_presses(setup);
+		return 0; // TODO next state (assert will fail if we stay)
 	}
 public:
 	GameLogicColour(GameLogicJumps* jumps, GameStageState& state) :
-		GameLogic(jumps, state), time(0)
-		{ STAGESTATE_RESET(colour, Colour) }
+		GameLogic(jumps, state), time(0) {
+		
+		STAGESTATE_RESET(colour, Colour);
+		for(int p = 0; p < PLAYERS; ++p){ claimed[p] = false; }
+	}
 };
 
 class GameLogicTitle : public GameLogic {
@@ -133,6 +197,7 @@ public:
 
 GameLogic::GameLogic(GameLogicJumps* jumps, GameStageState& state) :
 	jumps(jumps), state(state) {}
+
 GameLogic::~GameLogic() {}
 GameLogic* GameLogic::getTitleState(GameLogicJumps* jumps,
 	GameStageState& state, ControlManager& controlman) {
