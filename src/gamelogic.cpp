@@ -1,4 +1,5 @@
 #include <new> // Fear the placement new! See game.cpp.
+#include <assert.h>
 
 #include "gamelogic.hpp"
 
