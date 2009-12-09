@@ -82,3 +82,49 @@ public:
 /* Register with the factory */
 FACTORY_REGISTER_IMPL(UserInterfaceSpriteRenderer,UserInterfaceSpriteColour)
 
+class UserInterfaceSpriteSpecies : public UserInterfaceSpriteRenderer {
+private:
+	int last_player;
+	Species::Type last_species;
+
+public:
+	void init(GameStage::Type stage, GameSetup& setup, Game* game,
+		uint32_t ticks, UserInterfaceSpriteResources& resources) {
+
+		last_player = -1; // first frame fudge
+		last_species = Species::COMPUTER;
+
+		using namespace UserInterfaceSpriteConstants;
+		SDL_Surface* screen = SDL_GetVideoSurface();
+		// Blank the screen
+		SDL_FillRect(screen, 0,
+			SDL_MapRGB(screen->format, 0, 0, 0));
+		// Show the static text
+		const SDL_Color black = {0, 0, 0, 0};
+		resources.displayTextLine(resources.font_large,
+				"Species Choice", col_text_gold, black, 64);
+		resources.displayTextLine(resources.font_small,
+				"Push direction and press button",
+				col_text_gold, black, 384);
+		// Repaint everything to clear the screen
+		SDL_Flip(screen);
+	}
+
+	~UserInterfaceSpriteSpecies() { }
+
+	bool render(GameStage::Type stage, GameSetup& setup, Game* game,
+		GameStageState& state, uint32_t ticks,
+		UserInterfaceSpriteResources& resources) {
+
+		// TODO
+		
+		// Update last state
+		last_player = state.species.player;
+		last_species = setup.playersetup[state.species.player].species;
+
+		return true;
+	}
+};
+/* Register with the factory */
+FACTORY_REGISTER_IMPL(UserInterfaceSpriteRenderer,UserInterfaceSpriteSpecies)
+

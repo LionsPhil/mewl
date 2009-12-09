@@ -32,7 +32,10 @@ struct ProductionEvent { ProductionEvent();
 namespace ScoreboardMessage { typedef enum { NONE, FAILFOOD, FAILENERGY,
 	LOWFOOD, LOWENERGY, LOWBOTH, LOWORE,
 	ENDREALBAD, ENDBAD, ENDSURVIVE, ENDOK, ENDGOOD, ENDREALGOOD, ENDAWESOME
-	/* "First Founder" requires 'OK' or better. */ } Type; };
+	} Type;
+	/* "First Founder" requires 'OK' or better. */
+	const Type FIRST_FOUNDER_MIN = ENDOK;
+};
 
 /** Stage-specific data pertinent to both logic and UI.
  * It's not quite MVC---this is only the shared part of the model. */

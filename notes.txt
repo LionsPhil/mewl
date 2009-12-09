@@ -79,6 +79,8 @@ UI has access to player controllers, so could read direct from that. Not consist
 
 Sprite tiles are 64x64 and alpha-blend on top of the background. Top-left offset is 32 horizontal and 80 vertical. The mountain is smaller and has 16px horizontal and 4px vertical random wiggle within its subrow (of which there are four).
 
+Character graphics should probably be about 32x32 large (race select, scoreboard, auctions, town map), 8x8 small (colony map).
+
 "Active players push up to begin" doesn't allow for computer-only games. May want to add SELECT/START support.
 
 -- Original game documentation --

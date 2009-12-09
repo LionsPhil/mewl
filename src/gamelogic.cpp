@@ -29,6 +29,19 @@ void GameLogicJumps::destroyTheGameAlready() {
 	delete *ptrgame;
 }
 
+class GameLogicSpecies : public GameLogic {
+	virtual GameStage::Type getStage() { return GameStage::SPECIES; }
+	virtual GameLogic* simulate(GameSetup& setup, Game* game) {
+		return 0; // TODO
+	}
+public:
+	GameLogicSpecies(GameLogicJumps* jumps, GameStageState& state) :
+		GameLogic(jumps, state) {
+		
+		STAGESTATE_RESET(species, Species);
+	}
+};
+
 class GameLogicColour : public GameLogic {
 	int time; // Ticks spent on the current colour
 	bool claimed[PLAYERS]; // Colour [i] has been claimed
@@ -90,7 +103,7 @@ class GameLogicColour : public GameLogic {
 		}
 		// Clear up any mess players may have made on the way out
 		clear_stray_presses(setup);
-		return 0; // TODO next state (assert will fail if we stay)
+		return new GameLogicSpecies(jumps, state);
 	}
 public:
 	GameLogicColour(GameLogicJumps* jumps, GameStageState& state) :
