@@ -84,14 +84,14 @@ FACTORY_REGISTER_IMPL(UserInterfaceSpriteRenderer,UserInterfaceSpriteColour)
 
 class UserInterfaceSpriteSpecies : public UserInterfaceSpriteRenderer {
 private:
-	int last_player;
+	GameStageState::Species last_state;
 	Species::Type last_species;
 
 public:
 	void init(GameStage::Type stage, GameSetup& setup, Game* game,
 		uint32_t ticks, UserInterfaceSpriteResources& resources) {
 
-		last_player = -1; // first frame fudge
+		last_state.player = -1; // first frame fudge
 		last_species = Species::COMPUTER;
 
 		using namespace UserInterfaceSpriteConstants;
@@ -99,7 +99,7 @@ public:
 		// Blank the screen
 		SDL_FillRect(screen, 0,
 			SDL_MapRGB(screen->format, 0, 0, 0));
-		// Show the static text
+		// Show the static text TODO placeholder
 		const SDL_Color black = {0, 0, 0, 0};
 		resources.displayTextLine(resources.font_large,
 				"Species Choice", col_text_gold, black, 64);
@@ -116,10 +116,14 @@ public:
 		GameStageState& state, uint32_t ticks,
 		UserInterfaceSpriteResources& resources) {
 
-		// TODO
+		// TODO If state mismatch, reset animation and draw species
+
+		// TODO If species mismatch (and defined), show text
+
+		// TODO Animate any defined species
 		
 		// Update last state
-		last_player = state.species.player;
+		last_state = state.species;
 		last_species = setup.playersetup[state.species.player].species;
 
 		return true;

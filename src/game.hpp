@@ -54,6 +54,7 @@ public:
 	} colour;
 	struct Species        { Species();
 		int player;
+		bool defined; // True if PlayerSetup's species is valid
 	} species;
 	struct Scoreboard     { Scoreboard();
 		uint32_t landvalue[PLAYERS];

@@ -16,7 +16,7 @@ GameStageState::GameStageState() {} // it's all up to the inner contructors
 GameStageState::Title::Title() {for(int i=0;i<PLAYERS;++i)playerready[i]=false;}
 GameStageState::Colour::Colour() : offer(0)
 	{ for(int i = 0; i < PLAYERS; ++i) { claim[i] = -1; } }
-GameStageState::Species::Species() : player(0) {}
+GameStageState::Species::Species() : player(0), defined(false) {}
 GameStageState::Scoreboard::Scoreboard() : message(ScoreboardMessage::NONE) {
 	for(int i = 0; i < PLAYERS; ++i) {
 		landvalue[ i] = 0;

@@ -32,6 +32,18 @@ void GameLogicJumps::destroyTheGameAlready() {
 class GameLogicSpecies : public GameLogic {
 	virtual GameStage::Type getStage() { return GameStage::SPECIES; }
 	virtual GameLogic* simulate(GameSetup& setup, Game* game) {
+		// While computer player and < PLAYERS, set as COMP and player++
+
+		// Have we finished here?
+		if(state.species.player > PLAYERS) {
+			warn("return (next logic) required"); // TODO
+			die();
+		}
+
+		// If direction pressed, set PlayerSetup species, defined = true
+
+		// If button pressed && defined, defined = false, player++
+
 		return 0; // TODO
 	}
 public:
