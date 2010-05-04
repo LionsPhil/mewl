@@ -2,6 +2,7 @@
 #include <assert.h>
 
 #include "gamelogic.hpp"
+#include "platform.hpp"
 
 // This be some serious voodoo, mon.
 #define STAGESTATE_RESET(FIELD, KLASS) \
