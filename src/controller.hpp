@@ -9,6 +9,17 @@ typedef enum {
 	DIR_N = 0, DIR_NE, DIR_E, DIR_SE, DIR_S, DIR_SW, DIR_W, DIR_NW,
 	DIR_CENTRE
 } Direction;
+// Note that the direction ++/-- operators LOOP, and CENTRE doesn't change.
+inline void operator++(Direction& d) {
+	if(d == DIR_CENTRE) { return; }
+	if(d == DIR_NW) { d = DIR_N; return; }
+	d = static_cast<Direction>(d + 1);
+}
+inline void operator--(Direction& d) {
+	if(d == DIR_CENTRE) { return; }
+	if(d == DIR_N) { d = DIR_NW; return; }
+	d = static_cast<Direction>(d - 1);
+}
 
 /** A Controller is any of various possible devices which can be used to
  * control the game: mouse, keyboard, joystick, Wiimote... */

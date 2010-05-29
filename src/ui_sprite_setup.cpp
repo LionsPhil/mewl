@@ -3,6 +3,68 @@
 
 // This covers both the Colour and Species stages, to coalesce tiny files
 
+static const char* species_name(Species::Type s) {
+	switch(s) {
+		case Species::REGULAR1: return "Gollumer";
+		case Species::REGULAR2: return "Packer";
+		case Species::REGULAR3: return "Spheroid";
+		case Species::ADVANCED: return "Humanoid";
+		case Species::REGULAR4: return "Leggite";
+		case Species::BEGINNER: return "Flapper";
+		case Species::REGULAR5: return "Bonzoid";
+		case Species::COMPUTER: return "Mechtron";
+	}
+	abort();
+}
+
+static const char* species_descriptions[][3] = {{
+"gollumer blah",
+"",
+"",
+}, {
+"packer blah",
+"",
+"",
+}, {
+"spheroid blah",
+"",
+"",
+}, {
+"humanoid blah",
+"",
+"",
+}, {
+"leggite blah",
+"",
+"",
+}, {
+"flapper blah",
+"",
+"",
+}, {
+"bonzoid blah",
+"",
+"",
+}, {
+"mechtron blah",
+"",
+"",
+}};
+
+static const char** species_desc(Species::Type s) {
+	switch(s) { // Yeah yeah, pedantic type safety; may remove later.
+		case Species::REGULAR1: return species_descriptions[0];
+		case Species::REGULAR2: return species_descriptions[1];
+		case Species::REGULAR3: return species_descriptions[2];
+		case Species::ADVANCED: return species_descriptions[3];
+		case Species::REGULAR4: return species_descriptions[4];
+		case Species::BEGINNER: return species_descriptions[5];
+		case Species::REGULAR5: return species_descriptions[6];
+		case Species::COMPUTER: return species_descriptions[7];
+	}
+	abort();
+}
+
 class UserInterfaceSpriteColour : public UserInterfaceSpriteRenderer {
 private:
 	GameStageState::Colour last_state;
@@ -125,6 +187,16 @@ public:
 		// Update last state
 		last_state = state.species;
 		last_species = setup.playersetup[state.species.player].species;
+
+		// XXX DEBUG
+		using namespace UserInterfaceSpriteConstants;
+		const SDL_Color black = {0, 0, 0, 0};
+		resources.displayTextLine(resources.font_small,
+				state.species.defined
+					? species_name(last_species)
+					: "choose",
+				col_text_gold, black, 400);
+		species_desc(last_species); // useless call to make used
 
 		return true;
 	}

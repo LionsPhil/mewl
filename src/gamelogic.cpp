@@ -34,18 +34,42 @@ class GameLogicSpecies : public GameLogic {
 	virtual GameStage::Type getStage() { return GameStage::SPECIES; }
 	virtual GameLogic* simulate(GameSetup& setup, Game* game) {
 		// While computer player and < PLAYERS, set as COMP and player++
+		while((state.species.player < PLAYERS) &&
+			setup.playersetup[state.species.player].computer) {
+
+			setup.playersetup[state.species.player].species
+				= Species::COMPUTER;
+			state.species.player++;
+			state.species.defined = false;
+		}
 
 		// Have we finished here?
-		if(state.species.player > PLAYERS) {
+		if(state.species.player >= PLAYERS) {
 			warn("return (next logic) required"); // TODO
 			die();
 		}
 
 		// If direction pressed, set PlayerSetup species, defined = true
+		Direction d = setup.playersetup[state.species.player]
+			.controller->getDirection();
+		if(d != DIR_CENTRE) {
+			Species::Type s = Species::FIRST;
+			while(d != DIR_N) { --d; ++s; }
+			setup.playersetup[state.species.player].species = s;
+			state.species.defined = true;
+		}
 
 		// If button pressed && defined, defined = false, player++
+		if(state.species.defined &&
+			setup.playersetup[state.species.player].controller
+				->hadButtonPress()) {
 
-		return 0; // TODO
+			state.species.player++;
+			state.species.defined = false;
+			clear_stray_presses(setup);
+		}
+
+		return 0;
 	}
 public:
 	GameLogicSpecies(GameLogicJumps* jumps, GameStageState& state) :
