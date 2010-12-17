@@ -1,7 +1,7 @@
 [Project]
 FileName=mewl.dev
 Name=mewl
-UnitCount=28
+UnitCount=29
 Type=0
 Ver=1
 ObjFiles=
@@ -253,7 +253,7 @@ BuildCmd=
 Major=0
 Minor=1
 Release=1
-Build=291
+Build=312
 LanguageID=2057
 CharsetID=1252
 CompanyName=
@@ -265,7 +265,7 @@ LegalTrademarks=
 OriginalFilename=
 ProductName=M.E.W.L.
 ProductVersion=
-AutoIncBuildNr=1
+AutoIncBuildNr=0
 
 [Unit23]
 FileName=src\ui_sprite_title.cpp
@@ -321,6 +321,16 @@ BuildCmd=
 FileName=src\playerevent.cpp
 CompileCpp=1
 Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit29]
+FileName=src\ui_sprite_setup.cpp
+CompileCpp=1
+Folder=mewl
 Compile=1
 Link=1
 Priority=1000

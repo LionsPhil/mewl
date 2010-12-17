@@ -56,6 +56,7 @@ namespace UserInterfaceSpriteConstants {
 	const SDL_Color col_text_red   = {109,   0,   3, 0};
 	const SDL_Color col_text_green = { 39, 105,   0, 0};
 	const SDL_Color col_text_blue  = { 13,  21, 144, 0};
+	const SDL_Color black          = {  0,   0,   0, 0};
 };
 
 class UserInterfaceSpriteSprite;

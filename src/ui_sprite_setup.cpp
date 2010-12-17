@@ -17,38 +17,40 @@ static const char* species_name(Species::Type s) {
 	abort();
 }
 
+/* This is the width you've got to work with:
+ ---------------------------------------- */
 static const char* species_descriptions[][3] = {{
-"gollumer blah",
-"",
-"",
+"From the Nekite Galaxy.",
+"Gollumers love land. To get it they",
+"are willing to stick their necks out!",
 }, {
-"packer blah",
-"",
-"",
+"From the Silicon System.",
+"They love food, and make excellent farm-",
+"ers when they don't gobble their crop.",
 }, {
-"spheroid blah",
-"",
-"",
+"From the Rolldoe System.",
+"Spheroids are well rounded pioneers that",
+"hate square corners and straight lines.",
 }, {
-"humanoid blah",
-"",
-"",
+"From the Earth Systems.",
+"Humanoids start with $400 less because",
+"they are too smart!",
 }, {
-"leggite blah",
-"",
-"",
+"From the Afcany Plains.",
+"Leggites have their feet on the ground,",
+"heads in the clouds, and legs everywhere",
 }, {
-"flapper blah",
-"",
-"",
+"From the Boird-Drop Galaxy.",
+"All Flappers receive an extra $600 in",
+"their nest egg!",
 }, {
-"bonzoid blah",
-"",
-"",
+"From the Armpull Galaxy.",
+"Bonzoids love climbing and are often",
+"found hanging around in the mountains.",
 }, {
-"mechtron blah",
-"",
-"",
+"Evolved from a robotic Mutation.",
+"Mechtrons are quick deciders",
+"and efficient doers.",
 }};
 
 static const char** species_desc(Species::Type s) {
@@ -148,6 +150,7 @@ class UserInterfaceSpriteSpecies : public UserInterfaceSpriteRenderer {
 private:
 	GameStageState::Species last_state;
 	Species::Type last_species;
+	std::vector<UserInterfaceSpriteSprite*> sprites;
 
 public:
 	void init(GameStage::Type stage, GameSetup& setup, Game* game,
@@ -162,7 +165,6 @@ public:
 		SDL_FillRect(screen, 0,
 			SDL_MapRGB(screen->format, 0, 0, 0));
 		// Show the static text TODO placeholder
-		const SDL_Color black = {0, 0, 0, 0};
 		resources.displayTextLine(resources.font_large,
 				"Species Choice", col_text_gold, black, 64);
 		resources.displayTextLine(resources.font_small,
@@ -178,25 +180,56 @@ public:
 		GameStageState& state, uint32_t ticks,
 		UserInterfaceSpriteResources& resources) {
 
+		// Remove cursor of the last player we drew (also animation)
+		resources.eraseSprites(sprites);
+		sprites.clear(); // pointer may change
+		// Show pointer (if the player has one)
+		sprites.push_back(
+			resources.playerpointers[state.species.player]);
+		UserInterfaceSpritePointer_byController(SDL_GetVideoSurface(),
+			*resources.playerpointers[state.species.player],
+			setup.playersetup[state.species.player].controller);
+
 		// TODO If state mismatch, reset animation and draw species
 
-		// TODO If species mismatch (and defined), show text
+		// If species mismatch (and defined), show text
+		if(state.species.defined) {
+			Species::Type species =
+				setup.playersetup[state.species.player].species;
+			if(species != last_species || !last_state.defined) {
+				using namespace UserInterfaceSpriteConstants;
+				resources.displayTextLine(resources.font_small,
+					state.species.defined
+						? species_name(species) : " ",
+					col_text_gold, black, 400);
+				const char** desc = species_desc(species);
+				for(int line = 0; line < 3; ++line) {
+					resources.displayTextLine(
+						resources.font_small,
+						desc[line],
+						col_text_gold, black,
+						416 + line*16);
+				}
+				// TODO Check colour for this
+				resources.displayTextLine(resources.font_small,
+					species==Species::ADVANCED?
+					"Expert Species"
+					:species==Species::BEGINNER?
+					"Beginner Species"
+					:species==Species::COMPUTER?
+					"Computer Species" :" ",
+				col_text_blue, black, 464);
+			}
+		}
 
 		// TODO Animate any defined species
+
+		// Draw the sprites
+		resources.displaySprites(sprites);
 		
 		// Update last state
 		last_state = state.species;
 		last_species = setup.playersetup[state.species.player].species;
-
-		// XXX DEBUG
-		using namespace UserInterfaceSpriteConstants;
-		const SDL_Color black = {0, 0, 0, 0};
-		resources.displayTextLine(resources.font_small,
-				state.species.defined
-					? species_name(last_species)
-					: "choose",
-				col_text_gold, black, 400);
-		species_desc(last_species); // useless call to make used
 
 		return true;
 	}

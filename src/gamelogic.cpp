@@ -45,8 +45,9 @@ class GameLogicSpecies : public GameLogic {
 
 		// Have we finished here?
 		if(state.species.player >= PLAYERS) {
-			warn("return (next logic) required"); // TODO
-			die();
+			abort();
+			/*warn("return (next logic) required"); // TODO
+			die();*/
 		}
 
 		// If direction pressed, set PlayerSetup species, defined = true
