@@ -1,4 +1,4 @@
-# M.E.W.L. [![Build Status](https://travis-ci.org/LionsPhil/mewl.svg?branch=master)](https://travis-ci.org/LionsPhil/mewl)
+# M.E.W.L. [![Build Status](https://travis-ci.org/LionsPhil/mewl.svg?branch=master)](https://travis-ci.org/LionsPhil/mewl) [![Documentation Status](https://readthedocs.org/projects/mewl/badge/?version=latest)](https://readthedocs.org/projects/mewl/?badge=latest)
 Open source remake of the classic multiplayer economic strategy game [M.U.L.E.](https://en.wikipedia.org/wiki/M.U.L.E.).
 
 This is something I was working on way back in 2009, 2010.

@@ -20,12 +20,39 @@ import os
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #sys.path.insert(0, os.path.abspath('.'))
 
-# hack for readthedocs to cause it to run doxygen first
-# https://github.com/rtfd/readthedocs.org/issues/388
-on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
-if on_rtd:
-  from subprocess import call 
-  call('doxygen')
+# -- ReadTheDocs integration ----------------------------------------------
+# See https://breathe.readthedocs.org/en/latest/readthedocs.html
+
+import subprocess, sys
+
+def run_doxygen(folder):
+    """Run the doxygen make command in the designated folder"""
+
+    try:
+        retcode = subprocess.call("cd %s; make" % folder, shell=True)
+        if retcode < 0:
+            sys.stderr.write("doxygen terminated by signal %s" % (-retcode))
+    except OSError as e:
+        sys.stderr.write("doxygen execution failed: %s" % e)
+
+
+def generate_doxygen_xml(app):
+    """Run the doxygen make commands if we're on the ReadTheDocs server"""
+
+    read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
+
+    if read_the_docs_build:
+
+        run_doxygen("../../examples/doxygen")
+        run_doxygen("../../examples/specific")
+        run_doxygen("../../examples/tinyxml")
+
+
+def setup(app):
+
+    # Add hook for building doxygen xml when needed
+    app.connect("builder-inited", generate_doxygen_xml)
+
 
 # -- General configuration ------------------------------------------------
 
