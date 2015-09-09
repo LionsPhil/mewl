@@ -57,6 +57,12 @@ class GameLogicSpecies : public GameLogic {
 			Species::Type s = Species::FIRST;
 			while(d != DIR_N) { --d; ++s; }
 			setup.playersetup[state.species.player].species = s;
+			if(!state.species.defined) {
+				/* If this is their first direction, eat a button press, in
+				 * case they pressed *before* pushing a direction. */
+				setup.playersetup[state.species.player].controller
+					->hadButtonPress();
+			}
 			state.species.defined = true;
 		}
 
