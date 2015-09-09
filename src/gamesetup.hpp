@@ -6,8 +6,12 @@
 #include "controller.hpp"
 #include "difficulty.hpp"
 
+/** \file
+ * \brief Pre-game set-up state */
+
 const int PLAYERS = 4; // UI is very likely to assume this
 
+/** \invariant Computer players have a null controller; humans never do */
 class PlayerSetup {
 	// Colour comes from player index.
 	// Might be interesting to see if we can use Miis instead of Species
@@ -16,7 +20,7 @@ public: // This is just a struct with an ego problem
 	PlayerSetup();
 	Species::Type species;
 	bool computer;
-	Controller* controller; // meaningless if computer player
+	Controller* controller; ///< meaningless if computer player
 	// Use these to set the above to keep comp => controller==NULL invariant
 	void humanPlayer(Controller* controller);
 	void computerPlayer();

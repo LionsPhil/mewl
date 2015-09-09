@@ -3,6 +3,9 @@
 
 #include "resources.hpp"
 
+/** \file
+ * \brief Game events that can happen to players */
+
 class Game;
 
 namespace PlayerEvent {
@@ -47,7 +50,7 @@ namespace PlayerEvent {
 	/// Are any *specific* preconditions for the event met for this player?
 	bool precondition(PlayerEvent::Type self, int player, const Game& game);
 	
-	/* Thankfully, all the random effects can be immediate, and we don't
+	/** Thankfully, all the random effects can be immediate, and we don't
 	 * have to keep the differences around for the UI (else we'd be here
 	 * making twenty-odd subclasses instead of twenty-odd enum values). So
 	 * we have a method to calculate the financial/stock changes (which the

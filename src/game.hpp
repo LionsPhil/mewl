@@ -7,6 +7,9 @@
 #include "playerevent.hpp"
 #include "resources.hpp"
 
+/** \file
+ * \brief State of the entire game programme */
+
 /* Changing these is not advised. See Terrain class. Simple stuff first. */
 const uint8_t TERRAIN_WIDTH  = 9;
 const uint8_t TERRAIN_HEIGHT = 5;
@@ -25,7 +28,7 @@ struct ProductionEvent { ProductionEvent();
 	enum { NONE, PESTS, PIRATES, RAIN, QUAKE, SUN, METEORITE, RADIATION,
 	FIRE } type;
 	uint8_t x; uint8_t y;
-	Direction landslide; // may be centre if no mountain moves
+	Direction landslide; ///< may be centre if no mountain moves
 };
 
 /** Scoreboard messages; during-game warnings, and end-game result. */
@@ -33,7 +36,7 @@ namespace ScoreboardMessage { typedef enum { NONE, FAILFOOD, FAILENERGY,
 	LOWFOOD, LOWENERGY, LOWBOTH, LOWORE,
 	ENDREALBAD, ENDBAD, ENDSURVIVE, ENDOK, ENDGOOD, ENDREALGOOD, ENDAWESOME
 	} Type;
-	/* "First Founder" requires 'OK' or better. */
+	/** "First Founder" requires 'OK' or better. */
 	const Type FIRST_FOUNDER_MIN = ENDOK;
 };
 
@@ -49,12 +52,12 @@ public:
 		bool playerready[PLAYERS];
 	} title;
 	struct Colour         { Colour();
-		int offer; // Player index of colour up for grabs
-		int claim[PLAYERS]; // Colour idx claimed by player; -1 for none
+		int offer; ///< Player index of colour up for grabs
+		int claim[PLAYERS];///<Colour idx claimed by player; -1 for none
 	} colour;
 	struct Species        { Species();
 		int player;
-		bool defined; // True if PlayerSetup's species is valid
+		bool defined; ///< True if PlayerSetup's species is valid
 	} species;
 	struct Scoreboard     { Scoreboard();
 		uint32_t landvalue[PLAYERS];
@@ -70,16 +73,16 @@ public:
 		uint8_t x; uint8_t y;
 	} landauction;
 	struct PreAuction     { PreAuction();
-		Resource::Type resource; // 'none' means 'land'; rest varied
+		Resource::Type resource; ///< 'none' means 'land'; rest varied
 		uint32_t stock[     PLAYERS];
 		uint32_t production[PLAYERS];
 		uint32_t spoilage[  PLAYERS];
-		 int32_t surplus[   PLAYERS]; // negative = deficit
+		 int32_t surplus[   PLAYERS]; ///< negative = deficit
 		uint32_t store;
 	} preauction;
 	struct AuctionDeclare { AuctionDeclare();
 		// Preauction still valid, plus:
-		bool buyer[PLAYERS]; // else seller
+		bool buyer[PLAYERS]; ///< else seller
 		double time;
 		double timemax;
 	} auctiondeclare;
@@ -93,17 +96,17 @@ public:
 	struct PreDevelop     { PreDevelop();
 		int player;
 		bool eventhappens;
-		PlayerEvent::Type eventtype; // only defined if eventhappens
+		PlayerEvent::Type eventtype; ///< only defined if eventhappens
 	} predevelop;
 	struct DevelopHuman   { DevelopHuman();
 		int player;
 		// TODO position...more specific than per-tile: float? fixed?
 		Direction dir;
-		bool town; // else colony view
-		bool mule; // in tow?
+		bool town; ///< else colony view
+		bool mule; ///< in tow?
 		Resource::Type muletype;
-		double time; // seconds remaining
-		double timemax; // 'normal' maximum time for player for scale
+		double time; ///< seconds remaining
+		double timemax; ///< 'normal' maximum time for player for scale
 		// TODO wampus mountain, visibility
 	} develophuman;
 	struct Wampus         { Wampus();
@@ -112,23 +115,23 @@ public:
 	} wampus;
 	struct DevelopComp    { DevelopComp();
 		int player;
-		uint8_t x; // cursor, not player-character, position
+		uint8_t x; ///< cursor, not player-character, position
 		uint8_t y;
 	} developcomp;
 	struct PostDevelop    { PostDevelop();
 		int player;
-		uint32_t winnings; // if zero, ran out of time
+		uint32_t winnings; ///< if zero, ran out of time
 	} postdevelop;
 	struct PreProduct     { PreProduct();
 		ProductionEvent event;
 	} preproduct;
 	struct Product        { Product();
-		/* The production in each square here does NOT include the
+		/** The type of production is the exploitation type.
+		 * The production in each square here does NOT include the
 		 * effects of the post-production event. The two which may
 		 * affect it are PEST and PIRATES, both of which are
 		 * deterministic. The UI must animate the production change
 		 * away, and the logic must remember not to count it. */
-		/// The type of production is the exploitation type.
 		uint8_t production[TERRAIN_WIDTH][TERRAIN_HEIGHT];
 	} product;
 	struct PostProduct    { PostProduct();
@@ -147,17 +150,17 @@ public:
 };
 
 class Tile {
-	uint8_t m_mountains; // 0--3
-	uint8_t m_crystal; // 0--4
+	uint8_t m_mountains; ///< 0--3
+	uint8_t m_crystal; ///< 0--4
 	bool m_river;
-	bool m_owned; // Owned; otherwise, owner and equipment are undefined.
+	bool m_owned; ///< Owned; otherwise, owner and equipment are undefined.
 	int m_owner;
-	// What has it been outfitted to produce? Only valid if owned.
+	/// What has it been outfitted to produce? Only valid if owned.
 	Resource::Type m_equipment;
 public:
 	Tile();
-	uint8_t& mountains(); // Can be mutated by planetquakes
-	uint8_t& crystal(); // Can be mutated by meteor strikes
+	uint8_t& mountains(); ///< Can be mutated by planetquakes
+	uint8_t& crystal(); ///< Can be mutated by meteor strikes
 	/*const*/ bool river() const;
 	/*const*/ bool owned() const;
 	/*const*/ int owner() const;
@@ -198,7 +201,7 @@ public: // Another fancypants struct
 	Terrain terrain;
 	uint8_t month;
 	Stock store;
-	Stock prices; // (store)
+	Stock prices; ///< (store)
 
 	Game(const GameSetup& setup);
 };

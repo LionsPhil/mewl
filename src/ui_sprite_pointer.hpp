@@ -3,6 +3,9 @@
 #include "controller.hpp" // for Direction and utility function
 #include "ui_sprite.hpp"
 
+/** \file
+ * \brief Pointer sprite handling */
+
 /** Dynamic sprite which renders as an appropriate pointer graphic.
  *
  * The pointer-*.png files (generated from SVG) are not raw graphics; they need

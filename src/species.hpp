@@ -3,18 +3,21 @@
 #include <assert.h>
 #include <stdint.h>
 
+/** \file
+ * \brief Species traits */
+
 namespace Species {
 	// That there are eight of these is a fairly strong assumption in the
 	// UI, due to the 'select species by pushing in its direction' interface
 	typedef enum {
-		REGULAR1, // Gollumer
-		REGULAR2, // Packer
-		REGULAR3, // Spheroid
-		ADVANCED, // Humanoid
-		REGULAR4, // Leggite
-		BEGINNER, // Flapper
-		REGULAR5, // Bonzoid
-		COMPUTER  // Mechtron (still playable by humans)
+		REGULAR1, //< Gollumer
+		REGULAR2, //< Packer
+		REGULAR3, //< Spheroid
+		ADVANCED, //< Humanoid
+		REGULAR4, //< Leggite
+		BEGINNER, //< Flapper
+		REGULAR5, //< Bonzoid
+		COMPUTER  //< Mechtron (still playable by humans)
 	} Type;
 	/** Which species maps to the top direction on the select screen?
 	  * Others work from here clockwise, as with the Direction type.

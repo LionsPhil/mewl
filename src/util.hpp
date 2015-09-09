@@ -3,6 +3,9 @@
 #include <string.h>
 #include <stdlib.h>
 
+/** \file
+ * \brief Platform-agnostic utility functions */
+
 /** Generate a random integer in the inclusive range given with probability
  *  given by the normal distribution with mean zero and standard deviation
  *  provided. In future, this could perhaps be implemented using C++ TR1's
@@ -17,7 +20,8 @@ int random_uniform(int min, int max);
 
 /** A functor that simply calls delete, for emptying vectors of pointers.
  *  Remember to clear() too. Amazing that STL doesn't contain such a beast.
- *  (Boost apparently does, as boost::lambda::delete_ptr().) */
+ *  (Boost apparently does, as boost::lambda::delete_ptr().)
+ * \todo std::default_delete exists since C++11, migrate to it */
 struct delete_functor {
 	template <class T> void operator() (T* p) const { delete p; }
 };

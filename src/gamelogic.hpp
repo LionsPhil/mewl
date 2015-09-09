@@ -4,6 +4,9 @@
 #include "controller.hpp"
 #include "game.hpp"
 
+/** \file
+ * \brief Game mechanic mutations of the game state */
+
 class UserInterface;
 /** A class for allowing the game logic to trigger some events affecting the
  *  rest of the code in a controlled fashion. Set up by main. */

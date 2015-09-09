@@ -5,6 +5,9 @@
 #include <utility> // (pair)
 #include <SDL.h>
 
+/** \file
+ * \brief Abstract controller handling */
+
 typedef enum {
 	DIR_N = 0, DIR_NE, DIR_E, DIR_SE, DIR_S, DIR_SW, DIR_W, DIR_NW,
 	DIR_CENTRE
@@ -29,21 +32,21 @@ protected:
 	bool fired; ///< See hadButtonPress()
 public:
 	virtual ~Controller();
-	/* Have the controller describe itself. */
+	/** Have the controller describe itself. */
 	virtual const char* getDescription() = 0;
-	/* Is the controller capable of reporting a screen position right now?
+	/** Is the controller capable of reporting a screen position right now?
 	 * This may change repeatedly during the use of a controller, due to
 	 * grabless mice and Wiimotes pointed away from the screen. */
 	virtual bool hasPosition() = 0;
-	/* What is the screen position pointed to (for a top-left origin,
+	/** What is the screen position pointed to (for a top-left origin,
 	 * positive Y downwards, range 0-1)? If not hasPosition(), should report
 	 * the last position held. If no position ever held, not defined. */
 	virtual std::pair<double, double> getPosition() = 0;
-	/* Get a direction value. For devices with no directional stick,
+	/** Get a direction value. For devices with no directional stick,
 	 * interpret the position as a direction based on the nearest screen
 	 * edge. Remember to leave an area in the centre. */
 	virtual Direction getDirection() = 0;
-	/* Return true if the main button (whichever one[s] you wish to make
+	/** Return true if the main button (whichever one[s] you wish to make
 	 * sensitive) has been pressed since this function was last called.
 	 * Button presses should latch a flag which this function clears so as
 	 * to avoid double or missed presses from polling. The base class does

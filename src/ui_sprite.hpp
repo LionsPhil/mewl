@@ -30,7 +30,10 @@ using std::hash;
 #include "gamesetup.hpp"
 #include "util.hpp"
 
-/* Note that this is NOT a header for ui_sprite per se, as that is a subclass
+/** \file
+ * \brief User interface sprite handling
+ *
+ * Note that this is NOT a header for ui_sprite per se, as that is a subclass
  * which is instantiated via a factory---it isn't known to main, etc. This
  * header is instead for the other components of ui_sprite to know about the
  * common resources it provides. */

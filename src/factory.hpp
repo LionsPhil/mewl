@@ -5,6 +5,9 @@
 #include <vector>
 #include <map>
 
+/** \file
+ * \brief Generic factory template */
+
 /* Singleton */
 template <typename interface> class Factory {
 	private:
