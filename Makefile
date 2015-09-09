@@ -95,7 +95,7 @@ CPPWFLAGS = $(WARNFLAGS) -Wno-deprecated
 # Can't have -pedantic for CPPFLAGS due to errors in Box2D's enumerations.
 AFLAGS    = -f elf
 #CFLAGS    = $(CWFLAGS) -std=c99 -pedantic `sdl-config --cflags` $(CFLAGSEX)
-CPPFLAGS  = $(CPPWFLAGS) -std=c++98 -DVERSION='"$(VERSION)"' \
+CPPFLAGS  = $(CPPWFLAGS) -std=c++11 -DVERSION='"$(VERSION)"' \
             -DPLATFORM$(PLATFORM) -DUSERINTF='"$(USERINTF)"' \
             `sdl-config --cflags`   $(CPPFLAGSEX)
 LDFLAGS   = `sdl-config --libs` -lm $(LDFLAGSEX)

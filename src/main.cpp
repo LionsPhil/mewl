@@ -1,3 +1,4 @@
+#include <memory>
 #include <stdlib.h>
 #include <stdio.h>
 #include <SDL.h>
@@ -10,7 +11,6 @@ static const Uint32 tickduration = 10; /* ms -> 100Hz */
 
 static int realmain(bool fullscreen) {
 	bool run;
-	ControlManager controlman;
 	GameSetup gamesetup;
 	GameStageState gamestate;
 	Game* game;
@@ -45,11 +45,14 @@ static int realmain(bool fullscreen) {
 		warn("Joystick initialisation failed: %s", SDL_GetError());
 	}
 
-	controlman.populate();
+	// Make sure controlman's lifespan is a subset of SDL's
+	// TODO When moving to C++14, this should be make_unique. Not yet, tho'.
+	auto controlman = std::unique_ptr<ControlManager>(new ControlManager);
+	controlman->populate();
 
 	game = 0;
 	gamejumps = new GameLogicJumps(&game, *userintf);
-	gamelogic = GameLogic::getTitleState(gamejumps, gamestate, controlman);
+	gamelogic = GameLogic::getTitleState(gamejumps, gamestate, *controlman);
 	transitionok = true;
 
 	trace("Running");
@@ -97,7 +100,7 @@ static int realmain(bool fullscreen) {
 			case SDL_JOYHATMOTION:
 			case SDL_JOYBUTTONDOWN:
 			case SDL_JOYBUTTONUP:
-				controlman.feedEvent(event);
+				controlman->feedEvent(event);
 		}}
 
 		/* Process the passage of time */
@@ -138,6 +141,7 @@ static int realmain(bool fullscreen) {
 	}
 
 	trace("Clean exit");
+	controlman.reset(nullptr);
 	delete userintf;
 	delete gamelogic;
 	delete gamejumps;
