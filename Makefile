@@ -26,6 +26,7 @@ USERINTF = Sprite
       MV = mv
    EGREP = egrep
 INKSCAPE = inkscape
+     GDB = gdb
 
 # Extra flags to control build type
 # Debugging:
@@ -159,7 +160,7 @@ all: $(BINARY) $(SVGPNGS:%.svg=data/%.png)
 
 $(BINARY): $(OBJECTS)
 	@$(PRINTF) "$(BLUE)--- $(RV)LINKING   $(WHITE) $@\n"
-	@$(LD) $(LDFLAGS) -o $@ $^
+	@$(LD) -o $@ $^ $(LDFLAGS)
 	@$(PRINTF) "$(BLUE)$(RV)***$(WHITE) $(BINARY) built\n"
 
 # Pattern rules for creating intermediate objects from sources
@@ -230,4 +231,8 @@ info: env
 run: all
 	@$(PRINTF) "$(WHITE)--- $(RV)EXECUTING $(WHITE) $(BINARY)\n"
 	@./$(BINARY)
+
+debug: all
+	@$(PRINTF) "$(WHITE)--- $(RV)DEBUGGING $(WHITE) $(BINARY)\n"
+	@$(GDB) -ex run ./$(BINARY)
 

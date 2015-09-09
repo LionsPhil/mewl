@@ -299,7 +299,8 @@ public:
 			str[7] = '\0';
 			SDL_Surface* sur = resources.renderText(
 				resources.font_small, str, white);
-			SDL_Rect rect = {0, 0, sur->w, sur->h};
+			SDL_Rect rect = {0, 0,
+				static_cast<Uint16>(sur->w), static_cast<Uint16>(sur->h)};
 			SDL_FillRect(screen, &rect,
 				SDL_MapRGB(screen->format, 0, 0, 0));
 			SDL_BlitSurface(sur, NULL, screen, NULL);
@@ -360,7 +361,7 @@ SDL_Surface* UserInterfaceSpriteResources::renderText(TTF_Font* font,
 }
 
 bool UserInterfaceSpriteResources::displayTextLine(TTF_Font* font,
-	const char* text, SDL_Color foreground, SDL_Color background, int y) {
+	const char* text, SDL_Color foreground, SDL_Color background, Sint16 y) {
 
 	SDL_Surface* screen = SDL_GetVideoSurface();
 	SDL_Rect bar = {0, y, 640, 0};

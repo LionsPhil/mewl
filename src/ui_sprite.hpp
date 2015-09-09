@@ -87,7 +87,7 @@ struct UserInterfaceSpriteResources {
 		SDL_Color colour);
 	/** Render a full-width line of text to the screen. */
 	bool displayTextLine(TTF_Font* font, const char* text,
-		SDL_Color foreground, SDL_Color background, int y);
+		SDL_Color foreground, SDL_Color background, Sint16 y);
 	/** Render a set of sprites in the correct order (all save, all draw).*/
 	void displaySprites(
 		const std::vector<UserInterfaceSpriteSprite*>& sprites);
